@@ -3,622 +3,417 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Costa Capital — Koper CRM</title>
+<title>Costa Capital — Deal Platform</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F8F6F1; color: #1A1A1A; font-size: 14px; }
-  :root { --gold: #C9A84C; --dark: #1A1A1A; --muted: #888; --border: rgba(0,0,0,0.09); --surface: #F8F6F1; --card: #fff; }
-
-  .app { max-width: 1200px; margin: 0 auto; padding: 20px 16px; }
-  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
+  :root { --gold: #C9A84C; --dark: #1A1A1A; --muted: #888; --border: rgba(0,0,0,0.09); --card: #fff; }
+  .app { max-width: 1280px; margin: 0 auto; padding: 20px 16px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
   .header-title { font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
   .header-title span { color: var(--gold); }
   .header-sub { font-size: 12px; color: var(--muted); margin-top: 3px; display: flex; align-items: center; gap: 8px; }
-  .header-actions { display: flex; gap: 8px; }
-
+  .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .tab { padding: 10px 20px; font-size: 14px; cursor: pointer; border: none; background: none; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; font-family: inherit; }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); font-weight: 500; }
   button { cursor: pointer; font-family: inherit; font-size: 13px; }
   .btn-primary { background: var(--gold); color: #fff; border: none; border-radius: 8px; padding: 9px 16px; font-weight: 500; }
   .btn-primary:hover { background: #b8943d; }
   .btn-outline { background: none; border: 1px solid var(--gold); color: var(--gold); border-radius: 8px; padding: 9px 16px; font-weight: 500; }
-  .btn-outline:hover { background: rgba(201,168,76,0.08); }
   .btn-ghost { background: none; border: 0.5px solid var(--border); border-radius: 7px; padding: 8px 14px; color: var(--muted); }
   .btn-danger { background: none; border: 0.5px solid #F5CACA; color: #A32D2D; border-radius: 7px; padding: 7px 14px; font-size: 12px; }
-
   .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 18px; }
   .stat { background: var(--card); border: 0.5px solid var(--border); border-radius: 10px; padding: 14px 16px; }
   .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-  .stat-value { font-size: 28px; font-weight: 500; }
-
+  .stat-value { font-size: 26px; font-weight: 500; }
   .main { display: grid; gap: 14px; }
   .main.split { grid-template-columns: 320px 1fr; }
-
-  .filters { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-  .filter-li { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
-  .count { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
-
   input, select, textarea { font-family: inherit; font-size: 13px; padding: 8px 12px; border: 0.5px solid rgba(0,0,0,0.13); border-radius: 7px; background: #FAFAFA; color: var(--dark); outline: none; width: 100%; }
   input:focus, select:focus, textarea:focus { border-color: var(--gold); }
   textarea { resize: vertical; }
-
-  .contact-list { overflow-y: auto; max-height: calc(100vh - 310px); }
-  .contact-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 10px; padding: 13px 15px; cursor: pointer; margin-bottom: 7px; transition: border-color 0.1s; }
-  .contact-card:hover { border-color: rgba(201,168,76,0.4); }
-  .contact-card.selected { background: #FFFBF0; border: 1.5px solid var(--gold); }
-  .contact-header { display: flex; align-items: center; gap: 11px; }
-  .avatar { border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 500; flex-shrink: 0; }
-  .contact-name { font-weight: 500; font-size: 13.5px; }
-  .contact-company { font-size: 11px; color: var(--muted); }
-  .badges { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
-  .tags { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
-  .contact-rooms { font-size: 11px; color: var(--muted); margin-top: 5px; }
-
+  .card { background: var(--card); border: 0.5px solid var(--border); border-radius: 10px; padding: 13px 15px; cursor: pointer; margin-bottom: 7px; }
+  .card:hover { border-color: rgba(201,168,76,0.4); }
+  .card.selected { background: #FFFBF0; border: 1.5px solid var(--gold); }
   .badge { border-radius: 4px; font-size: 11px; padding: 2px 7px; font-weight: 500; white-space: nowrap; }
   .tag { border-radius: 4px; font-size: 11px; padding: 2px 7px; display: inline-flex; align-items: center; gap: 4px; background: rgba(201,168,76,0.12); color: var(--gold); border: 0.5px solid rgba(201,168,76,0.3); }
   .tag .remove { cursor: pointer; opacity: 0.6; font-size: 10px; }
-  .tag .remove:hover { opacity: 1; }
-
+  .tags { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
+  .badges { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+  .avatar { border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 500; flex-shrink: 0; }
   .detail { background: var(--card); border: 0.5px solid var(--border); border-radius: 12px; padding: 22px; overflow-y: auto; max-height: calc(100vh - 160px); }
-  .detail-header { display: flex; justify-content: space-between; margin-bottom: 16px; }
-  .detail-name { font-weight: 500; font-size: 18px; }
-  .detail-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .detail-actions { display: flex; gap: 6px; align-items: flex-start; }
-  .section-title { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; border-bottom: 0.5px solid rgba(201,168,76,0.3); padding-bottom: 4px; margin-top: 16px; }
-  .detail-row { display: flex; gap: 10px; margin-bottom: 5px; font-size: 13px; }
-  .detail-label { color: var(--muted); min-width: 110px; flex-shrink: 0; }
-  .detail-notes { font-size: 13px; color: #444; line-height: 1.7; white-space: pre-wrap; margin-top: 4px; }
-
+  .sec-title { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; border-bottom: 0.5px solid rgba(201,168,76,0.3); padding-bottom: 4px; margin-top: 16px; }
+  .drow { display: flex; gap: 10px; margin-bottom: 5px; font-size: 13px; }
+  .dlabel { color: var(--muted); min-width: 120px; flex-shrink: 0; }
   .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-  .modal { background: #fff; border-radius: 14px; padding: 28px; width: min(580px, 95vw); max-height: 90vh; overflow-y: auto; border: 1px solid rgba(201,168,76,0.4); }
-  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .modal { background: #fff; border-radius: 14px; padding: 28px; width: min(620px, 95vw); max-height: 90vh; overflow-y: auto; border: 1px solid rgba(201,168,76,0.4); }
+  .modal-wide { width: min(760px, 96vw); }
+  .modal-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   .modal-title { font-size: 17px; font-weight: 500; }
   .modal-close { background: none; border: none; font-size: 20px; color: var(--muted); line-height: 1; }
-  .form-row { margin-bottom: 12px; }
-  .form-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-  .form-checks { display: flex; gap: 20px; margin-bottom: 13px; }
-  .form-check { display: flex; align-items: center; gap: 7px; font-size: 13px; cursor: pointer; }
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+  .frow { margin-bottom: 12px; }
+  .flabel { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
   .tag-input-row { display: flex; gap: 6px; margin-bottom: 5px; }
   .tag-input-row input { flex: 1; }
   .tag-input-row button { padding: 8px 12px; background: var(--gold); color: #fff; border: none; border-radius: 7px; flex-shrink: 0; }
-  .tag-suggestions { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
-  .tag-suggest { background: none; border: 0.5px solid var(--border); border-radius: 4px; font-size: 11px; padding: 2px 7px; color: var(--muted); }
-  .tag-suggest:hover { border-color: var(--gold); color: var(--gold); }
-  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
-
-  .search-modal { width: min(700px, 96vw); }
-  .search-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-  .search-result { background: var(--card); border: 0.5px solid var(--border); border-radius: 10px; padding: 13px 15px; margin-bottom: 8px; }
-  .search-result-header { display: flex; justify-content: space-between; gap: 10px; }
-  .search-result-body { flex: 1; }
-  .result-name { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
-  .result-company { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-  .result-activity { font-size: 12px; color: #444; line-height: 1.6; }
-  .result-match { font-size: 12px; color: var(--muted); margin-top: 4px; font-style: italic; }
-  .result-source { font-size: 11px; color: var(--muted); margin-top: 4px; }
-
-  .sync-status { font-size: 11px; margin-left: 8px; }
-  .spinner { display: flex; gap: 5px; align-items: center; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: pulse 1.1s ease-in-out infinite; }
-  .dot:nth-child(2) { animation-delay: 0.2s; }
-  .dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes pulse { 0%,100%{opacity:.3;transform:scale(.8)} 50%{opacity:1;transform:scale(1.1)} }
-
-  .error-box { background: #FFF5F5; border: 0.5px solid #F5CACA; border-radius: 9px; padding: 14px 18px; margin-bottom: 16px; font-size: 13px; color: #A32D2D; }
-  .loading-screen { text-align: center; padding: 80px 0; }
-
-  .chip-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 6px; min-height: 24px; }
-
-  @media (max-width: 700px) {
-    .stats { grid-template-columns: repeat(2,1fr); }
-    .main.split { grid-template-columns: 1fr; }
-    .search-grid, .form-grid { grid-template-columns: 1fr; }
-  }
+  .tag-sug { background: none; border: 0.5px solid var(--border); border-radius: 4px; font-size: 11px; padding: 2px 7px; color: var(--muted); cursor: pointer; }
+  .tag-sugs { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+  .obj-price { font-size: 20px; font-weight: 500; color: var(--gold); }
+  .match-card { background: #F8F6F1; border: 0.5px solid var(--border); border-radius: 8px; padding: 10px 13px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .ai-box { background: rgba(201,168,76,0.06); border: 0.5px solid rgba(201,168,76,0.3); border-radius: 10px; padding: 20px; text-align: center; margin: 16px 0; }
+  .ok-box { background: #F0FFF4; border: 0.5px solid #9FE1CB; border-radius: 9px; padding: 13px 16px; margin-bottom: 16px; font-size: 13px; color: #1A6B3C; }
+  .err-box { background: #FFF5F5; border: 0.5px solid #F5CACA; border-radius: 9px; padding: 14px 18px; margin-bottom: 16px; font-size: 13px; color: #A32D2D; }
+  .list-scroll { overflow-y: auto; max-height: calc(100vh - 310px); }
+  .filters { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .count { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .sync { font-size: 11px; margin-left: 6px; }
+  .spinner { display: flex; gap: 5px; align-items: center; justify-content: center; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: p 1.1s ease-in-out infinite; }
+  .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+  @keyframes p{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+  @media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}.main.split{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="app" id="app">
-  <div class="loading-screen">
-    <div class="spinner" style="justify-content:center;margin-bottom:14px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-    <div style="font-size:13px;color:var(--muted);">Verbinden met Google Sheets...</div>
-  </div>
+  <div class="spinner" style="padding:80px 0"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
 </div>
-
 <script>
-const SHEET_NAME = "contacten Hans en Jaap voor hotels en overig";
-const HEADERS = ["id","name","alias","email","phone","company","linkedinFirstDegree","locations","type","roomRange","budget","notes","operator","status","lastContact","source"];
-const STATUSES = ["Lead","Actief","In onderhandeling","Gesloten","Inactief"];
-const LOCATIONS = ["Madrid","Barcelona","Valencia","Alicante","Málaga","Sevilla","Marbella","Costa del Sol","Costa Blanca","Ibiza","Mallorca","Bilbao","San Sebastián","Portugal"];
-const PROP_TYPES = ["Boutique","3-4 sterren","4-5 sterren","Luxury","Aparthotel","Historisch pand","Nieuwbouw","Transformatie","Portfolio"];
-const STATUS_COLORS = {"Lead":"#E67E22","Actief":"#1A6B3C","In onderhandeling":"#1A4A7A","Gesloten":"#7A3A1A","Inactief":"#888"};
-const AVATAR_COLORS = ["#C9A84C","#1A4A7A","#1A6B3C","#7A3A1A","#4A1A7A","#1A6B6B"];
-const SEED = [
-  {id:"1",name:"Edwin Kramer",alias:"Ed",email:"",phone:"",company:"",linkedinFirstDegree:"true",locations:"Valencia|Málaga|Cádiz|Sevilla|Alicante",type:"Historisch gebouw|Geen nieuwbouw|Premium rate",roomRange:"35-60",budget:"",notes:"City centre, aanloop lokale bevolking, straatniveau openbare ruimte voor F&B. Moet premium rate kunnen vragen. Graag met bestaande hotelvergunning.",operator:"false",status:"Actief",lastContact:"2025-03-26",source:"Direct"},
-  {id:"2",name:"Edwin Kramer",alias:"Ed 2",email:"",phone:"",company:"",linkedinFirstDegree:"true",locations:"Madrid|Barcelona",type:"Premium boutique|Portfolio",roomRange:"25+",budget:"",notes:"Heeft net 6 hotels gekocht in Londen en Amsterdam, heeft 3 in Barcelona.",operator:"false",status:"Actief",lastContact:"2025-03-26",source:"Direct"},
-  {id:"3",name:"Jan Roeland",alias:"JR",email:"",phone:"",company:"Investeringsfonds (adviseur)",linkedinFirstDegree:"false",locations:"Valencia|Alicante|Barcelona|Madrid",type:"3-4 sterren|Aparthotel",roomRange:"50+",budget:"",notes:"Adviseur van investeringsfonds. Wil zelf ook meedelen. Als er teveel mensen tussen zitten dan wordt het hem niet.",operator:"false",status:"Actief",lastContact:"2025-03-26",source:"Netwerk"},
-  {id:"4",name:"Ainhoa Rodriguez",alias:"AR",email:"",phone:"",company:"",linkedinFirstDegree:"false",locations:"Madrid|Barcelona|Valencia|Alicante",type:"4-5 sterren|Ontwikkelingen|Transformaties",roomRange:"Variabel",budget:"",notes:"Heeft verschillende investeerders. Kan zowel single assets zijn als portfolio's.",operator:"true",status:"Actief",lastContact:"2025-03-26",source:"Netwerk"},
-  {id:"5",name:"Amir",alias:"TL",email:"amir@ancora-inv.com",phone:"",company:"Ancora Investments",linkedinFirstDegree:"false",locations:"Portugal",type:"Ontwikkelingen Hotels",roomRange:"",budget:"",notes:"",operator:"false",status:"Lead",lastContact:"2025-03-25",source:"Online"},
-];
+const SHEET_ID="1y_QNvwgMSRydeeY2etGJUBREn-kDNRd9MuxV9nlJ2wc";
+const SC="contacten Hans en Jaap voor hotels en overig";
+const SO="Objecten";
+const CH=["id","name","alias","email","phone","company","linkedinFirstDegree","locations","type","roomRange","starMin","budget","notes","operator","status","lastContact","source"];
+const OH=["id","name","type","stars","location","price","rooms","size","status","description","matchCriteria","addedDate","source"];
+const STATS=["Lead","Actief","In onderhandeling","Gesloten","Inactief"];
+const OSTATS=["Beschikbaar","In analyse","In onderhandeling","Gesloten","Inactief"];
+const STARS=["","1 ster","2 sterren","3 sterren","4 sterren","5 sterren","Niet van toepassing"];
+const OTYPES=["Hotel","Boutique hotel","Resort","Aparthotel","Portfolio","Development","Nursing home","Mixed use","Kantoor","Retail","Wonen","Overig"];
+const LOCS=["Madrid","Barcelona","Valencia","Alicante","Málaga","Sevilla","Marbella","Costa del Sol","Costa Blanca","Ibiza","Mallorca","Portugal","Duitsland","Nederland","België","Frankrijk"];
+const AC=["#C9A84C","#1A4A7A","#1A6B3C","#7A3A1A","#4A1A7A","#1A6B6B"];
+const SC2={"Lead":"#E67E22","Actief":"#1A6B3C","In onderhandeling":"#1A4A7A","Gesloten":"#7A3A1A","Inactief":"#888"};
+const OC={"Beschikbaar":"#1A6B3C","In analyse":"#1A4A7A","In onderhandeling":"#E67E22","Gesloten":"#7A3A1A","Inactief":"#888"};
 
-let state = { contacts: [], selected: null, filterText: "", filterStatus: "Alle", filterLI: false, syncState: "loading", syncError: "", showSearch: false, showForm: false, editContact: null };
+let S={contacts:[],objects:[],tab:"kopers",selC:null,selO:null,fTxt:"",fStat:"Alle",fLI:false,ofTxt:"",ofStat:"Alle",sync:"loading",syncErr:"",showCF:false,editC:null,showOF:false,editO:null,showSearch:false,showPdf:false};
+let CF={},OF={},pdfState={loading:false,extracted:null,error:"",fname:""};
+let SS={loc:"",type:"",rooms:"",budget:"",extra:"",loading:false,results:null,error:""};
 
-async function api(body) {
-  const r = await fetch("/.netlify/functions/sheets", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  return r.json();
-}
+async function api(b){const r=await fetch("/.netlify/functions/sheets",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}
 
-function rowToContact(row) {
-  if (!row || !row[1]) return null;
-  return { id: row[0]||"", name: row[1]||"", alias: row[2]||"", email: row[3]||"", phone: row[4]||"", company: row[5]||"", linkedinFirstDegree: row[6]==="true", locations: row[7] ? row[7].split("|") : [], type: row[8] ? row[8].split("|") : [], roomRange: row[9]||"", budget: row[10]||"", notes: row[11]||"", operator: row[12]==="true", status: row[13]||"Lead", lastContact: row[14]||"", source: row[15]||"" };
-}
+function r2c(r){if(!r||!r[1])return null;return{id:r[0]||"",name:r[1]||"",alias:r[2]||"",email:r[3]||"",phone:r[4]||"",company:r[5]||"",linkedinFirstDegree:r[6]==="true",locations:r[7]?r[7].split("|"):[],type:r[8]?r[8].split("|"):[],roomRange:r[9]||"",starMin:r[10]||"",budget:r[11]||"",notes:r[12]||"",operator:r[13]==="true",status:r[14]||"Lead",lastContact:r[15]||"",source:r[16]||""};}
+function c2r(c){return[String(c.id),c.name,c.alias||"",c.email||"",c.phone||"",c.company||"",String(c.linkedinFirstDegree),(c.locations||[]).join("|"),(c.type||[]).join("|"),c.roomRange||"",c.starMin||"",c.budget||"",c.notes||"",String(c.operator),c.status,c.lastContact||"",c.source||""];}
+function r2o(r){if(!r||!r[1])return null;return{id:r[0]||"",name:r[1]||"",type:r[2]||"",stars:r[3]||"",location:r[4]||"",price:r[5]||"",rooms:r[6]||"",size:r[7]||"",status:r[8]||"Beschikbaar",description:r[9]||"",matchCriteria:r[10]||"",addedDate:r[11]||"",source:r[12]||""};}
+function o2r(o){return[String(o.id),o.name||"",o.type||"",o.stars||"",o.location||"",o.price||"",o.rooms||"",o.size||"",o.status||"Beschikbaar",o.description||"",o.matchCriteria||"",o.addedDate||"",o.source||""];}
 
-function contactToRow(c) {
-  return [String(c.id), c.name, c.alias||"", c.email||"", c.phone||"", c.company||"", String(c.linkedinFirstDegree), (c.locations||[]).join("|"), (c.type||[]).join("|"), c.roomRange||"", c.budget||"", c.notes||"", String(c.operator), c.status, c.lastContact||"", c.source||""];
-}
+function set(u){Object.assign(S,u);}
 
-async function initSheet() {
-  setState({syncState:"loading"});
-  try {
-    const info = await api({action:"sheetinfo"});
-    const sheets = (info.sheets||[]).map(s=>s.properties.title);
-    if (!sheets.includes(SHEET_NAME)) throw new Error(`Tabblad "${SHEET_NAME}" niet gevonden. Aanwezig: ${sheets.join(", ")}`);
-    const data = await api({action:"get", range:`${SHEET_NAME}!A1:P1`});
-    if (!data.values || data.values.length === 0) {
-      await api({action:"append", range:SHEET_NAME, values:[HEADERS]});
-      await api({action:"append", range:SHEET_NAME, values:SEED.map(s=>HEADERS.map(h=>s[h]||""))});
-    }
-    await loadContacts();
-  } catch(e) {
-    setState({syncState:"error", syncError: e.message});
-    render();
-  }
-}
-
-async function loadContacts() {
-  setState({syncState:"loading"});
-  try {
-    const data = await api({action:"get", range:`${SHEET_NAME}!A2:P1000`});
-    const rows = data.values || [];
-    const contacts = rows.map(rowToContact).filter(Boolean).filter(c=>c.name);
-    setState({contacts, syncState:"synced"});
-  } catch(e) {
-    setState({syncState:"error", syncError:e.message});
-  }
+async function init(){
+  set({sync:"loading"});
+  try{
+    const info=await api({action:"sheetinfo"});
+    const sheets=(info.sheets||[]).map(s=>s.properties.title);
+    if(!sheets.includes(SC))throw new Error(`Tabblad "${SC}" niet gevonden.`);
+    if(!sheets.includes(SO)){await api({action:"append",range:SO,values:[OH]});}
+    await Promise.all([loadC(),loadO()]);
+    set({sync:"synced"});
+  }catch(e){set({sync:"error",syncErr:e.message});}
   render();
 }
 
-async function saveContact(form) {
-  setState({syncState:"saving"}); render();
-  try {
-    const data = await api({action:"get", range:`${SHEET_NAME}!A2:A1000`});
-    const rows = data.values || [];
-    const idx = rows.findIndex(r=>r[0]===String(form.id));
-    const row = contactToRow(form);
-    if (idx >= 0) {
-      await api({action:"update", range:`${SHEET_NAME}!A${idx+2}:P${idx+2}`, values:[row]});
-    } else {
-      await api({action:"append", range:SHEET_NAME, values:[row]});
-    }
-    await loadContacts();
-    setState({selected:form, showForm:false, editContact:null});
-  } catch(e) { setState({syncState:"error", syncError:e.message}); }
+async function loadC(){const d=await api({action:"get",range:`${SC}!A2:P10000`});S.contacts=(d.values||[]).map(r2c).filter(Boolean).filter(c=>c.name);}
+async function loadO(){try{const d=await api({action:"get",range:`${SO}!A2:L1000`});S.objects=(d.values||[]).map(r2o).filter(Boolean).filter(o=>o.name);}catch(e){S.objects=[];}}
+async function reload(){set({sync:"loading"});render();try{await Promise.all([loadC(),loadO()]);set({sync:"synced"});}catch(e){set({sync:"error",syncErr:e.message});}render();}
+
+async function saveC(form){
+  set({sync:"saving"});render();
+  try{
+    const d=await api({action:"get",range:`${SC}!A2:A10000`});
+    const rows=d.values||[];
+    const idx=rows.findIndex(r=>r[0]===String(form.id));
+    if(idx>=0)await api({action:"update",range:`${SC}!A${idx+2}:P${idx+2}`,values:[c2r(form)]});
+    else await api({action:"append",range:SC,values:[c2r(form)]});
+    await loadC();
+    set({selC:form,showCF:false,editC:null,sync:"synced"});
+  }catch(e){set({sync:"error",syncErr:e.message});}
   render();
 }
 
-async function deleteContact(id) {
-  if (!confirm("Contact verwijderen?")) return;
-  setState({syncState:"saving"}); render();
-  try {
-    const data = await api({action:"get", range:`${SHEET_NAME}!A2:P1000`});
-    const rows = (data.values||[]).filter(r=>r[0]!==String(id));
-    await api({action:"clear", range:`${SHEET_NAME}!A2:P1000`});
-    if (rows.length > 0) await api({action:"update", range:`${SHEET_NAME}!A2:P${rows.length+1}`, values:rows});
-    await loadContacts();
-    setState({selected:null});
-  } catch(e) { setState({syncState:"error", syncError:e.message}); }
+async function delC(id){
+  if(!confirm("Contact verwijderen?"))return;
+  set({sync:"saving"});render();
+  try{
+    const d=await api({action:"get",range:`${SC}!A2:P10000`});
+    const rows=(d.values||[]).filter(r=>r[0]!==String(id));
+    await api({action:"clear",range:`${SC}!A2:P10000`});
+    if(rows.length>0)await api({action:"update",range:`${SC}!A2:P${rows.length+1}`,values:rows});
+    await loadC();set({selC:null,sync:"synced"});
+  }catch(e){set({sync:"error",syncErr:e.message});}
   render();
 }
 
-function setState(updates) { Object.assign(state, updates); }
-
-function avatar(name, size=38) {
-  const initials = name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
-  const bg = AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
-  return `<div class="avatar" style="width:${size}px;height:${size}px;font-size:${Math.round(size*0.34)}px;background:${bg};">${initials}</div>`;
+async function saveO(form){
+  set({sync:"saving"});render();
+  try{
+    const d=await api({action:"get",range:`${SO}!A2:A1000`});
+    const rows=d.values||[];
+    const idx=rows.findIndex(r=>r[0]===String(form.id));
+    if(idx>=0)await api({action:"update",range:`${SO}!A${idx+2}:L${idx+2}`,values:[o2r(form)]});
+    else await api({action:"append",range:SO,values:[o2r(form)]});
+    await loadO();
+    set({selO:form,showOF:false,editO:null,showPdf:false,sync:"synced"});
+  }catch(e){set({sync:"error",syncErr:e.message});}
+  render();
 }
 
-function badge(text, color) {
-  return `<span class="badge" style="background:${color}18;color:${color};border:0.5px solid ${color}40;">${text}</span>`;
+async function delO(id){
+  if(!confirm("Object verwijderen?"))return;
+  set({sync:"saving"});render();
+  try{
+    const d=await api({action:"get",range:`${SO}!A2:L1000`});
+    const rows=(d.values||[]).filter(r=>r[0]!==String(id));
+    await api({action:"clear",range:`${SO}!A2:L1000`});
+    if(rows.length>0)await api({action:"update",range:`${SO}!A2:L${rows.length+1}`,values:rows});
+    await loadO();set({selO:null,sync:"synced"});
+  }catch(e){set({sync:"error",syncErr:e.message});}
+  render();
 }
 
-function tag(text, removable=false, key="") {
-  return `<span class="tag">${text}${removable ? `<span class="remove" onclick="removeTag('${key}','${text.replace(/'/g,"\\'")}')">✕</span>` : ""}</span>`;
+function matches(o){
+  if(!o)return[];
+  const loc=(o.location||"").toLowerCase();
+  const typ=(o.type||"").toLowerCase();
+  const kws=(o.matchCriteria||"").toLowerCase().split(",").map(k=>k.trim()).filter(Boolean);
+  return S.contacts.filter(c=>{
+    const lm=c.locations.some(l=>loc.includes(l.toLowerCase())||l.toLowerCase().split(",").some(lp=>loc.includes(lp.trim())));
+    const tm=c.type.some(t=>typ.includes(t.toLowerCase())||t.toLowerCase().includes(typ.split(" ")[0]));
+    const km=kws.some(k=>c.locations.some(l=>l.toLowerCase().includes(k))||c.type.some(t=>t.toLowerCase().includes(k)));
+    const sm=!c.starMin||!o.stars||o.stars>=c.starMin;
+    return (lm||tm||km)&&sm;
+  }).slice(0,25);
 }
 
-function syncStatusHtml() {
-  const m = {loading:["#888","Laden..."], saving:["#C9A84C","Opslaan..."], synced:["#1A6B3C","✓ Gesynchroniseerd"], error:["#A32D2D","Fout — zie melding"]};
-  const v = m[state.syncState];
-  return v ? `<span class="sync-status" style="color:${v[0]}">${v[1]}</span>` : "";
+async function handlePDF(input){
+  const file=input.files[0];if(!file)return;
+  pdfState={loading:true,extracted:null,error:"",fname:file.name};
+  set({showPdf:true});render();
+  try{
+    const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=()=>rej(new Error("Leesfout"));r.readAsDataURL(file);});
+    const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:`Je bent een vastgoeddata-extractor voor Costa Capital. Extraheer data uit vastgoedobjecten (hotels, resorts, development, portfolios, nursing homes, etc.). Geef UITSLUITEND geldig JSON:\n{"name":"Naam object","type":"Hotel/Boutique hotel/Resort/Aparthotel/Portfolio/Development/Nursing home/Mixed use/Overig","stars":"Aantal sterren als tekst bijv. 4 sterren of 5 sterren (leeg als niet van toepassing)","location":"Locatie","price":"Vraagprijs met valuta","rooms":"Aantal kamers/eenheden","size":"Oppervlakte m²","status":"Beschikbaar/Development/Te koop","description":"Max 3 zinnen beschrijving","matchCriteria":"Kommagescheiden trefwoorden voor koperskoppeling"}`,messages:[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:b64}},{type:"text",text:`Extraheer vastgoeddata. Bestand: ${file.name}`}]}]})});
+    const data=await resp.json();
+    const txt=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
+    const m=txt.match(/\{[\s\S]*\}/);
+    if(!m)throw new Error("AI kon geen data extraheren uit dit document.");
+    const ex=JSON.parse(m[0]);
+    pdfState={loading:false,extracted:ex,error:"",fname:file.name};
+    OF={id:String(Date.now()),name:ex.name||"",type:ex.type||"Hotel",location:ex.location||"",price:ex.price||"",rooms:ex.rooms||"",size:ex.size||"",status:"Beschikbaar",description:ex.description||"",matchCriteria:ex.matchCriteria||"",addedDate:new Date().toISOString().split("T")[0],source:file.name};
+  }catch(e){pdfState={loading:false,extracted:null,error:e.message,fname:file.name};}
+  render();input.value="";
 }
 
-function filteredContacts() {
-  const t = state.filterText.toLowerCase();
-  return state.contacts.filter(c =>
-    (!t || [c.name,c.company,...c.locations,...c.type,c.notes].join(" ").toLowerCase().includes(t)) &&
-    (state.filterStatus==="Alle" || c.status===state.filterStatus) &&
-    (!state.filterLI || c.linkedinFirstDegree)
-  );
+async function handleLI(input){
+  const file=input.files[0];if(!file)return;
+  const text=await file.text();
+  const lines=text.split('\n').map(l=>{l=l.replace(/;;+\s*$/,'').trim();if(l.startsWith('"')&&l.endsWith('"'))l=l.slice(1,-1).replace(/""/g,'"');return l;}).filter(l=>l.length>0);
+  const hi=lines.findIndex(l=>l.toLowerCase().includes('first name'));
+  if(hi===-1){alert('Geen geldige LinkedIn CSV.');input.value='';return;}
+  const hdr=lines[hi].split(',').map(h=>h.replace(/"/g,'').trim().toLowerCase());
+  const fi=hdr.findIndex(h=>h.includes('first')),li=hdr.findIndex(h=>h.includes('last')),ci=hdr.findIndex(h=>h.includes('company')),pi=hdr.findIndex(h=>h.includes('position')),ei=hdr.findIndex(h=>h.includes('email'));
+  function pcsv(l){const r=[];let c='',q=false;for(let i=0;i<l.length;i++){const ch=l[i];if(ch==='"'){if(q&&l[i+1]==='"'){c+='"';i++;}else q=!q;}else if(ch===','&&!q){r.push(c.trim());c='';}else c+=ch;}r.push(c.trim());return r;}
+  const en=S.contacts.map(c=>c.name.toLowerCase());
+  const nc=[];let sk=0;
+  for(const l of lines.slice(hi+1)){if(!l.trim())continue;const cols=pcsv(l);const f=(cols[fi]||'').replace(/^"|"$/g,'').trim(),la=(cols[li]||'').replace(/^"|"$/g,'').trim(),n=(f+' '+la).trim();if(!n||n.length<2){sk++;continue;}if(en.includes(n.toLowerCase())){sk++;continue;}const co=ci>=0?(cols[ci]||'').replace(/^"|"$/g,'').trim():'',po=pi>=0?(cols[pi]||'').replace(/^"|"$/g,'').trim():'',em=ei>=0?(cols[ei]||'').replace(/^"|"$/g,'').trim():'';nc.push({id:String(Date.now()+nc.length),name:n,alias:'',email:em,phone:'',company:co,linkedinFirstDegree:true,locations:[],type:[],roomRange:'',budget:'',notes:po?`Functie: ${po}`:'',operator:false,status:'Lead',lastContact:new Date().toISOString().split('T')[0],source:'LinkedIn'});en.push(n.toLowerCase());}
+  if(nc.length===0){alert(`Geen nieuwe contacten.\n${sk} overgeslagen.`);input.value='';return;}
+  if(!confirm(`${nc.length} nieuwe LinkedIn connecties importeren?\n(${sk} overgeslagen)`)){input.value='';return;}
+  set({sync:'saving'});render();
+  try{const B=100;for(let i=0;i<nc.length;i+=B){await api({action:'append',range:SC,values:nc.slice(i,i+B).map(c2r)});}await loadC();set({sync:'synced'});alert(`Klaar! ${nc.length} geïmporteerd.`);}
+  catch(e){set({sync:'error',syncErr:e.message});}
+  render();input.value='';
 }
 
-function render() {
-  const app = document.getElementById("app");
-  const s = state;
+async function runSearch(){
+  if(!SS.loc&&!SS.type)return;
+  SS.loading=true;SS.results=null;SS.error="";render();
+  const cr=[SS.loc&&`Locatie: ${SS.loc}`,SS.type&&`Type: ${SS.type}`,SS.rooms&&`Kamers: ${SS.rooms}`,SS.budget&&`Budget: ${SS.budget}`,SS.extra&&`Extra: ${SS.extra}`].filter(Boolean).join(", ");
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,tools:[{type:"web_search_20250305",name:"web_search"}],system:`Dealflow-assistent Costa Capital. Zoek ECHTE RECENTE kopers/investeerders voor vastgoed. JSON array alleen:\n[{"name":"Naam","company":"Org","deal_type":"Type","activity":"Recent gedaan","why_match":"Waarom match","linkedin_likely":true,"source":"Bron"}]\n4-8 resultaten.`,messages:[{role:"user",content:`Kopers voor: ${cr}`}]})});
+    const d=await res.json();const t=(d.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
+    const m=t.match(/\[[\s\S]*\]/);
+    if(m){try{SS.results=JSON.parse(m[0]);}catch{SS.results=[];SS.error="Parse fout.";}}else{SS.results=[];SS.error="Geen resultaten.";}
+  }catch(e){SS.error="Fout: "+e.message;}
+  SS.loading=false;render();
+}
 
-  if (s.syncState === "loading" && s.contacts.length === 0) {
-    app.innerHTML = `<div class="loading-screen"><div class="spinner" style="justify-content:center;margin-bottom:14px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div style="font-size:13px;color:var(--muted)">Verbinden met Google Sheets...</div></div>`;
-    return;
-  }
+function av(name,sz=38){const i=name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();return `<div class="avatar" style="width:${sz}px;height:${sz}px;font-size:${Math.round(sz*0.34)}px;background:${AC[name.charCodeAt(0)%AC.length]};">${i}</div>`;}
+function bdg(t,c){return `<span class="badge" style="background:${c}18;color:${c};border:0.5px solid ${c}40;">${t}</span>`;}
+function tg(t,rm=false,f=""){return `<span class="tag">${t}${rm?`<span class="remove" onclick="rmTag('${f}','${t.replace(/'/g,"\\'")}')">✕</span>`:""}</span>`;}
+function syncH(){const m={loading:["#888","Laden..."],saving:["#C9A84C","Opslaan..."],synced:["#1A6B3C","✓ Gesynchroniseerd"],error:["#A32D2D","Fout"]};const v=m[S.sync];return v?`<span class="sync" style="color:${v[0]}">${v[1]}</span>`+"":" ";}
 
-  const fc = filteredContacts();
-  const stats = [
-    {label:"Contacten", value:s.contacts.length, color:"#C9A84C"},
-    {label:"Actieve kopers", value:s.contacts.filter(c=>c.status==="Actief").length, color:"#1A6B3C"},
-    {label:"1e lijn LinkedIn", value:s.contacts.filter(c=>c.linkedinFirstDegree).length, color:"#0A66C2"},
-    {label:"Open leads", value:s.contacts.filter(c=>c.status==="Lead").length, color:"#E67E22"},
-  ];
+function rmTag(f,v){if(CF[f])CF[f]=CF[f].filter(x=>x!==v);render();}
+function addTag(f,v){const val=v||(document.getElementById(f+'In')?document.getElementById(f+'In').value.trim():"");if(val&&CF[f]&&!CF[f].includes(val)){CF[f].push(val);if(!v&&document.getElementById(f+'In'))document.getElementById(f+'In').value="";}render();}
 
-  app.innerHTML = `
-    <div class="header">
-      <div>
-        <div class="header-title"><span>Costa Capital</span> — Koper CRM</div>
-        <div class="header-sub">Hotel & horecavastgoed · Spanje & West-Europa ${syncStatusHtml()} ${s.syncState==="synced"?`<a href="#" onclick="loadContacts();return false;" style="font-size:11px;color:var(--muted)">vernieuwen</a>`:""}</div>
-      </div>
-      <div class="header-actions">
-        <label class="btn-ghost" style="cursor:pointer;display:inline-flex;align-items:center;" title="Importeer LinkedIn connecties als CSV">
-          LinkedIn import
-          <input type="file" id="liImport" accept=".csv" style="display:none" onchange="handleLinkedInCSV(this)">
-        </label>
-        <button class="btn-outline" onclick="openSearch()">Zoek kopers via internet</button>
-        <button class="btn-primary" onclick="openForm(null)">+ Nieuw contact</button>
-      </div>
+function openCF(c){CF=c?JSON.parse(JSON.stringify(c)):{id:String(Date.now()),name:"",alias:"",email:"",phone:"",company:"",linkedinFirstDegree:false,locations:[],type:[],roomRange:"",starMin:"",budget:"",notes:"",operator:false,status:"Lead",lastContact:new Date().toISOString().split("T")[0],source:"Direct"};set({editC:c,showCF:true});render();}
+function openOF(o){OF=o?JSON.parse(JSON.stringify(o)):{id:String(Date.now()),name:"",type:"Hotel",stars:"",location:"",price:"",rooms:"",size:"",status:"Beschikbaar",description:"",matchCriteria:"",addedDate:new Date().toISOString().split("T")[0],source:""};set({editO:o,showOF:true,showPdf:false});render();}
+
+function render(){
+  const app=document.getElementById("app");
+  if(S.sync==="loading"&&S.contacts.length===0&&S.objects.length===0){app.innerHTML=`<div class="spinner" style="padding:80px 0"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div style="text-align:center;font-size:13px;color:var(--muted);margin-top:12px">Verbinden met Google Sheets...</div>`;return;}
+
+  const hdr=`<div class="header"><div><div class="header-title"><span>Costa Capital</span> — Deal Platform</div><div class="header-sub">Hotel & vastgoed · Spanje & West-Europa ${syncH()} ${S.sync==="synced"?`<a href="#" onclick="reload();return false;" style="font-size:11px;color:var(--muted)">vernieuwen</a>`:""}</div></div>
+  <div class="header-actions">${S.tab==="kopers"?`<label class="btn-ghost" style="cursor:pointer;display:inline-flex;align-items:center;">LinkedIn import<input type="file" accept=".csv" style="display:none" onchange="handleLI(this)"></label><button class="btn-outline" onclick="set({showSearch:true});render()">Zoek kopers</button><button class="btn-primary" onclick="openCF(null)">+ Contact</button>`:`<label class="btn-outline" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;">📄 PDF importeren<input type="file" accept=".pdf" style="display:none" onchange="handlePDF(this)"></label><button class="btn-primary" onclick="openOF(null)">+ Object</button>`}</div></div>
+  <div class="tabs"><button class="tab ${S.tab==="kopers"?"active":""}" onclick="set({tab:'kopers',selO:null});render()">Kopers (${S.contacts.length})</button><button class="tab ${S.tab==="objecten"?"active":""}" onclick="set({tab:'objecten',selC:null});render()">Objecten (${S.objects.length})</button></div>`;
+
+  const errBox=S.sync==="error"?`<div class="err-box"><strong>Verbindingsfout</strong> — ${S.syncErr}<br><small>Controleer of Google Sheet gedeeld is als "Iedereen met link kan bewerken".</small><button class="btn-primary" style="margin-top:8px;font-size:12px" onclick="init()">Opnieuw</button></div>`:"";
+
+  const modals=(S.showSearch?mSearch():"")+(S.showPdf?mPdf():"")+(S.showCF||S.editC?mCF():"")+(S.showOF||S.editO?mOF():"");
+
+  app.innerHTML=hdr+errBox+(S.tab==="kopers"?tabK():tabO())+modals;
+}
+
+function tabK(){
+  const stats=[{l:"Contacten",v:S.contacts.length,c:"#C9A84C"},{l:"Actieve kopers",v:S.contacts.filter(c=>c.status==="Actief").length,c:"#1A6B3C"},{l:"1e lijn LinkedIn",v:S.contacts.filter(c=>c.linkedinFirstDegree).length,c:"#0A66C2"},{l:"Open leads",v:S.contacts.filter(c=>c.status==="Lead").length,c:"#E67E22"}];
+  const fc=S.contacts.filter(c=>{const t=S.fTxt.toLowerCase();return(!t||[c.name,c.company,...c.locations,...c.type,c.notes].join(" ").toLowerCase().includes(t))&&(S.fStat==="Alle"||c.status===S.fStat)&&(!S.fLI||c.linkedinFirstDegree);});
+  return `<div class="stats">${stats.map(s=>`<div class="stat"><div class="stat-label">${s.l}</div><div class="stat-value" style="color:${s.c}">${s.v}</div></div>`).join("")}</div>
+  <div class="main ${S.selC?"split":""}"><div>
+    <div class="filters"><input placeholder="Zoek naam, locatie, type..." value="${S.fTxt}" oninput="set({fTxt:this.value});render();" style="flex:1;min-width:140px;"><select onchange="set({fStat:this.value});render();" style="width:auto;"><option ${S.fStat==="Alle"?"selected":""}>Alle</option>${STATS.map(s=>`<option ${S.fStat===s?"selected":""}>${s}</option>`).join("")}</select></div>
+    <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);margin-bottom:8px;cursor:pointer;"><input type="checkbox" ${S.fLI?"checked":""} onchange="set({fLI:this.checked});render();"> Alleen 1e lijns LinkedIn</label>
+    <div class="count">${fc.length} van ${S.contacts.length}</div>
+    <div class="list-scroll">
+      ${fc.length===0?`<div style="text-align:center;padding:40px 0;color:var(--muted)">Geen resultaten.<br><a href="#" onclick="set({fTxt:'',fStat:'Alle',fLI:false});render();return false;" style="color:var(--gold);font-size:13px;display:inline-block;margin-top:8px">Filters wissen</a></div>`:""}
+      ${fc.map(c=>`<div class="card ${S.selC?.id===c.id?"selected":""}" onclick="set({selC:${JSON.stringify(c).replace(/"/g,"&quot;")}});render();">
+        <div style="display:flex;align-items:center;gap:11px;">${av(c.name)}<div style="flex:1;min-width:0;"><div style="font-weight:500;font-size:13.5px;">${c.name}</div>${c.company?`<div style="font-size:11px;color:var(--muted)">${c.company}</div>`:""}<div class="badges">${bdg(c.status,SC2[c.status]||"#888")}${c.linkedinFirstDegree?bdg("LI 1e lijn","#0A66C2"):""}${c.source==="AI Zoeker"?bdg("AI","#7A3A1A"):""}</div></div></div>
+        ${c.locations.length>0?`<div class="tags">${c.locations.slice(0,3).map(l=>tg(l)).join("")}${c.locations.length>3?tg(`+${c.locations.length-3}`):""}</div>`:""}
+        ${c.roomRange?`<div style="font-size:11px;color:var(--muted);margin-top:5px;">${c.roomRange} kamers · ${c.type.slice(0,2).join(", ")}</div>`:""}
+      </div>`).join("")}
     </div>
-
-    ${s.syncState==="error" ? `<div class="error-box"><strong>Verbindingsfout</strong> — ${s.syncError}<br><small style="display:block;margin-top:4px">Controleer of het Google Sheet gedeeld is als "Iedereen met de link kan bewerken" en dat de Netlify function actief is.</small><button class="btn-primary" style="margin-top:10px;font-size:12px;" onclick="initSheet()">Opnieuw proberen</button></div>` : ""}
-
-    <div class="stats">${stats.map(st=>`<div class="stat"><div class="stat-label">${st.label}</div><div class="stat-value" style="color:${st.color}">${st.value}</div></div>`).join("")}</div>
-
-    <div class="main ${s.selected ? "split" : ""}">
-      <div>
-        <div class="filters">
-          <input type="text" placeholder="Zoek naam, locatie, type..." value="${s.filterText}" oninput="setState({filterText:this.value});render();" style="flex:1;min-width:140px;">
-          <select onchange="setState({filterStatus:this.value});render();" style="width:auto;">
-            <option ${s.filterStatus==="Alle"?"selected":""}>Alle</option>
-            ${STATUSES.map(st=>`<option ${s.filterStatus===st?"selected":""}>${st}</option>`).join("")}
-          </select>
-        </div>
-        <label class="filter-li"><input type="checkbox" ${s.filterLI?"checked":""} onchange="setState({filterLI:this.checked});render();"> Alleen 1e lijns LinkedIn</label>
-        <div class="count">${fc.length} van ${s.contacts.length} contacten</div>
-        <div class="contact-list">
-          ${fc.length===0 ? `<div style="text-align:center;padding:40px 0;color:var(--muted)">Geen resultaten.<br><a href="#" onclick="setState({filterText:'',filterStatus:'Alle',filterLI:false});render();return false;" style="color:var(--gold);font-size:13px;margin-top:8px;display:inline-block;">Filters wissen</a></div>` :
-          fc.map(c => `
-            <div class="contact-card ${s.selected?.id===c.id?"selected":""}" onclick="setState({selected:${JSON.stringify(c).replace(/"/g,"&quot;")}});render();">
-              <div class="contact-header">
-                ${avatar(c.name)}
-                <div style="flex:1;min-width:0;">
-                  <div class="contact-name">${c.name}</div>
-                  ${c.company?`<div class="contact-company">${c.company}</div>`:""}
-                  <div class="badges">
-                    ${badge(c.status, STATUS_COLORS[c.status]||"#888")}
-                    ${c.linkedinFirstDegree?badge("LI 1e lijn","#0A66C2"):""}
-                    ${c.source==="AI Zoeker"?badge("AI gevonden","#7A3A1A"):""}
-                  </div>
-                </div>
-              </div>
-              ${c.locations.length>0?`<div class="tags">${c.locations.slice(0,3).map(l=>tag(l)).join("")}${c.locations.length>3?tag(`+${c.locations.length-3}`):""}</div>`:""}
-              ${c.roomRange?`<div class="contact-rooms">${c.roomRange} kamers · ${c.type.slice(0,2).join(", ")}</div>`:""}
-            </div>
-          `).join("")}
-        </div>
-      </div>
-
-      ${s.selected ? renderDetail(s.selected) : ""}
-    </div>
-
-    ${s.showSearch ? renderSearchModal() : ""}
-    ${s.showForm || s.editContact ? renderFormModal(s.editContact) : ""}
-  `;
+  </div>${S.selC?dC(S.selC):""}</div>`;
 }
 
-function renderDetail(c) {
+function dC(c){return `<div class="detail">
+  <div style="display:flex;justify-content:space-between;margin-bottom:16px;"><div style="display:flex;align-items:center;gap:12px;">${av(c.name,48)}<div><div style="font-weight:500;font-size:17px;">${c.name}</div>${c.alias?`<div style="font-size:12px;color:var(--muted)">"${c.alias}"</div>`:""} ${c.company?`<div style="font-size:12px;color:var(--muted)">${c.company}</div>`:""}</div></div>
+  <div style="display:flex;gap:6px;"><button class="btn-primary" style="font-size:12px;padding:6px 12px" onclick="openCF(${JSON.stringify(c).replace(/"/g,"&quot;")})">Bewerken</button><button class="btn-ghost" onclick="set({selC:null});render();">✕</button></div></div>
+  <div class="badges" style="margin-bottom:16px;">${bdg(c.status,SC2[c.status]||"#888")} ${c.linkedinFirstDegree?bdg("1e lijn LinkedIn","#0A66C2"):""} ${c.operator?bdg("Operator","#7A3A1A"):""} ${bdg(c.source||"Direct","#555")}</div>
+  <div class="sec-title">Vastgoedprofiel</div>
+  <div class="drow"><span class="dlabel">Locaties</span><span>${c.locations.join(", ")||"—"}</span></div>
+  <div class="drow"><span class="dlabel">Type</span><span>${c.type.join(", ")||"—"}</span></div>
+  <div class="drow"><span class="dlabel">Kamers</span><span>${c.roomRange||"—"}</span></div>
+  <div class="drow"><span class="dlabel">Min. sterren</span><span>${c.starMin||"—"}</span></div>
+  <div class="drow"><span class="dlabel">Budget</span><span>${c.budget||"—"}</span></div>
+  <div class="sec-title">Contact</div>
+  <div class="drow"><span class="dlabel">E-mail</span><span>${c.email||"—"}</span></div>
+  <div class="drow"><span class="dlabel">Telefoon</span><span>${c.phone||"—"}</span></div>
+  <div class="drow"><span class="dlabel">Laatste contact</span><span>${c.lastContact||"—"}</span></div>
+  ${c.notes?`<div class="sec-title">Notities</div><div style="font-size:13px;color:#444;line-height:1.7;white-space:pre-wrap;">${c.notes}</div>`:""}
+  <div style="margin-top:20px;"><button class="btn-danger" onclick="delC('${c.id}')">Verwijderen</button></div>
+</div>`;}
+
+function tabO(){
+  const stats=[{l:"Objecten",v:S.objects.length,c:"#C9A84C"},{l:"Beschikbaar",v:S.objects.filter(o=>o.status==="Beschikbaar").length,c:"#1A6B3C"},{l:"In analyse",v:S.objects.filter(o=>o.status==="In analyse").length,c:"#1A4A7A"},{l:"In onderhandeling",v:S.objects.filter(o=>o.status==="In onderhandeling").length,c:"#E67E22"}];
+  const fo=S.objects.filter(o=>{const t=S.ofTxt.toLowerCase();return(!t||[o.name,o.type,o.location,o.description].join(" ").toLowerCase().includes(t))&&(S.ofStat==="Alle"||o.status===S.ofStat);});
+  return `<div class="stats">${stats.map(s=>`<div class="stat"><div class="stat-label">${s.l}</div><div class="stat-value" style="color:${s.c}">${s.v}</div></div>`).join("")}</div>
+  <div class="main ${S.selO?"split":""}"><div>
+    <div class="filters"><input placeholder="Zoek naam, locatie, type..." value="${S.ofTxt}" oninput="set({ofTxt:this.value});render();" style="flex:1;min-width:140px;"><select onchange="set({ofStat:this.value});render();" style="width:auto;"><option ${S.ofStat==="Alle"?"selected":""}>Alle</option>${OSTATS.map(s=>`<option ${S.ofStat===s?"selected":""}>${s}</option>`).join("")}</select></div>
+    <div class="count">${fo.length} van ${S.objects.length} objecten</div>
+    <div class="list-scroll">
+      ${fo.length===0?`<div style="text-align:center;padding:40px 0;color:var(--muted);">${S.objects.length===0?"Nog geen objecten. Gebruik '+ Object' of importeer een PDF.":"Geen resultaten."}</div>`:""}
+      ${fo.map(o=>`<div class="card ${S.selO?.id===o.id?"selected":""}" onclick="set({selO:${JSON.stringify(o).replace(/"/g,"&quot;")}});render();">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;"><div style="flex:1;min-width:0;"><div style="font-weight:500;font-size:13.5px;margin-bottom:4px;">${o.name}</div><div class="badges">${bdg(o.status,OC[o.status]||"#888")} ${bdg(o.type,"#555")} ${o.stars?bdg(o.stars,"#C9A84C"):""}</div></div>${o.price?`<div class="obj-price" style="font-size:14px;white-space:nowrap;">${o.price}</div>`:""}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;">${[o.location,o.rooms,o.size].filter(Boolean).join(" · ")}</div>
+        ${o.description?`<div style="font-size:12px;color:#555;margin-top:6px;line-height:1.5;">${o.description.slice(0,120)}${o.description.length>120?"...":""}</div>`:""}
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;">${matches(o).length} mogelijke kopers in CRM</div>
+      </div>`).join("")}
+    </div>
+  </div>${S.selO?dO(S.selO):""}</div>`;
+}
+
+function dO(o){
+  const mx=matches(o);
   return `<div class="detail">
-    <div class="detail-header">
-      <div style="display:flex;align-items:center;gap:12px;">
-        ${avatar(c.name, 48)}
-        <div>
-          <div class="detail-name">${c.name}</div>
-          ${c.alias?`<div class="detail-sub">"${c.alias}"</div>`:""}
-          ${c.company?`<div class="detail-sub">${c.company}</div>`:""}
-        </div>
-      </div>
-      <div class="detail-actions">
-        <button class="btn-primary" style="font-size:12px;padding:6px 12px;" onclick="openForm(${JSON.stringify(c).replace(/"/g,"&quot;")})">Bewerken</button>
-        <button class="btn-ghost" onclick="setState({selected:null});render();">✕</button>
-      </div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:16px;"><div><div style="font-weight:500;font-size:17px;">${o.name}</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">${o.location}</div></div>
+    <div style="display:flex;gap:6px;"><button class="btn-primary" style="font-size:12px;padding:6px 12px" onclick="openOF(${JSON.stringify(o).replace(/"/g,"&quot;")})">Bewerken</button><button class="btn-ghost" onclick="set({selO:null});render();">✕</button></div></div>
+    <div class="badges" style="margin-bottom:16px;">${bdg(o.status,OC[o.status]||"#888")} ${bdg(o.type,"#555")} ${o.source?bdg("PDF","#1A4A7A"):""}</div>
+    ${o.price?`<div class="obj-price" style="font-size:22px;margin-bottom:12px;">${o.price}</div>`:""}
+    <div class="sec-title">Details</div>
+    <div class="drow"><span class="dlabel">Type</span><span>${o.type||"—"}</span></div>
+    <div class="drow"><span class="dlabel">Sterren</span><span>${o.stars||"—"}</span></div>
+    <div class="drow"><span class="dlabel">Locatie</span><span>${o.location||"—"}</span></div>
+    <div class="drow"><span class="dlabel">Kamers/eenheden</span><span>${o.rooms||"—"}</span></div>
+    <div class="drow"><span class="dlabel">Oppervlakte</span><span>${o.size||"—"}</span></div>
+    <div class="drow"><span class="dlabel">Status</span><span>${o.status||"—"}</span></div>
+    <div class="drow"><span class="dlabel">Toegevoegd</span><span>${o.addedDate||"—"}</span></div>
+    <div class="drow"><span class="dlabel">Bron</span><span>${o.source||"—"}</span></div>
+    ${o.description?`<div class="sec-title">Beschrijving</div><div style="font-size:13px;color:#444;line-height:1.7;white-space:pre-wrap;">${o.description}</div>`:""}
+    <div class="sec-title">Overeenkomende kopers (${mx.length})</div>
+    ${mx.length===0?`<div style="font-size:13px;color:var(--muted);">Geen directe matches op locatie of type.</div>`:""}
+    ${mx.map(c=>`<div class="match-card">${av(c.name,32)}<div style="flex:1;min-width:0;"><div style="font-weight:500;font-size:13px;">${c.name}</div><div style="font-size:11px;color:var(--muted);">${c.company||""} ${c.locations.slice(0,2).join(", ")}</div></div><div style="display:flex;gap:4px;">${bdg(c.status,SC2[c.status]||"#888")}${c.linkedinFirstDegree?bdg("LI","#0A66C2"):""}</div></div>`).join("")}
+    ${mx.length>0?`<button class="btn-outline" style="width:100%;margin-top:8px;font-size:12px;" onclick="SS.loc='${o.location}';SS.type='${o.type}';set({showSearch:true});render();">Zoek meer kopers online voor dit object</button>`:""}
+    <div style="margin-top:16px;"><button class="btn-danger" onclick="delO('${o.id}')">Object verwijderen</button></div>
+  </div>`;}
+
+function mPdf(){
+  const ps=pdfState;
+  const fields=ps.extracted?`<div class="fgrid"><div><div class="flabel">Naam *</div><input value="${(OF.name||"").replace(/"/g,"&quot;")}" oninput="OF.name=this.value"></div><div><div class="flabel">Type</div><select onchange="OF.type=this.value">${OTYPES.map(t=>`<option ${OF.type===t?"selected":""}>${t}</option>`).join("")}</select></div></div>
+  <div class="fgrid"><div><div class="flabel">Locatie</div><input value="${(OF.location||"").replace(/"/g,"&quot;")}" oninput="OF.location=this.value"></div><div><div class="flabel">Vraagprijs</div><input value="${(OF.price||"").replace(/"/g,"&quot;")}" oninput="OF.price=this.value"></div></div>
+  <div class="fgrid"><div><div class="flabel">Kamers</div><input value="${(OF.rooms||"").replace(/"/g,"&quot;")}" oninput="OF.rooms=this.value"></div><div><div class="flabel">Oppervlakte</div><input value="${(OF.size||"").replace(/"/g,"&quot;")}" oninput="OF.size=this.value"></div></div>
+  <div class="fgrid"><div><div class="flabel">Status</div><select onchange="OF.status=this.value">${OSTATS.map(s=>`<option ${OF.status===s?"selected":""}>${s}</option>`).join("")}</select></div><div><div class="flabel">Bron</div><input value="${(OF.source||"").replace(/"/g,"&quot;")}" oninput="OF.source=this.value"></div></div>
+  <div class="frow"><div class="flabel">Beschrijving</div><textarea rows="3" oninput="OF.description=this.value">${OF.description||""}</textarea></div>
+  <div class="frow"><div class="flabel">Match trefwoorden</div><input value="${(OF.matchCriteria||"").replace(/"/g,"&quot;")}" oninput="OF.matchCriteria=this.value" placeholder="bijv. Marbella, 4-5 sterren, resort"></div>
+  <div class="modal-footer"><button class="btn-ghost" onclick="set({showPdf:false});render();">Annuleren</button><button class="btn-primary" onclick="saveO(OF)">Opslaan in Sheets</button></div>`:""
+  return `<div class="overlay" onclick="if(event.target===this){set({showPdf:false});render();}"><div class="modal modal-wide" onclick="event.stopPropagation()">
+    <div class="modal-hdr"><div><div class="modal-title">PDF Importeren</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">AI extraheert automatisch de vastgoeddata</div></div><button class="modal-close" onclick="set({showPdf:false});render();">✕</button></div>
+    ${ps.loading?`<div class="ai-box"><div class="spinner" style="margin-bottom:12px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div style="font-size:13px;color:var(--muted);">AI leest het document en extraheert vastgoeddata...</div></div>`:""}
+    ${ps.error?`<div class="err-box">${ps.error}</div>`:""}
+    ${ps.extracted&&!ps.loading?`<div class="ok-box">✓ Data geëxtraheerd uit <strong>${ps.fname}</strong>. Controleer en pas aan.</div>${fields}`:""}
+  </div></div>`;}
+
+function mOF(){
+  const f=OF;
+  return `<div class="overlay" onclick="if(event.target===this){set({showOF:false,editO:null});render();}"><div class="modal modal-wide" onclick="event.stopPropagation()">
+    <div class="modal-hdr"><div class="modal-title">${S.editO?"Object bewerken":"Nieuw object"}</div><button class="modal-close" onclick="set({showOF:false,editO:null});render();">✕</button></div>
+    <div class="fgrid"><div><div class="flabel">Naam *</div><input value="${(f.name||"").replace(/"/g,"&quot;")}" oninput="OF.name=this.value"></div><div><div class="flabel">Type</div><select onchange="OF.type=this.value">${OTYPES.map(t=>`<option ${f.type===t?"selected":""}>${t}</option>`).join("")}</select></div></div>
+    <div class="fgrid"><div><div class="flabel">Aantal sterren</div><select onchange="OF.stars=this.value">${STARS.map(s=>`<option ${f.stars===s?"selected":""}>${s}</option>`).join("")}</select></div><div></div></div>
+    <div class="fgrid"><div><div class="flabel">Locatie</div><input value="${(f.location||"").replace(/"/g,"&quot;")}" oninput="OF.location=this.value" placeholder="bijv. Marbella, Costa del Sol"></div><div><div class="flabel">Vraagprijs</div><input value="${(f.price||"").replace(/"/g,"&quot;")}" oninput="OF.price=this.value" placeholder="bijv. €28.500.000"></div></div>
+    <div class="fgrid"><div><div class="flabel">Kamers / eenheden</div><input value="${(f.rooms||"").replace(/"/g,"&quot;")}" oninput="OF.rooms=this.value"></div><div><div class="flabel">Oppervlakte</div><input value="${(f.size||"").replace(/"/g,"&quot;")}" oninput="OF.size=this.value"></div></div>
+    <div class="fgrid"><div><div class="flabel">Status</div><select onchange="OF.status=this.value">${OSTATS.map(s=>`<option ${f.status===s?"selected":""}>${s}</option>`).join("")}</select></div><div><div class="flabel">Bron / bestandsnaam</div><input value="${(f.source||"").replace(/"/g,"&quot;")}" oninput="OF.source=this.value"></div></div>
+    <div class="frow"><div class="flabel">Beschrijving</div><textarea rows="3" oninput="OF.description=this.value">${f.description||""}</textarea></div>
+    <div class="frow"><div class="flabel">Match trefwoorden (voor koperskoppeling)</div><input value="${(f.matchCriteria||"").replace(/"/g,"&quot;")}" oninput="OF.matchCriteria=this.value" placeholder="bijv. Marbella, 4-5 sterren, resort, boutique"></div>
+    <div class="modal-footer"><button class="btn-ghost" onclick="set({showOF:false,editO:null});render();">Annuleren</button><button class="btn-primary" onclick="saveO(OF)">Opslaan in Sheets</button></div>
+  </div></div>`;}
+
+function mCF(){
+  const f=CF;
+  return `<div class="overlay" onclick="if(event.target===this){set({showCF:false,editC:null});render();}"><div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hdr"><div class="modal-title">${S.editC?"Bewerken":"Nieuw contact"}</div><button class="modal-close" onclick="set({showCF:false,editC:null});render();">✕</button></div>
+    ${[["Naam *","name"],["Bijnaam","alias"],["Bedrijf","company"],["E-mail","email"],["Telefoon","phone"],["Kamers (voorkeur)","roomRange"],["Min. sterren (voorkeur)","starMin"],["Budget","budget"]].map(([l,k])=>`<div class="frow"><div class="flabel">${l}</div><input value="${(f[k]||"").replace(/"/g,"&quot;")}" oninput="CF['${k}']=this.value"></div>`).join("")}
+    <div class="fgrid"><div><div class="flabel">Status</div><select onchange="CF.status=this.value">${STATS.map(s=>`<option ${f.status===s?"selected":""}>${s}</option>`).join("")}</select></div><div><div class="flabel">Bron</div><select onchange="CF.source=this.value">${["Direct","Netwerk","LinkedIn","Online","AI Zoeker","Referral","Event"].map(s=>`<option ${f.source===s?"selected":""}>${s}</option>`).join("")}</select></div></div>
+    <div style="display:flex;gap:20px;margin-bottom:13px;"><label style="display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer;"><input type="checkbox" ${f.linkedinFirstDegree?"checked":""} onchange="CF.linkedinFirstDegree=this.checked"> 1e lijns LinkedIn</label><label style="display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer;"><input type="checkbox" ${f.operator?"checked":""} onchange="CF.operator=this.checked"> Operator zoekend</label></div>
+    <div class="frow"><div class="flabel">Locaties</div>
+      <div class="tags" style="margin-bottom:6px;">${(f.locations||[]).map(l=>tg(l,true,"locations")).join("")}</div>
+      <div class="tag-input-row"><input id="locationsIn" placeholder="Locatie + Enter" onkeydown="if(event.key==='Enter'){addTag('locations');event.preventDefault();}"><button onclick="addTag('locations')">+</button></div>
+      <div class="tag-sugs">${LOCS.filter(l=>!(f.locations||[]).includes(l)).map(l=>`<button class="tag-sug" onclick="addTag('locations','${l}')">${l}</button>`).join("")}</div>
     </div>
-    <div class="badges" style="margin-bottom:16px;">
-      ${badge(c.status, STATUS_COLORS[c.status]||"#888")}
-      ${c.linkedinFirstDegree?badge("1e lijn LinkedIn","#0A66C2"):""}
-      ${c.operator?badge("Operator","#7A3A1A"):""}
-      ${badge(c.source||"Direct","#555")}
-    </div>
-    <div class="section-title">Vastgoedprofiel</div>
-    <div class="detail-row"><span class="detail-label">Locaties</span><span>${c.locations.join(", ")||"—"}</span></div>
-    <div class="detail-row"><span class="detail-label">Type</span><span>${c.type.join(", ")||"—"}</span></div>
-    <div class="detail-row"><span class="detail-label">Kamers</span><span>${c.roomRange||"—"}</span></div>
-    <div class="detail-row"><span class="detail-label">Budget</span><span>${c.budget||"—"}</span></div>
-    <div class="section-title">Contact</div>
-    <div class="detail-row"><span class="detail-label">E-mail</span><span>${c.email||"—"}</span></div>
-    <div class="detail-row"><span class="detail-label">Telefoon</span><span>${c.phone||"—"}</span></div>
-    <div class="detail-row"><span class="detail-label">Laatste contact</span><span>${c.lastContact||"—"}</span></div>
-    ${c.notes?`<div class="section-title">Notities</div><div class="detail-notes">${c.notes}</div>`:""}
-    <div style="margin-top:20px;">
-      <button class="btn-danger" onclick="deleteContact('${c.id}')">Contact verwijderen</button>
-    </div>
-  </div>`;
-}
+    <div class="frow" style="margin-top:10px;"><div class="flabel">Notities</div><textarea rows="3" oninput="CF.notes=this.value">${f.notes||""}</textarea></div>
+    <div class="modal-footer"><button class="btn-ghost" onclick="set({showCF:false,editC:null});render();">Annuleren</button><button class="btn-primary" onclick="saveC(CF)">Opslaan</button></div>
+  </div></div>`;}
 
-let formState = {};
-function openForm(contact) {
-  formState = contact ? JSON.parse(JSON.stringify(contact)) : {id:String(Date.now()),name:"",alias:"",email:"",phone:"",company:"",linkedinFirstDegree:false,locations:[],type:[],roomRange:"",budget:"",notes:"",operator:false,status:"Lead",lastContact:new Date().toISOString().split("T")[0],source:"Direct"};
-  setState({editContact:contact, showForm:true});
-  render();
-}
+function mSearch(){
+  const ss=SS;
+  return `<div class="overlay" onclick="if(event.target===this){set({showSearch:false});render();}"><div class="modal modal-wide" onclick="event.stopPropagation()">
+    <div class="modal-hdr"><div><div class="modal-title">Live Koper Zoeker</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">AI zoekt live op internet naar beslissers</div></div><button class="modal-close" onclick="set({showSearch:false});render();">✕</button></div>
+    <div class="fgrid"><div><div class="flabel">Locatie *</div><input value="${ss.loc}" placeholder="bijv. Valencia" oninput="SS.loc=this.value"></div><div><div class="flabel">Type *</div><input value="${ss.type}" placeholder="bijv. Boutique hotel" oninput="SS.type=this.value"></div><div><div class="flabel">Kamers</div><input value="${ss.rooms}" placeholder="bijv. 30-60" oninput="SS.rooms=this.value"></div><div><div class="flabel">Budget</div><input value="${ss.budget}" placeholder="bijv. €3M - €8M" oninput="SS.budget=this.value"></div></div>
+    <div class="frow"><div class="flabel">Extra</div><input value="${ss.extra}" placeholder="bijv. historisch pand, bestaande vergunning" oninput="SS.extra=this.value"></div>
+    <button class="btn-primary" style="width:100%;padding:11px;margin:12px 0;font-size:14px;border-radius:9px;" onclick="runSearch()" ${ss.loading?"disabled":""}>
+      ${ss.loading?"Zoeken op internet...":"Zoek live op internet →"}
+    </button>
+    ${ss.loading?`<div class="spinner" style="margin-bottom:16px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`:""}
+    ${ss.error?`<div class="err-box">${ss.error}</div>`:""}
+    ${ss.results&&ss.results.length>0?`<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${ss.results.length} kopers gevonden</div>
+    ${ss.results.map((r,i)=>{const inC=S.contacts.some(c=>c.name.toLowerCase().includes((r.name||"").toLowerCase().split(" ")[0]));return `<div style="background:#fff;border:0.5px solid var(--border);border-radius:10px;padding:13px 15px;margin-bottom:8px;"><div style="display:flex;justify-content:space-between;gap:10px;"><div style="flex:1;"><div style="font-weight:500;font-size:14px;margin-bottom:4px;">${r.name||""}</div>${r.company?`<div style="font-size:12px;color:var(--muted);margin-bottom:6px;">${r.company}</div>`:""}<div class="badges">${r.linkedin_likely?bdg("Mogelijk LinkedIn","#0A66C2"):""}${inC?bdg("Al in CRM","#1A6B3C"):""}${r.deal_type?bdg(r.deal_type,"#C9A84C"):""}</div>${r.activity?`<div style="font-size:12px;color:#444;line-height:1.6;margin-top:6px;">${r.activity}</div>`:""}</div>${!inC?`<button class="btn-primary" style="flex-shrink:0;align-self:flex-start;font-size:12px;padding:7px 12px;" onclick="saveC({id:String(Date.now()),name:'${(r.name||"").replace(/'/g,"\\'")}',alias:'',email:'',phone:'',company:'${(r.company||"").replace(/'/g,"\\'")}',linkedinFirstDegree:false,locations:['${ss.loc}'],type:['${ss.type}'],roomRange:'${ss.rooms}',budget:'${ss.budget}',notes:'${(r.activity||"").replace(/'/g,"\\'")}',operator:false,status:'Lead',lastContact:'${new Date().toISOString().split("T")[0]}',source:'AI Zoeker'})">+ Toevoegen</button>`:""}
+    </div></div>`;}).join("")}`:""}
+  </div></div>`;}
 
-function removeTag(field, value) {
-  formState[field] = formState[field].filter(x=>x!==value);
-  renderFormOnly();
-}
-
-function addTag(field, value) {
-  const v = value || document.getElementById(`${field}Input`).value.trim();
-  if (v && !formState[field].includes(v)) { formState[field].push(v); if (!value) document.getElementById(`${field}Input`).value=""; renderFormOnly(); }
-}
-
-function renderFormOnly() {
-  const el = document.getElementById("formModal");
-  if (el) el.outerHTML = renderFormModal(state.editContact);
-}
-
-function renderFormModal(contact) {
-  const f = formState;
-  return `<div class="overlay" id="formModal" onclick="if(event.target===this){setState({showForm:false,editContact:null});render();}">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modal-header">
-        <div class="modal-title">${contact?"Bewerken":"Nieuw contact"}</div>
-        <button class="modal-close" onclick="setState({showForm:false,editContact:null});render();">✕</button>
-      </div>
-      ${["name:Naam *","alias:Bijnaam","company:Bedrijf","email:E-mail","phone:Telefoon","roomRange:Aantal kamers","budget:Budget"].map(s=>{const[k,l]=s.split(":");return`<div class="form-row"><div class="form-label">${l}</div><input value="${(f[k]||"").replace(/"/g,"&quot;")}" oninput="formState['${k}']=this.value"></div>`}).join("")}
-      <div class="form-grid">
-        <div><div class="form-label">Status</div><select onchange="formState.status=this.value">${STATUSES.map(s=>`<option ${f.status===s?"selected":""}>${s}</option>`).join("")}</select></div>
-        <div><div class="form-label">Bron</div><select onchange="formState.source=this.value">${["Direct","Netwerk","LinkedIn","Online","AI Zoeker","Referral","Event"].map(s=>`<option ${f.source===s?"selected":""}>${s}</option>`).join("")}</select></div>
-      </div>
-      <div class="form-checks">
-        <label class="form-check"><input type="checkbox" ${f.linkedinFirstDegree?"checked":""} onchange="formState.linkedinFirstDegree=this.checked"> 1e lijns LinkedIn</label>
-        <label class="form-check"><input type="checkbox" ${f.operator?"checked":""} onchange="formState.operator=this.checked"> Operator zoekend</label>
-      </div>
-      <div class="form-row"><div class="form-label">Locaties</div>
-        <div class="chip-row">${(f.locations||[]).map(l=>tag(l,true,"locations")).join("")}</div>
-        <div class="tag-input-row"><input id="locationsInput" placeholder="Locatie + Enter" onkeydown="if(event.key==='Enter'){addTag('locations');event.preventDefault();}"><button onclick="addTag('locations')">+</button></div>
-        <div class="tag-suggestions">${LOCATIONS.filter(l=>!(f.locations||[]).includes(l)).map(l=>`<button class="tag-suggest" onclick="addTag('locations','${l}')">${l}</button>`).join("")}</div>
-      </div>
-      <div class="form-row"><div class="form-label">Type vastgoed</div>
-        <div class="chip-row">${(f.type||[]).map(t=>tag(t,true,"type")).join("")}</div>
-        <div class="tag-input-row"><input id="typeInput" placeholder="Type + Enter" onkeydown="if(event.key==='Enter'){addTag('type');event.preventDefault();}"><button onclick="addTag('type')">+</button></div>
-        <div class="tag-suggestions">${PROP_TYPES.filter(t=>!(f.type||[]).includes(t)).map(t=>`<button class="tag-suggest" onclick="addTag('type','${t}')">${t}</button>`).join("")}</div>
-      </div>
-      <div class="form-row"><div class="form-label">Notities</div><textarea rows="3" oninput="formState.notes=this.value">${f.notes||""}</textarea></div>
-      <div class="modal-footer">
-        <button class="btn-ghost" onclick="setState({showForm:false,editContact:null});render();">Annuleren</button>
-        <button class="btn-primary" onclick="saveContact(formState)">Opslaan in Sheets</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-let searchState = {loc:"",type:"",rooms:"",budget:"",extra:"",loading:false,results:null,error:""};
-function openSearch() { setState({showSearch:true}); render(); }
-
-function renderSearchModal() {
-  const ss = searchState;
-  return `<div class="overlay" onclick="if(event.target===this){setState({showSearch:false});render();}">
-    <div class="modal search-modal" onclick="event.stopPropagation()">
-      <div class="modal-header">
-        <div><div class="modal-title">Live Koper Zoeker</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">AI zoekt live op internet · gevonden contacten gaan direct in Google Sheets</div></div>
-        <button class="modal-close" onclick="setState({showSearch:false});render();">✕</button>
-      </div>
-      <div class="search-grid">
-        <div><div class="form-label">Locatie *</div><input id="s-loc" value="${ss.loc}" placeholder="bijv. Valencia, Costa del Sol" oninput="searchState.loc=this.value"></div>
-        <div><div class="form-label">Type vastgoed *</div><input id="s-type" value="${ss.type}" placeholder="bijv. Boutique hotel" oninput="searchState.type=this.value"></div>
-        <div><div class="form-label">Aantal kamers</div><input id="s-rooms" value="${ss.rooms}" placeholder="bijv. 30-60" oninput="searchState.rooms=this.value"></div>
-        <div><div class="form-label">Budget</div><input id="s-budget" value="${ss.budget}" placeholder="bijv. €3M - €8M" oninput="searchState.budget=this.value"></div>
-      </div>
-      <div class="form-row"><div class="form-label">Extra kenmerken</div><input id="s-extra" value="${ss.extra}" placeholder="bijv. historisch pand, bestaande vergunning" oninput="searchState.extra=this.value"></div>
-      <button class="btn-primary" style="width:100%;padding:11px;margin:14px 0;font-size:14px;border-radius:9px;" onclick="runSearch()" ${ss.loading?"disabled":""}>
-        ${ss.loading ? "Zoeken op internet..." : "Zoek live op internet →"}
-      </button>
-      ${ss.loading?`<div class="spinner" style="justify-content:center;margin-bottom:16px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`:""}
-      ${ss.error?`<div class="error-box">${ss.error}</div>`:""}
-      ${ss.results && ss.results.length===0 && !ss.error?`<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">Geen resultaten. Probeer bredere criteria.</div>`:""}
-      ${ss.results && ss.results.length>0?`
-        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${ss.results.length} kopers gevonden · "+ Toevoegen" slaat op in Google Sheets</div>
-        ${ss.results.map((r,i)=>{
-          const inCrm = state.contacts.some(c=>c.name.toLowerCase().includes((r.name||"").toLowerCase().split(" ")[0].toLowerCase()));
-          return `<div class="search-result">
-            <div class="search-result-header">
-              <div class="search-result-body">
-                <div class="result-name">${r.name||""}</div>
-                ${r.company?`<div class="result-company">${r.company}</div>`:""}
-                <div class="badges" style="margin-bottom:6px;">
-                  ${r.linkedin_likely?badge("Mogelijk op LinkedIn","#0A66C2"):""}
-                  ${inCrm?badge("Al in CRM","#1A6B3C"):""}
-                  ${r.deal_type?badge(r.deal_type,"#C9A84C"):""}
-                </div>
-                ${r.activity?`<div class="result-activity">${r.activity}</div>`:""}
-                ${r.why_match?`<div class="result-match">${r.why_match}</div>`:""}
-                ${r.source?`<div class="result-source">Bron: ${r.source}</div>`:""}
-              </div>
-              ${!inCrm?`<button class="btn-primary" style="flex-shrink:0;align-self:flex-start;font-size:12px;padding:7px 12px;" onclick="addSearchResult(${i})">+ Toevoegen</button>`:""}
-            </div>
-          </div>`;
-        }).join("")}
-      `:""}
-    </div>
-  </div>`;
-}
-
-async function runSearch() {
-  const ss = searchState;
-  if (!ss.loc && !ss.type) return;
-  searchState.loading = true; searchState.results = null; searchState.error = "";
-  render();
-  const criteria = [ss.loc&&`Locatie: ${ss.loc}`, ss.type&&`Type: ${ss.type}`, ss.rooms&&`Kamers: ${ss.rooms}`, ss.budget&&`Budget: ${ss.budget}`, ss.extra&&`Extra: ${ss.extra}`].filter(Boolean).join(", ");
-  try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({
-        model:"claude-sonnet-4-20250514", max_tokens:1000,
-        tools:[{type:"web_search_20250305",name:"web_search"}],
-        system:`Je bent dealflow-assistent voor Costa Capital, gespecialiseerd in hotelfinanciering Spanje/West-Europa. Zoek ECHTE RECENTE personen en organisaties die hotels kopen die overeenkomen met de criteria. Zoek op overnames, investeerders, fondsen, family offices, persberichten. Antwoord ALLEEN als JSON array (geen markdown):\n[{"name":"Naam","company":"Org","deal_type":"Type deal","activity":"Wat recent gedaan (jaar)","why_match":"Waarom match","linkedin_likely":true,"source":"Bron"}]\n4-8 resultaten. Feitelijk, verzin niets.`,
-        messages:[{role:"user",content:`Zoek kopers/investeerders voor: ${criteria}. Wie deed vergelijkbare deals recentelijk in deze regio?`}]
-      })
-    });
-    const data = await res.json();
-    const text = (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
-    const m = text.match(/\[[\s\S]*\]/);
-    if (m) { try { searchState.results = JSON.parse(m[0]); } catch { searchState.results=[]; searchState.error="Parse fout in resultaat."; } }
-    else { searchState.results=[]; searchState.error="Geen gestructureerde resultaten ontvangen."; }
-  } catch(e) { searchState.error="Fout: "+e.message; }
-  searchState.loading = false;
-  render();
-}
-
-function addSearchResult(idx) {
-  const r = searchState.results[idx];
-  const ss = searchState;
-  const contact = {id:String(Date.now()),name:r.name||"",alias:"",email:"",phone:"",company:r.company||"",linkedinFirstDegree:false,locations:ss.loc?[ss.loc]:[],type:ss.type?[ss.type]:[],roomRange:ss.rooms||"",budget:ss.budget||"",notes:(r.activity||"")+(r.source?`\n\nBron: ${r.source}`:""),operator:false,status:"Lead",lastContact:new Date().toISOString().split("T")[0],source:"AI Zoeker"};
-  saveContact(contact);
-  setState({showSearch:false});
-}
-
-
-async function handleLinkedInCSV(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const text = await file.text();
-
-  // Clean lines: strip trailing ;; and unwrap outer quotes (LinkedIn quirk)
-  const lines = text.split('\n').map(l => {
-    l = l.replace(/;;+\s*$/, '').trim();
-    if (l.startsWith('"') && l.endsWith('"')) {
-      l = l.slice(1, -1).replace(/""/g, '"');
-    }
-    return l;
-  }).filter(l => l.length > 0);
-
-  if (lines.length < 2) { alert('Geen data gevonden in CSV.'); return; }
-
-  // Find header row
-  const headerIdx = lines.findIndex(l => l.toLowerCase().includes('first name') || l.toLowerCase().includes('voornaam'));
-  if (headerIdx === -1) { alert('Geen geldige LinkedIn CSV herkend.\nExporteer via LinkedIn → Instellingen → Gegevensarchivering → Connecties.'); return; }
-
-  // Parse header
-  const headers = lines[headerIdx].split(',').map(h => h.replace(/"/g,'').trim().toLowerCase());
-  const firstIdx = headers.findIndex(h => h.includes('first'));
-  const lastIdx = headers.findIndex(h => h.includes('last'));
-  const companyIdx = headers.findIndex(h => h.includes('company'));
-  const positionIdx = headers.findIndex(h => h.includes('position'));
-  const emailIdx = headers.findIndex(h => h.includes('email'));
-
-  // Smart CSV parser that handles quoted fields with commas inside
-  function parseCSVLine(line) {
-    const result = [];
-    let current = '';
-    let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-      const ch = line[i];
-      if (ch === '"') {
-        if (inQuotes && line[i+1] === '"') { current += '"'; i++; }
-        else { inQuotes = !inQuotes; }
-      } else if (ch === ',' && !inQuotes) {
-        result.push(current.trim());
-        current = '';
-      } else {
-        current += ch;
-      }
-    }
-    result.push(current.trim());
-    return result;
-  }
-
-  const existingNames = state.contacts.map(c => c.name.toLowerCase());
-  const newContacts = [];
-  let skipped = 0;
-
-  for (const line of lines.slice(headerIdx + 1)) {
-    if (!line.trim()) continue;
-    const cols = parseCSVLine(line);
-    const first = (cols[firstIdx] || '').replace(/^["]+|["]+$/g,'').trim();
-    const last = (cols[lastIdx] || '').replace(/^["]+|["]+$/g,'').trim();
-    const name = (first + ' ' + last).trim();
-
-    if (!name || name.length < 2) { skipped++; continue; }
-    if (existingNames.includes(name.toLowerCase())) { skipped++; continue; }
-
-    const company = companyIdx >= 0 ? (cols[companyIdx]||'').replace(/^["]+|["]+$/g,'').trim() : '';
-    const position = positionIdx >= 0 ? (cols[positionIdx]||'').replace(/^["]+|["]+$/g,'').trim() : '';
-    const email = emailIdx >= 0 ? (cols[emailIdx]||'').replace(/^["]+|["]+$/g,'').trim() : '';
-
-    newContacts.push({
-      id: String(Date.now() + newContacts.length),
-      name, alias: '', email, phone: '', company,
-      linkedinFirstDegree: true,
-      locations: [], type: [], roomRange: '', budget: '',
-      notes: position ? `Functie: ${position}` : '',
-      operator: false, status: 'Lead',
-      lastContact: new Date().toISOString().split('T')[0],
-      source: 'LinkedIn'
-    });
-    existingNames.push(name.toLowerCase());
-  }
-
-  if (newContacts.length === 0) {
-    alert(`Geen nieuwe contacten gevonden.\n${skipped} al aanwezig of leeg.`);
-    input.value = ''; return;
-  }
-
-  if (!confirm(`${newContacts.length} nieuwe LinkedIn connecties importeren?\n(${skipped} overgeslagen — al aanwezig of leeg)\n\nDit kan even duren bij grote aantallen.`)) {
-    input.value = ''; return;
-  }
-
-  // Upload in batches of 100 to avoid API limits
-  setState({syncState:'saving'}); render();
-  try {
-    const BATCH = 100;
-    for (let i = 0; i < newContacts.length; i += BATCH) {
-      const batch = newContacts.slice(i, i + BATCH);
-      const rows = batch.map(c => [String(c.id),c.name,c.alias,c.email,c.phone,c.company,String(c.linkedinFirstDegree),(c.locations||[]).join('|'),(c.type||[]).join('|'),c.roomRange,c.budget,c.notes,String(c.operator),c.status,c.lastContact,c.source]);
-      await api({action:'append', range:SHEET_NAME, values:rows});
-    }
-    await loadContacts();
-    alert(`Klaar! ${newContacts.length} LinkedIn connecties geïmporteerd.\n${skipped} overgeslagen.`);
-  } catch(e) {
-    setState({syncState:'error', syncError: e.message});
-    render();
-  }
-  input.value = '';
-}
-
-initSheet();
+render();
+init().then(()=>render());
 </script>
 </body>
 </html>
