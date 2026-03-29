@@ -516,10 +516,14 @@ async function handleLinkedInCSV(input) {
   if (!file) return;
   const text = await file.text();
 
-  // Clean lines: strip trailing ;; and whitespace, filter empty
-  const lines = text.split('\n')
-    .map(l => l.replace(/;;+\s*$/, '').trim())
-    .filter(l => l.length > 0);
+  // Clean lines: strip trailing ;; and unwrap outer quotes (LinkedIn quirk)
+  const lines = text.split('\n').map(l => {
+    l = l.replace(/;;+\s*$/, '').trim();
+    if (l.startsWith('"') && l.endsWith('"')) {
+      l = l.slice(1, -1).replace(/""/g, '"');
+    }
+    return l;
+  }).filter(l => l.length > 0);
 
   if (lines.length < 2) { alert('Geen data gevonden in CSV.'); return; }
 
