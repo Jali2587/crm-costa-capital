@@ -165,12 +165,12 @@ async function loadC(){const d=await api({action:"get",range:`${SC}!A2:P10000`})
 async function loadO(){
   try{
     // Check if headers exist in row 1, write them if not
-    const h=await api({action:"get",range:`${SO}!A1:L1`});
+    const h=await api({action:"get",range:`${SO}!A1:M1`});
     const hrow=(h.values&&h.values[0])||[];
     if(!hrow[0]||hrow[0]!=="id"){
-      await api({action:"update",range:`${SO}!A1:L1`,values:[OH]});
+      await api({action:"update",range:`${SO}!A1:M1`,values:[OH]});
     }
-    const d=await api({action:"get",range:`${SO}!A2:L1000`});
+    const d=await api({action:"get",range:`${SO}!A2:M1000`});
     S.objects=(d.values||[]).map(r2o).filter(Boolean).filter(o=>o.name);
   }catch(e){S.objects=[];}
 }
@@ -206,36 +206,25 @@ async function delC(id){
 async function saveO(form){
   set({sync:"saving"});render();
   try{
-    // Ensure headers exist first
-    const h=await api({action:"get",range:`${SO}!A1:M1`});
-    const hrow=(h.values&&h.values[0])||[];
-    if(!hrow[0]||hrow[0]!=="id"){
-      await api({action:"update",range:`${SO}!A1:M1`,values:[OH]});
-    }
-    // Now save the object
-    const d=await api({action:"get",range:`${SO}!A2:A1000`});
-    const rows=d.values||[];
-    const idx=rows.findIndex(r=>r[0]===String(form.id));
-    const row=o2r(form);
-    if(idx>=0){
-      await api({action:"update",range:`${SO}!A${idx+2}:M${idx+2}`,values:[row]});
-    } else {
-      await api({action:"append",range:SO,values:[row]});
-    }
+    var row=o2r(form);
+    // Use just the sheet name without column spec for append
+    var result=await api({action:"append",range:SO,values:[row]});
+    if(result.error){throw new Error(JSON.stringify(result.error));}
+    // Also check for API-level errors in the response
+    if(result.code&&result.code!==200){throw new Error("Sheets code "+result.code+": "+JSON.stringify(result));}
     await loadO();
     set({selO:form,showOF:false,editO:null,showPdf:false,sync:"synced"});
   }catch(e){
-    set({sync:"error",syncErr:"Object opslaan mislukt: "+e.message});
-    alert("Fout bij opslaan: "+e.message);
+    set({sync:"error",syncErr:e.message});
+    alert("Fout bij opslaan object:\n"+e.message);
   }
   render();
 }
-
 async function delO(id){
   if(!confirm("Object verwijderen?"))return;
   set({sync:"saving"});render();
   try{
-    const d=await api({action:"get",range:`${SO}!A2:L1000`});
+    const d=await api({action:"get",range:`${SO}!A2:M1000`});
     const rows=(d.values||[]).filter(r=>r[0]!==String(id));
     await api({action:"clear",range:`${SO}!A2:L1000`});
     if(rows.length>0)await api({action:"update",range:`${SO}!A2:L${rows.length+1}`,values:rows});
