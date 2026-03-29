@@ -36,7 +36,7 @@ function makeJWT(sa) {
     iat: now
   }));
   var signing = header + "." + claim;
-  var key = sa.private_key;
+  var key = sa.private_key.replace(/\\n/g, "\n");  // fix Netlify escaped newlines
   var sign = crypto.createSign("RSA-SHA256");
   sign.update(signing);
   var sig = sign.sign(key, "base64")
