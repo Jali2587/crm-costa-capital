@@ -198,18 +198,25 @@ async function handlePDF(input){
   pdfState={loading:true,extracted:null,error:"",fname:file.name};
   set({showPdf:true});render();
   try{
-    if(file.size>20*1024*1024)throw new Error(`PDF te groot (${(file.size/1024/1024).toFixed(1)}MB). Max 20MB.`);
-    const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{try{res(r.result.split(",")[1]);}catch(e){rej(new Error("Base64 conversie mislukt"));}};r.onerror=()=>rej(new Error("Bestand kon niet worden gelezen"));r.readAsDataURL(file);});
+    if(file.size>30*1024*1024)throw new Error(`PDF te groot (${(file.size/1024/1024).toFixed(1)}MB). Max 30MB.`);
+    // Read as base64
+    const b64=await new Promise((res,rej)=>{
+      const r=new FileReader();
+      r.onload=()=>{try{res(r.result.split(",")[1]);}catch(e){rej(new Error("Leesfout"));}};
+      r.onerror=()=>rej(new Error("Bestand kon niet worden gelezen"));
+      r.readAsDataURL(file);
+    });
     if(!b64||b64.length<100)throw new Error("PDF lijkt leeg of onleesbaar.");
-    const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:'Je bent vastgoeddata-extractor voor Costa Capital. Geef UITSLUITEND geldig JSON zonder markdown:\n{"name":"Naam object","type":"Hotel/Boutique hotel/Resort/Aparthotel/Portfolio/Development/Nursing home/Mixed use/Overig","stars":"Aantal sterren bijv. 4 sterren (leeg indien nvt)","location":"Locatie","price":"Vraagprijs met valuta","rooms":"Aantal kamers","size":"Oppervlakte m2","status":"Beschikbaar","description":"Max 2 zinnen","matchCriteria":"Trefwoorden kommagescheiden"}',messages:[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:b64}},{type:"text",text:"Extraheer vastgoeddata uit dit document en geef alleen JSON terug."}]}]})});
-    if(!resp.ok){const err=await resp.text();throw new Error(`API fout ${resp.status}: ${err.slice(0,300)}`);}
+    // Send to Netlify function (server-side) instead of directly to Anthropic
+    const resp=await fetch("/.netlify/functions/sheets",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({action:"extractpdf",pdfBase64:b64,filename:file.name})
+    });
     const data=await resp.json();
-    if(data.error)throw new Error(`API: ${data.error.message||JSON.stringify(data.error)}`);
-    const txt=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("");
-    if(!txt)throw new Error("AI gaf geen antwoord. Probeer opnieuw.");
-    const m=txt.match(/\{[\s\S]*?\}/);
-    if(!m)throw new Error("Geen JSON gevonden in antwoord: "+txt.slice(0,200));
-    let ex;try{ex=JSON.parse(m[0]);}catch(pe){throw new Error("JSON parse fout: "+m[0].slice(0,100));}
+    if(!resp.ok||data.error)throw new Error(data.error||`Fout ${resp.status}`);
+    const ex=data.extracted;
+    if(!ex||!ex.name)throw new Error("AI kon geen vastgoeddata vinden in dit document.");
     pdfState={loading:false,extracted:ex,error:"",fname:file.name};
     OF={id:String(Date.now()),name:ex.name||"",type:ex.type||"Hotel",stars:ex.stars||"",location:ex.location||"",price:ex.price||"",rooms:ex.rooms||"",size:ex.size||"",status:"Beschikbaar",description:ex.description||"",matchCriteria:ex.matchCriteria||"",addedDate:new Date().toISOString().split("T")[0],source:file.name};
   }catch(e){pdfState={loading:false,extracted:null,error:e.message,fname:file.name};}
