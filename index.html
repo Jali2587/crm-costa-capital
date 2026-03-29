@@ -98,6 +98,46 @@ const OC={"Beschikbaar":"#1A6B3C","In analyse":"#1A4A7A","In onderhandeling":"#E
 let S={contacts:[],objects:[],tab:"kopers",selC:null,selO:null,fTxt:"",fStat:"Alle",fLI:false,ofTxt:"",ofStat:"Alle",sync:"loading",syncErr:"",showCF:false,editC:null,showOF:false,editO:null,showSearch:false,showPdf:false};
 let CF={},OF={},pdfState={loading:false,extracted:null,error:"",fname:""};
 let SS={loc:"",type:"",rooms:"",budget:"",extra:"",loading:false,results:null,error:""};
+let AIM={loading:false,matches:null,error:"",objId:""};
+
+async function runAiMatch(obj){
+  // Laag 1: quick filter op locatie/type/sterren - max 50 kandidaten
+  const loc=(obj.location||"").toLowerCase();
+  const typ=(obj.type||"").toLowerCase();
+  const kws=(obj.matchCriteria||"").toLowerCase().split(",").map(k=>k.trim()).filter(Boolean);
+  const layer1 = S.contacts.filter(c=>{
+    const lm=c.locations.some(l=>loc.includes(l.toLowerCase())||l.toLowerCase().split(",").some(p=>loc.includes(p.trim())));
+    const tm=c.type.some(t=>typ.includes(t.toLowerCase())||t.toLowerCase().includes(typ.split(" ")[0]));
+    const km=kws.some(k=>c.locations.some(l=>l.toLowerCase().includes(k))||c.type.some(t=>t.toLowerCase().includes(k))||c.company.toLowerCase().includes(k));
+    const nm=c.notes&&kws.some(k=>c.notes.toLowerCase().includes(k));
+    return lm||tm||km||nm;
+  });
+  // Also include contacts with relevant company keywords
+  const companyKws=["vastgoed","hotel","invest","capital","fund","fonds","property","real estate","resort","hospitality","ontwikkel","finance"];
+  const layer1b = S.contacts.filter(c=>!layer1.includes(c)&&c.company&&companyKws.some(k=>c.company.toLowerCase().includes(k)));
+  const candidates = [...layer1,...layer1b].slice(0,50);
+
+  AIM={loading:true,matches:null,error:"",objId:obj.id};
+  set({selO:obj}); render();
+
+  try{
+    const resp=await fetch("/.netlify/functions/sheets",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        action:"aimatch",
+        object:{name:obj.name,type:obj.type,location:obj.location,price:obj.price,stars:obj.stars},
+        candidates:candidates.map(c=>({name:c.name,company:c.company,notes:c.notes,linkedinFirstDegree:c.linkedinFirstDegree}))
+      })
+    });
+    const d=await resp.json();
+    if(d.error)throw new Error(d.error);
+    AIM={loading:false,matches:d.matches||[],error:"",objId:obj.id};
+  }catch(e){
+    AIM={loading:false,matches:null,error:e.message,objId:obj.id};
+  }
+  render();
+}
 
 async function api(b){const r=await fetch("/.netlify/functions/sheets",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}
 
@@ -257,13 +297,13 @@ async function runSearch(){
   SS.loading=true;SS.results=null;SS.error="";render();
   const cr=[SS.loc&&`Locatie: ${SS.loc}`,SS.type&&`Type: ${SS.type}`,SS.rooms&&`Kamers: ${SS.rooms}`,SS.budget&&`Budget: ${SS.budget}`,SS.extra&&`Extra: ${SS.extra}`].filter(Boolean).join(", ");
   try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,tools:[{type:"web_search_20250305",name:"web_search"}],system:`Dealflow-assistent Costa Capital. Zoek ECHTE RECENTE kopers/investeerders voor vastgoed. JSON array alleen:\n[{"name":"Naam","company":"Org","deal_type":"Type","activity":"Recent gedaan","why_match":"Waarom match","linkedin_likely":true,"source":"Bron"}]\n4-8 resultaten.`,messages:[{role:"user",content:`Kopers voor: ${cr}`}]})});
-    const d=await res.json();const t=(d.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
-    const m=t.match(/\[[\s\S]*\]/);
-    if(m){try{SS.results=JSON.parse(m[0]);}catch{SS.results=[];SS.error="Parse fout.";}}else{SS.results=[];SS.error="Geen resultaten.";}
+    const res=await fetch("/.netlify/functions/sheets",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"search",criteria:cr})});
+    const d=await res.json();
+    if(d.error)throw new Error(d.error);
+    SS.results=d.results||[];
+    if(SS.results.length===0)SS.error="Geen resultaten gevonden. Probeer bredere criteria.";
   }catch(e){SS.error="Fout: "+e.message;}
-  SS.loading=false;render();
-}
+  SS.loading=false;render();}
 
 function av(name,sz=38){const i=name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();return `<div class="avatar" style="width:${sz}px;height:${sz}px;font-size:${Math.round(sz*0.34)}px;background:${AC[name.charCodeAt(0)%AC.length]};">${i}</div>`;}
 function bdg(t,c){return `<span class="badge" style="background:${c}18;color:${c};border:0.5px solid ${c}40;">${t}</span>`;}
@@ -367,7 +407,35 @@ function dO(o){
     <div class="sec-title">Overeenkomende kopers (${mx.length})</div>
     ${mx.length===0?`<div style="font-size:13px;color:var(--muted);">Geen directe matches op locatie of type.</div>`:""}
     ${mx.map(c=>`<div class="match-card">${av(c.name,32)}<div style="flex:1;min-width:0;"><div style="font-weight:500;font-size:13px;">${c.name}</div><div style="font-size:11px;color:var(--muted);">${c.company||""} ${c.locations.slice(0,2).join(", ")}</div></div><div style="display:flex;gap:4px;">${bdg(c.status,SC2[c.status]||"#888")}${c.linkedinFirstDegree?bdg("LI","#0A66C2"):""}</div></div>`).join("")}
-    ${mx.length>0?`<button class="btn-outline" style="width:100%;margin-top:8px;font-size:12px;" onclick="SS.loc='${o.location}';SS.type='${o.type}';set({showSearch:true});render();">Zoek meer kopers online voor dit object</button>`:""}
+    ${mx.length>0?`<button class="btn-outline" style="width:100%;margin-top:8px;font-size:12px;" onclick="SS.loc='${o.location}';SS.type='${o.type}';set({showSearch:true});render();">Zoek nieuwe kopers online</button>`:""}
+
+    <div class="sec-title" style="margin-top:20px;">AI analyse van jouw netwerk</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">AI doorzoekt je ${S.contacts.length} CRM-contacten en zoekt online naar recente activiteit</div>
+    ${AIM.loading&&AIM.objId===o.id?`<div class="spinner" style="margin-bottom:12px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div style="font-size:12px;color:var(--muted);text-align:center;">AI analyseert je netwerk en zoekt online...</div>`:""}
+    ${AIM.error&&AIM.objId===o.id?`<div class="err-box">${AIM.error}</div>`:""}
+    ${AIM.matches&&AIM.objId===o.id&&AIM.matches.length>0?
+      '<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">'+AIM.matches.length+' beste matches uit je netwerk</div>'+
+      AIM.matches.map(function(m){
+        var contact=S.contacts.find(function(c){return c.name.toLowerCase()===m.name.toLowerCase();});
+        var scoreColor=m.score>=8?'#1A6B3C':m.score>=6?'#E67E22':'#888';
+        var liTag=m.linkedin?'<span style="margin-left:6px;background:#0A66C218;color:#0A66C2;border-radius:3px;padding:1px 5px;font-size:10px;">LI</span>':'';
+        var avatarHtml=contact?av(m.name,32):'<div style="width:32px;height:32px;border-radius:50%;background:#ddd;flex-shrink:0;"></div>';
+        var reasonHtml=m.reason?'<div style="font-size:12px;color:#444;line-height:1.5;padding-left:42px;">'+m.reason+'</div>':'';
+        var activityHtml=m.activity?'<div style="font-size:11px;color:var(--muted);padding-left:42px;font-style:italic;">'+m.activity+'</div>':'';
+        return '<div class="match-card" style="flex-direction:column;align-items:flex-start;gap:6px;">'+
+          '<div style="display:flex;align-items:center;gap:10px;width:100%;">'+
+          avatarHtml+
+          '<div style="flex:1;min-width:0;">'+
+          '<div style="font-weight:500;font-size:13px;">'+m.name+'</div>'+
+          '<div style="font-size:11px;color:var(--muted);">'+(contact?contact.company:'')+liTag+'</div>'+
+          '</div>'+
+          '<div style="font-size:11px;font-weight:500;color:'+scoreColor+';">Score '+m.score+'/10</div>'+
+          '</div>'+reasonHtml+activityHtml+'</div>';
+      }).join("")
+    :""}
+    ${!AIM.loading&&(!AIM.matches||AIM.objId!==o.id)?`<button class="btn-primary" style="width:100%;padding:10px;font-size:13px;" onclick="runAiMatch(${JSON.stringify(o).replace(/"/g,'&quot;')})">AI: analyseer mijn netwerk voor dit object</button>`:""}
+    ${AIM.matches&&AIM.objId===o.id?`<button class="btn-ghost" style="width:100%;margin-top:8px;font-size:12px;" onclick="runAiMatch(${JSON.stringify(o).replace(/"/g,'&quot;')})">Opnieuw analyseren</button>`:""}
+
     <div style="margin-top:16px;"><button class="btn-danger" onclick="delO('${o.id}')">Object verwijderen</button></div>
   </div>`;}
 
