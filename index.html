@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Costa Capital — Koper CRM</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F8F6F1; color: #1A1A1A; font-size: 14px; }
+  :root { --gold: #C9A84C; --dark: #1A1A1A; --muted: #888; --border: rgba(0,0,0,0.09); --surface: #F8F6F1; --card: #fff; }
+
+  .app { max-width: 1200px; margin: 0 auto; padding: 20px 16px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
+  .header-title { font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
+  .header-title span { color: var(--gold); }
+  .header-sub { font-size: 12px; color: var(--muted); margin-top: 3px; display: flex; align-items: center; gap: 8px; }
+  .header-actions { display: flex; gap: 8px; }
+
+  button { cursor: pointer; font-family: inherit; font-size: 13px; }
+  .btn-primary { background: var(--gold); color: #fff; border: none; border-radius: 8px; padding: 9px 16px; font-weight: 500; }
+  .btn-primary:hover { background: #b8943d; }
+  .btn-outline { background: none; border: 1px solid var(--gold); color: var(--gold); border-radius: 8px; padding: 9px 16px; font-weight: 500; }
+  .btn-outline:hover { background: rgba(201,168,76,0.08); }
+  .btn-ghost { background: none; border: 0.5px solid var(--border); border-radius: 7px; padding: 8px 14px; color: var(--muted); }
+  .btn-danger { background: none; border: 0.5px solid #F5CACA; color: #A32D2D; border-radius: 7px; padding: 7px 14px; font-size: 12px; }
+
+  .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 18px; }
+  .stat { background: var(--card); border: 0.5px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .stat-value { font-size: 28px; font-weight: 500; }
+
+  .main { display: grid; gap: 14px; }
+  .main.split { grid-template-columns: 320px 1fr; }
+
+  .filters { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .filter-li { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .count { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+
+  input, select, textarea { font-family: inherit; font-size: 13px; padding: 8px 12px; border: 0.5px solid rgba(0,0,0,0.13); border-radius: 7px; background: #FAFAFA; color: var(--dark); outline: none; width: 100%; }
+  input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+  textarea { resize: vertical; }
+
+  .contact-list { overflow-y: auto; max-height: calc(100vh - 310px); }
+  .contact-card { background: var(--card); border: 0.5px solid var(--border); border-radius: 10px; padding: 13px 15px; cursor: pointer; margin-bottom: 7px; transition: border-color 0.1s; }
+  .contact-card:hover { border-color: rgba(201,168,76,0.4); }
+  .contact-card.selected { background: #FFFBF0; border: 1.5px solid var(--gold); }
+  .contact-header { display: flex; align-items: center; gap: 11px; }
+  .avatar { border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 500; flex-shrink: 0; }
+  .contact-name { font-weight: 500; font-size: 13.5px; }
+  .contact-company { font-size: 11px; color: var(--muted); }
+  .badges { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+  .tags { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
+  .contact-rooms { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+  .badge { border-radius: 4px; font-size: 11px; padding: 2px 7px; font-weight: 500; white-space: nowrap; }
+  .tag { border-radius: 4px; font-size: 11px; padding: 2px 7px; display: inline-flex; align-items: center; gap: 4px; background: rgba(201,168,76,0.12); color: var(--gold); border: 0.5px solid rgba(201,168,76,0.3); }
+  .tag .remove { cursor: pointer; opacity: 0.6; font-size: 10px; }
+  .tag .remove:hover { opacity: 1; }
+
+  .detail { background: var(--card); border: 0.5px solid var(--border); border-radius: 12px; padding: 22px; overflow-y: auto; max-height: calc(100vh - 160px); }
+  .detail-header { display: flex; justify-content: space-between; margin-bottom: 16px; }
+  .detail-name { font-weight: 500; font-size: 18px; }
+  .detail-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .detail-actions { display: flex; gap: 6px; align-items: flex-start; }
+  .section-title { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; border-bottom: 0.5px solid rgba(201,168,76,0.3); padding-bottom: 4px; margin-top: 16px; }
+  .detail-row { display: flex; gap: 10px; margin-bottom: 5px; font-size: 13px; }
+  .detail-label { color: var(--muted); min-width: 110px; flex-shrink: 0; }
+  .detail-notes { font-size: 13px; color: #444; line-height: 1.7; white-space: pre-wrap; margin-top: 4px; }
+
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+  .modal { background: #fff; border-radius: 14px; padding: 28px; width: min(580px, 95vw); max-height: 90vh; overflow-y: auto; border: 1px solid rgba(201,168,76,0.4); }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .modal-title { font-size: 17px; font-weight: 500; }
+  .modal-close { background: none; border: none; font-size: 20px; color: var(--muted); line-height: 1; }
+  .form-row { margin-bottom: 12px; }
+  .form-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .form-checks { display: flex; gap: 20px; margin-bottom: 13px; }
+  .form-check { display: flex; align-items: center; gap: 7px; font-size: 13px; cursor: pointer; }
+  .tag-input-row { display: flex; gap: 6px; margin-bottom: 5px; }
+  .tag-input-row input { flex: 1; }
+  .tag-input-row button { padding: 8px 12px; background: var(--gold); color: #fff; border: none; border-radius: 7px; flex-shrink: 0; }
+  .tag-suggestions { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+  .tag-suggest { background: none; border: 0.5px solid var(--border); border-radius: 4px; font-size: 11px; padding: 2px 7px; color: var(--muted); }
+  .tag-suggest:hover { border-color: var(--gold); color: var(--gold); }
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+
+  .search-modal { width: min(700px, 96vw); }
+  .search-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .search-result { background: var(--card); border: 0.5px solid var(--border); border-radius: 10px; padding: 13px 15px; margin-bottom: 8px; }
+  .search-result-header { display: flex; justify-content: space-between; gap: 10px; }
+  .search-result-body { flex: 1; }
+  .result-name { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+  .result-company { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .result-activity { font-size: 12px; color: #444; line-height: 1.6; }
+  .result-match { font-size: 12px; color: var(--muted); margin-top: 4px; font-style: italic; }
+  .result-source { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .sync-status { font-size: 11px; margin-left: 8px; }
+  .spinner { display: flex; gap: 5px; align-items: center; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: pulse 1.1s ease-in-out infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%,100%{opacity:.3;transform:scale(.8)} 50%{opacity:1;transform:scale(1.1)} }
+
+  .error-box { background: #FFF5F5; border: 0.5px solid #F5CACA; border-radius: 9px; padding: 14px 18px; margin-bottom: 16px; font-size: 13px; color: #A32D2D; }
+  .loading-screen { text-align: center; padding: 80px 0; }
+
+  .chip-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 6px; min-height: 24px; }
+
+  @media (max-width: 700px) {
+    .stats { grid-template-columns: repeat(2,1fr); }
+    .main.split { grid-template-columns: 1fr; }
+    .search-grid, .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="loading-screen">
+    <div class="spinner" style="justify-content:center;margin-bottom:14px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <div style="font-size:13px;color:var(--muted);">Verbinden met Google Sheets...</div>
+  </div>
+</div>
+
+<script>
+const SHEET_NAME = "contacten Hans en Jaap voor hotels en overig";
+const HEADERS = ["id","name","alias","email","phone","company","linkedinFirstDegree","locations","type","roomRange","budget","notes","operator","status","lastContact","source"];
+const STATUSES = ["Lead","Actief","In onderhandeling","Gesloten","Inactief"];
+const LOCATIONS = ["Madrid","Barcelona","Valencia","Alicante","Málaga","Sevilla","Marbella","Costa del Sol","Costa Blanca","Ibiza","Mallorca","Bilbao","San Sebastián","Portugal"];
+const PROP_TYPES = ["Boutique","3-4 sterren","4-5 sterren","Luxury","Aparthotel","Historisch pand","Nieuwbouw","Transformatie","Portfolio"];
+const STATUS_COLORS = {"Lead":"#E67E22","Actief":"#1A6B3C","In onderhandeling":"#1A4A7A","Gesloten":"#7A3A1A","Inactief":"#888"};
+const AVATAR_COLORS = ["#C9A84C","#1A4A7A","#1A6B3C","#7A3A1A","#4A1A7A","#1A6B6B"];
+const SEED = [
+  {id:"1",name:"Edwin Kramer",alias:"Ed",email:"",phone:"",company:"",linkedinFirstDegree:"true",locations:"Valencia|Málaga|Cádiz|Sevilla|Alicante",type:"Historisch gebouw|Geen nieuwbouw|Premium rate",roomRange:"35-60",budget:"",notes:"City centre, aanloop lokale bevolking, straatniveau openbare ruimte voor F&B. Moet premium rate kunnen vragen. Graag met bestaande hotelvergunning.",operator:"false",status:"Actief",lastContact:"2025-03-26",source:"Direct"},
+  {id:"2",name:"Edwin Kramer",alias:"Ed 2",email:"",phone:"",company:"",linkedinFirstDegree:"true",locations:"Madrid|Barcelona",type:"Premium boutique|Portfolio",roomRange:"25+",budget:"",notes:"Heeft net 6 hotels gekocht in Londen en Amsterdam, heeft 3 in Barcelona.",operator:"false",status:"Actief",lastContact:"2025-03-26",source:"Direct"},
+  {id:"3",name:"Jan Roeland",alias:"JR",email:"",phone:"",company:"Investeringsfonds (adviseur)",linkedinFirstDegree:"false",locations:"Valencia|Alicante|Barcelona|Madrid",type:"3-4 sterren|Aparthotel",roomRange:"50+",budget:"",notes:"Adviseur van investeringsfonds. Wil zelf ook meedelen. Als er teveel mensen tussen zitten dan wordt het hem niet.",operator:"false",status:"Actief",lastContact:"2025-03-26",source:"Netwerk"},
+  {id:"4",name:"Ainhoa Rodriguez",alias:"AR",email:"",phone:"",company:"",linkedinFirstDegree:"false",locations:"Madrid|Barcelona|Valencia|Alicante",type:"4-5 sterren|Ontwikkelingen|Transformaties",roomRange:"Variabel",budget:"",notes:"Heeft verschillende investeerders. Kan zowel single assets zijn als portfolio's.",operator:"true",status:"Actief",lastContact:"2025-03-26",source:"Netwerk"},
+  {id:"5",name:"Amir",alias:"TL",email:"amir@ancora-inv.com",phone:"",company:"Ancora Investments",linkedinFirstDegree:"false",locations:"Portugal",type:"Ontwikkelingen Hotels",roomRange:"",budget:"",notes:"",operator:"false",status:"Lead",lastContact:"2025-03-25",source:"Online"},
+];
+
+let state = { contacts: [], selected: null, filterText: "", filterStatus: "Alle", filterLI: false, syncState: "loading", syncError: "", showSearch: false, showForm: false, editContact: null };
+
+async function api(body) {
+  const r = await fetch("/.netlify/functions/sheets", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+function rowToContact(row) {
+  if (!row || !row[1]) return null;
+  return { id: row[0]||"", name: row[1]||"", alias: row[2]||"", email: row[3]||"", phone: row[4]||"", company: row[5]||"", linkedinFirstDegree: row[6]==="true", locations: row[7] ? row[7].split("|") : [], type: row[8] ? row[8].split("|") : [], roomRange: row[9]||"", budget: row[10]||"", notes: row[11]||"", operator: row[12]==="true", status: row[13]||"Lead", lastContact: row[14]||"", source: row[15]||"" };
+}
+
+function contactToRow(c) {
+  return [String(c.id), c.name, c.alias||"", c.email||"", c.phone||"", c.company||"", String(c.linkedinFirstDegree), (c.locations||[]).join("|"), (c.type||[]).join("|"), c.roomRange||"", c.budget||"", c.notes||"", String(c.operator), c.status, c.lastContact||"", c.source||""];
+}
+
+async function initSheet() {
+  setState({syncState:"loading"});
+  try {
+    const info = await api({action:"sheetinfo"});
+    const sheets = (info.sheets||[]).map(s=>s.properties.title);
+    if (!sheets.includes(SHEET_NAME)) throw new Error(`Tabblad "${SHEET_NAME}" niet gevonden. Aanwezig: ${sheets.join(", ")}`);
+    const data = await api({action:"get", range:`${SHEET_NAME}!A1:P1`});
+    if (!data.values || data.values.length === 0) {
+      await api({action:"append", range:SHEET_NAME, values:[HEADERS]});
+      await api({action:"append", range:SHEET_NAME, values:SEED.map(s=>HEADERS.map(h=>s[h]||""))});
+    }
+    await loadContacts();
+  } catch(e) {
+    setState({syncState:"error", syncError: e.message});
+    render();
+  }
+}
+
+async function loadContacts() {
+  setState({syncState:"loading"});
+  try {
+    const data = await api({action:"get", range:`${SHEET_NAME}!A2:P1000`});
+    const rows = data.values || [];
+    const contacts = rows.map(rowToContact).filter(Boolean).filter(c=>c.name);
+    setState({contacts, syncState:"synced"});
+  } catch(e) {
+    setState({syncState:"error", syncError:e.message});
+  }
+  render();
+}
+
+async function saveContact(form) {
+  setState({syncState:"saving"}); render();
+  try {
+    const data = await api({action:"get", range:`${SHEET_NAME}!A2:A1000`});
+    const rows = data.values || [];
+    const idx = rows.findIndex(r=>r[0]===String(form.id));
+    const row = contactToRow(form);
+    if (idx >= 0) {
+      await api({action:"update", range:`${SHEET_NAME}!A${idx+2}:P${idx+2}`, values:[row]});
+    } else {
+      await api({action:"append", range:SHEET_NAME, values:[row]});
+    }
+    await loadContacts();
+    setState({selected:form, showForm:false, editContact:null});
+  } catch(e) { setState({syncState:"error", syncError:e.message}); }
+  render();
+}
+
+async function deleteContact(id) {
+  if (!confirm("Contact verwijderen?")) return;
+  setState({syncState:"saving"}); render();
+  try {
+    const data = await api({action:"get", range:`${SHEET_NAME}!A2:P1000`});
+    const rows = (data.values||[]).filter(r=>r[0]!==String(id));
+    await api({action:"clear", range:`${SHEET_NAME}!A2:P1000`});
+    if (rows.length > 0) await api({action:"update", range:`${SHEET_NAME}!A2:P${rows.length+1}`, values:rows});
+    await loadContacts();
+    setState({selected:null});
+  } catch(e) { setState({syncState:"error", syncError:e.message}); }
+  render();
+}
+
+function setState(updates) { Object.assign(state, updates); }
+
+function avatar(name, size=38) {
+  const initials = name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+  const bg = AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
+  return `<div class="avatar" style="width:${size}px;height:${size}px;font-size:${Math.round(size*0.34)}px;background:${bg};">${initials}</div>`;
+}
+
+function badge(text, color) {
+  return `<span class="badge" style="background:${color}18;color:${color};border:0.5px solid ${color}40;">${text}</span>`;
+}
+
+function tag(text, removable=false, key="") {
+  return `<span class="tag">${text}${removable ? `<span class="remove" onclick="removeTag('${key}','${text.replace(/'/g,"\\'")}')">✕</span>` : ""}</span>`;
+}
+
+function syncStatusHtml() {
+  const m = {loading:["#888","Laden..."], saving:["#C9A84C","Opslaan..."], synced:["#1A6B3C","✓ Gesynchroniseerd"], error:["#A32D2D","Fout — zie melding"]};
+  const v = m[state.syncState];
+  return v ? `<span class="sync-status" style="color:${v[0]}">${v[1]}</span>` : "";
+}
+
+function filteredContacts() {
+  const t = state.filterText.toLowerCase();
+  return state.contacts.filter(c =>
+    (!t || [c.name,c.company,...c.locations,...c.type,c.notes].join(" ").toLowerCase().includes(t)) &&
+    (state.filterStatus==="Alle" || c.status===state.filterStatus) &&
+    (!state.filterLI || c.linkedinFirstDegree)
+  );
+}
+
+function render() {
+  const app = document.getElementById("app");
+  const s = state;
+
+  if (s.syncState === "loading" && s.contacts.length === 0) {
+    app.innerHTML = `<div class="loading-screen"><div class="spinner" style="justify-content:center;margin-bottom:14px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div style="font-size:13px;color:var(--muted)">Verbinden met Google Sheets...</div></div>`;
+    return;
+  }
+
+  const fc = filteredContacts();
+  const stats = [
+    {label:"Contacten", value:s.contacts.length, color:"#C9A84C"},
+    {label:"Actieve kopers", value:s.contacts.filter(c=>c.status==="Actief").length, color:"#1A6B3C"},
+    {label:"1e lijn LinkedIn", value:s.contacts.filter(c=>c.linkedinFirstDegree).length, color:"#0A66C2"},
+    {label:"Open leads", value:s.contacts.filter(c=>c.status==="Lead").length, color:"#E67E22"},
+  ];
+
+  app.innerHTML = `
+    <div class="header">
+      <div>
+        <div class="header-title"><span>Costa Capital</span> — Koper CRM</div>
+        <div class="header-sub">Hotel & horecavastgoed · Spanje & West-Europa ${syncStatusHtml()} ${s.syncState==="synced"?`<a href="#" onclick="loadContacts();return false;" style="font-size:11px;color:var(--muted)">vernieuwen</a>`:""}</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-outline" onclick="openSearch()">Zoek kopers via internet</button>
+        <button class="btn-primary" onclick="openForm(null)">+ Nieuw contact</button>
+      </div>
+    </div>
+
+    ${s.syncState==="error" ? `<div class="error-box"><strong>Verbindingsfout</strong> — ${s.syncError}<br><small style="display:block;margin-top:4px">Controleer of het Google Sheet gedeeld is als "Iedereen met de link kan bewerken" en dat de Netlify function actief is.</small><button class="btn-primary" style="margin-top:10px;font-size:12px;" onclick="initSheet()">Opnieuw proberen</button></div>` : ""}
+
+    <div class="stats">${stats.map(st=>`<div class="stat"><div class="stat-label">${st.label}</div><div class="stat-value" style="color:${st.color}">${st.value}</div></div>`).join("")}</div>
+
+    <div class="main ${s.selected ? "split" : ""}">
+      <div>
+        <div class="filters">
+          <input type="text" placeholder="Zoek naam, locatie, type..." value="${s.filterText}" oninput="setState({filterText:this.value});render();" style="flex:1;min-width:140px;">
+          <select onchange="setState({filterStatus:this.value});render();" style="width:auto;">
+            <option ${s.filterStatus==="Alle"?"selected":""}>Alle</option>
+            ${STATUSES.map(st=>`<option ${s.filterStatus===st?"selected":""}>${st}</option>`).join("")}
+          </select>
+        </div>
+        <label class="filter-li"><input type="checkbox" ${s.filterLI?"checked":""} onchange="setState({filterLI:this.checked});render();"> Alleen 1e lijns LinkedIn</label>
+        <div class="count">${fc.length} van ${s.contacts.length} contacten</div>
+        <div class="contact-list">
+          ${fc.length===0 ? `<div style="text-align:center;padding:40px 0;color:var(--muted)">Geen resultaten.<br><a href="#" onclick="setState({filterText:'',filterStatus:'Alle',filterLI:false});render();return false;" style="color:var(--gold);font-size:13px;margin-top:8px;display:inline-block;">Filters wissen</a></div>` :
+          fc.map(c => `
+            <div class="contact-card ${s.selected?.id===c.id?"selected":""}" onclick="setState({selected:${JSON.stringify(c).replace(/"/g,"&quot;")}});render();">
+              <div class="contact-header">
+                ${avatar(c.name)}
+                <div style="flex:1;min-width:0;">
+                  <div class="contact-name">${c.name}</div>
+                  ${c.company?`<div class="contact-company">${c.company}</div>`:""}
+                  <div class="badges">
+                    ${badge(c.status, STATUS_COLORS[c.status]||"#888")}
+                    ${c.linkedinFirstDegree?badge("LI 1e lijn","#0A66C2"):""}
+                    ${c.source==="AI Zoeker"?badge("AI gevonden","#7A3A1A"):""}
+                  </div>
+                </div>
+              </div>
+              ${c.locations.length>0?`<div class="tags">${c.locations.slice(0,3).map(l=>tag(l)).join("")}${c.locations.length>3?tag(`+${c.locations.length-3}`):""}</div>`:""}
+              ${c.roomRange?`<div class="contact-rooms">${c.roomRange} kamers · ${c.type.slice(0,2).join(", ")}</div>`:""}
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      ${s.selected ? renderDetail(s.selected) : ""}
+    </div>
+
+    ${s.showSearch ? renderSearchModal() : ""}
+    ${s.showForm || s.editContact ? renderFormModal(s.editContact) : ""}
+  `;
+}
+
+function renderDetail(c) {
+  return `<div class="detail">
+    <div class="detail-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        ${avatar(c.name, 48)}
+        <div>
+          <div class="detail-name">${c.name}</div>
+          ${c.alias?`<div class="detail-sub">"${c.alias}"</div>`:""}
+          ${c.company?`<div class="detail-sub">${c.company}</div>`:""}
+        </div>
+      </div>
+      <div class="detail-actions">
+        <button class="btn-primary" style="font-size:12px;padding:6px 12px;" onclick="openForm(${JSON.stringify(c).replace(/"/g,"&quot;")})">Bewerken</button>
+        <button class="btn-ghost" onclick="setState({selected:null});render();">✕</button>
+      </div>
+    </div>
+    <div class="badges" style="margin-bottom:16px;">
+      ${badge(c.status, STATUS_COLORS[c.status]||"#888")}
+      ${c.linkedinFirstDegree?badge("1e lijn LinkedIn","#0A66C2"):""}
+      ${c.operator?badge("Operator","#7A3A1A"):""}
+      ${badge(c.source||"Direct","#555")}
+    </div>
+    <div class="section-title">Vastgoedprofiel</div>
+    <div class="detail-row"><span class="detail-label">Locaties</span><span>${c.locations.join(", ")||"—"}</span></div>
+    <div class="detail-row"><span class="detail-label">Type</span><span>${c.type.join(", ")||"—"}</span></div>
+    <div class="detail-row"><span class="detail-label">Kamers</span><span>${c.roomRange||"—"}</span></div>
+    <div class="detail-row"><span class="detail-label">Budget</span><span>${c.budget||"—"}</span></div>
+    <div class="section-title">Contact</div>
+    <div class="detail-row"><span class="detail-label">E-mail</span><span>${c.email||"—"}</span></div>
+    <div class="detail-row"><span class="detail-label">Telefoon</span><span>${c.phone||"—"}</span></div>
+    <div class="detail-row"><span class="detail-label">Laatste contact</span><span>${c.lastContact||"—"}</span></div>
+    ${c.notes?`<div class="section-title">Notities</div><div class="detail-notes">${c.notes}</div>`:""}
+    <div style="margin-top:20px;">
+      <button class="btn-danger" onclick="deleteContact('${c.id}')">Contact verwijderen</button>
+    </div>
+  </div>`;
+}
+
+let formState = {};
+function openForm(contact) {
+  formState = contact ? JSON.parse(JSON.stringify(contact)) : {id:String(Date.now()),name:"",alias:"",email:"",phone:"",company:"",linkedinFirstDegree:false,locations:[],type:[],roomRange:"",budget:"",notes:"",operator:false,status:"Lead",lastContact:new Date().toISOString().split("T")[0],source:"Direct"};
+  setState({editContact:contact, showForm:true});
+  render();
+}
+
+function removeTag(field, value) {
+  formState[field] = formState[field].filter(x=>x!==value);
+  renderFormOnly();
+}
+
+function addTag(field, value) {
+  const v = value || document.getElementById(`${field}Input`).value.trim();
+  if (v && !formState[field].includes(v)) { formState[field].push(v); if (!value) document.getElementById(`${field}Input`).value=""; renderFormOnly(); }
+}
+
+function renderFormOnly() {
+  const el = document.getElementById("formModal");
+  if (el) el.outerHTML = renderFormModal(state.editContact);
+}
+
+function renderFormModal(contact) {
+  const f = formState;
+  return `<div class="overlay" id="formModal" onclick="if(event.target===this){setState({showForm:false,editContact:null});render();}">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">${contact?"Bewerken":"Nieuw contact"}</div>
+        <button class="modal-close" onclick="setState({showForm:false,editContact:null});render();">✕</button>
+      </div>
+      ${["name:Naam *","alias:Bijnaam","company:Bedrijf","email:E-mail","phone:Telefoon","roomRange:Aantal kamers","budget:Budget"].map(s=>{const[k,l]=s.split(":");return`<div class="form-row"><div class="form-label">${l}</div><input value="${(f[k]||"").replace(/"/g,"&quot;")}" oninput="formState['${k}']=this.value"></div>`}).join("")}
+      <div class="form-grid">
+        <div><div class="form-label">Status</div><select onchange="formState.status=this.value">${STATUSES.map(s=>`<option ${f.status===s?"selected":""}>${s}</option>`).join("")}</select></div>
+        <div><div class="form-label">Bron</div><select onchange="formState.source=this.value">${["Direct","Netwerk","LinkedIn","Online","AI Zoeker","Referral","Event"].map(s=>`<option ${f.source===s?"selected":""}>${s}</option>`).join("")}</select></div>
+      </div>
+      <div class="form-checks">
+        <label class="form-check"><input type="checkbox" ${f.linkedinFirstDegree?"checked":""} onchange="formState.linkedinFirstDegree=this.checked"> 1e lijns LinkedIn</label>
+        <label class="form-check"><input type="checkbox" ${f.operator?"checked":""} onchange="formState.operator=this.checked"> Operator zoekend</label>
+      </div>
+      <div class="form-row"><div class="form-label">Locaties</div>
+        <div class="chip-row">${(f.locations||[]).map(l=>tag(l,true,"locations")).join("")}</div>
+        <div class="tag-input-row"><input id="locationsInput" placeholder="Locatie + Enter" onkeydown="if(event.key==='Enter'){addTag('locations');event.preventDefault();}"><button onclick="addTag('locations')">+</button></div>
+        <div class="tag-suggestions">${LOCATIONS.filter(l=>!(f.locations||[]).includes(l)).map(l=>`<button class="tag-suggest" onclick="addTag('locations','${l}')">${l}</button>`).join("")}</div>
+      </div>
+      <div class="form-row"><div class="form-label">Type vastgoed</div>
+        <div class="chip-row">${(f.type||[]).map(t=>tag(t,true,"type")).join("")}</div>
+        <div class="tag-input-row"><input id="typeInput" placeholder="Type + Enter" onkeydown="if(event.key==='Enter'){addTag('type');event.preventDefault();}"><button onclick="addTag('type')">+</button></div>
+        <div class="tag-suggestions">${PROP_TYPES.filter(t=>!(f.type||[]).includes(t)).map(t=>`<button class="tag-suggest" onclick="addTag('type','${t}')">${t}</button>`).join("")}</div>
+      </div>
+      <div class="form-row"><div class="form-label">Notities</div><textarea rows="3" oninput="formState.notes=this.value">${f.notes||""}</textarea></div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="setState({showForm:false,editContact:null});render();">Annuleren</button>
+        <button class="btn-primary" onclick="saveContact(formState)">Opslaan in Sheets</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+let searchState = {loc:"",type:"",rooms:"",budget:"",extra:"",loading:false,results:null,error:""};
+function openSearch() { setState({showSearch:true}); render(); }
+
+function renderSearchModal() {
+  const ss = searchState;
+  return `<div class="overlay" onclick="if(event.target===this){setState({showSearch:false});render();}">
+    <div class="modal search-modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div><div class="modal-title">Live Koper Zoeker</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">AI zoekt live op internet · gevonden contacten gaan direct in Google Sheets</div></div>
+        <button class="modal-close" onclick="setState({showSearch:false});render();">✕</button>
+      </div>
+      <div class="search-grid">
+        <div><div class="form-label">Locatie *</div><input id="s-loc" value="${ss.loc}" placeholder="bijv. Valencia, Costa del Sol" oninput="searchState.loc=this.value"></div>
+        <div><div class="form-label">Type vastgoed *</div><input id="s-type" value="${ss.type}" placeholder="bijv. Boutique hotel" oninput="searchState.type=this.value"></div>
+        <div><div class="form-label">Aantal kamers</div><input id="s-rooms" value="${ss.rooms}" placeholder="bijv. 30-60" oninput="searchState.rooms=this.value"></div>
+        <div><div class="form-label">Budget</div><input id="s-budget" value="${ss.budget}" placeholder="bijv. €3M - €8M" oninput="searchState.budget=this.value"></div>
+      </div>
+      <div class="form-row"><div class="form-label">Extra kenmerken</div><input id="s-extra" value="${ss.extra}" placeholder="bijv. historisch pand, bestaande vergunning" oninput="searchState.extra=this.value"></div>
+      <button class="btn-primary" style="width:100%;padding:11px;margin:14px 0;font-size:14px;border-radius:9px;" onclick="runSearch()" ${ss.loading?"disabled":""}>
+        ${ss.loading ? "Zoeken op internet..." : "Zoek live op internet →"}
+      </button>
+      ${ss.loading?`<div class="spinner" style="justify-content:center;margin-bottom:16px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`:""}
+      ${ss.error?`<div class="error-box">${ss.error}</div>`:""}
+      ${ss.results && ss.results.length===0 && !ss.error?`<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">Geen resultaten. Probeer bredere criteria.</div>`:""}
+      ${ss.results && ss.results.length>0?`
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${ss.results.length} kopers gevonden · "+ Toevoegen" slaat op in Google Sheets</div>
+        ${ss.results.map((r,i)=>{
+          const inCrm = state.contacts.some(c=>c.name.toLowerCase().includes((r.name||"").toLowerCase().split(" ")[0].toLowerCase()));
+          return `<div class="search-result">
+            <div class="search-result-header">
+              <div class="search-result-body">
+                <div class="result-name">${r.name||""}</div>
+                ${r.company?`<div class="result-company">${r.company}</div>`:""}
+                <div class="badges" style="margin-bottom:6px;">
+                  ${r.linkedin_likely?badge("Mogelijk op LinkedIn","#0A66C2"):""}
+                  ${inCrm?badge("Al in CRM","#1A6B3C"):""}
+                  ${r.deal_type?badge(r.deal_type,"#C9A84C"):""}
+                </div>
+                ${r.activity?`<div class="result-activity">${r.activity}</div>`:""}
+                ${r.why_match?`<div class="result-match">${r.why_match}</div>`:""}
+                ${r.source?`<div class="result-source">Bron: ${r.source}</div>`:""}
+              </div>
+              ${!inCrm?`<button class="btn-primary" style="flex-shrink:0;align-self:flex-start;font-size:12px;padding:7px 12px;" onclick="addSearchResult(${i})">+ Toevoegen</button>`:""}
+            </div>
+          </div>`;
+        }).join("")}
+      `:""}
+    </div>
+  </div>`;
+}
+
+async function runSearch() {
+  const ss = searchState;
+  if (!ss.loc && !ss.type) return;
+  searchState.loading = true; searchState.results = null; searchState.error = "";
+  render();
+  const criteria = [ss.loc&&`Locatie: ${ss.loc}`, ss.type&&`Type: ${ss.type}`, ss.rooms&&`Kamers: ${ss.rooms}`, ss.budget&&`Budget: ${ss.budget}`, ss.extra&&`Extra: ${ss.extra}`].filter(Boolean).join(", ");
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({
+        model:"claude-sonnet-4-20250514", max_tokens:1000,
+        tools:[{type:"web_search_20250305",name:"web_search"}],
+        system:`Je bent dealflow-assistent voor Costa Capital, gespecialiseerd in hotelfinanciering Spanje/West-Europa. Zoek ECHTE RECENTE personen en organisaties die hotels kopen die overeenkomen met de criteria. Zoek op overnames, investeerders, fondsen, family offices, persberichten. Antwoord ALLEEN als JSON array (geen markdown):\n[{"name":"Naam","company":"Org","deal_type":"Type deal","activity":"Wat recent gedaan (jaar)","why_match":"Waarom match","linkedin_likely":true,"source":"Bron"}]\n4-8 resultaten. Feitelijk, verzin niets.`,
+        messages:[{role:"user",content:`Zoek kopers/investeerders voor: ${criteria}. Wie deed vergelijkbare deals recentelijk in deze regio?`}]
+      })
+    });
+    const data = await res.json();
+    const text = (data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n");
+    const m = text.match(/\[[\s\S]*\]/);
+    if (m) { try { searchState.results = JSON.parse(m[0]); } catch { searchState.results=[]; searchState.error="Parse fout in resultaat."; } }
+    else { searchState.results=[]; searchState.error="Geen gestructureerde resultaten ontvangen."; }
+  } catch(e) { searchState.error="Fout: "+e.message; }
+  searchState.loading = false;
+  render();
+}
+
+function addSearchResult(idx) {
+  const r = searchState.results[idx];
+  const ss = searchState;
+  const contact = {id:String(Date.now()),name:r.name||"",alias:"",email:"",phone:"",company:r.company||"",linkedinFirstDegree:false,locations:ss.loc?[ss.loc]:[],type:ss.type?[ss.type]:[],roomRange:ss.rooms||"",budget:ss.budget||"",notes:(r.activity||"")+(r.source?`\n\nBron: ${r.source}`:""),operator:false,status:"Lead",lastContact:new Date().toISOString().split("T")[0],source:"AI Zoeker"};
+  saveContact(contact);
+  setState({showSearch:false});
+}
+
+initSheet();
+</script>
+</body>
+</html>
