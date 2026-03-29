@@ -23,6 +23,7 @@
   .btn-outline { background: none; border: 1px solid var(--gold); color: var(--gold); border-radius: 8px; padding: 9px 16px; font-weight: 500; }
   .btn-ghost { background: none; border: 0.5px solid var(--border); border-radius: 7px; padding: 8px 14px; color: var(--muted); }
   .btn-danger { background: none; border: 0.5px solid #F5CACA; color: #A32D2D; border-radius: 7px; padding: 7px 14px; font-size: 12px; }
+  .btn-success { background: #1A6B3C; color: #fff; border: none; border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 500; }
   .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 18px; }
   .stat { background: var(--card); border: 0.5px solid var(--border); border-radius: 10px; padding: 14px 16px; }
   .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
@@ -97,11 +98,62 @@ const OC={"Beschikbaar":"#1A6B3C","In analyse":"#1A4A7A","In onderhandeling":"#E
 
 let S={contacts:[],objects:[],tab:"kopers",selC:null,selO:null,fTxt:"",fStat:"Alle",fLI:false,ofTxt:"",ofStat:"Alle",sync:"loading",syncErr:"",showCF:false,editC:null,showOF:false,editO:null,showSearch:false,showPdf:false};
 let CF={},OF={},pdfState={loading:false,extracted:null,error:"",fname:""};
-let SS={loc:"",type:"",rooms:"",budget:"",extra:"",loading:false,results:null,error:""};
+let SS={loc:"",type:"",rooms:"",budget:"",extra:"",loading:false,results:null,error:"",forObject:null};
 let AIM={loading:false,matches:null,error:"",objId:""};
 
+// ── Koper toevoegen vanuit zoekresultaat of AI match, gekoppeld aan object ──
+
+async function addBuyerFromResult(contactData, objectId) {
+  // Sla contact op in CRM
+  await saveC(contactData, true);
+  // Koppel als mogelijke koper aan het object via een notitie in het contact
+  // (contact wordt opgeslagen met objectId in de notities als referentie)
+  render();
+}
+
+async function addSearchResultToCRM(name, company, activity, loc, type, rooms, budget, objectId) {
+  const contact = {
+    id: String(Date.now()),
+    name: name,
+    alias: "",
+    email: "",
+    phone: "",
+    company: company,
+    linkedinFirstDegree: false,
+    locations: [loc].filter(Boolean),
+    type: [type].filter(Boolean),
+    roomRange: rooms || "",
+    starMin: "",
+    budget: budget || "",
+    notes: (activity || "") + (objectId ? "\n\n📌 Gevonden via AI zoeker voor object: " + objectId : ""),
+    operator: false,
+    status: "Lead",
+    lastContact: new Date().toISOString().split("T")[0],
+    source: "AI Zoeker"
+  };
+
+  // Zoek het object op voor de naam
+  const obj = S.objects.find(o => o.id === objectId);
+  if (obj) {
+    contact.notes = (activity || "") + "\n\n📌 Gevonden als potentiële koper voor: " + obj.name + " (" + obj.location + ", " + obj.price + ")";
+  }
+
+  set({sync:"saving"}); render();
+  try {
+    await api({action:"append", range:SC, values:[c2r(contact)]});
+    await loadC();
+    set({sync:"synced"});
+    // Update zoekresultaten zodat knop verandert naar "In CRM"
+    if (SS.results) {
+      SS.results = SS.results.map(r => r._name === name ? {...r, _added: true} : r);
+    }
+  } catch(e) {
+    set({sync:"error", syncErr:e.message});
+  }
+  render();
+}
+
 async function runAiMatch(obj){
-  // Laag 1: quick filter op locatie/type/sterren - max 50 kandidaten
   const loc=(obj.location||"").toLowerCase();
   const typ=(obj.type||"").toLowerCase();
   const kws=(obj.matchCriteria||"").toLowerCase().split(",").map(k=>k.trim()).filter(Boolean);
@@ -112,7 +164,6 @@ async function runAiMatch(obj){
     const nm=c.notes&&kws.some(k=>c.notes.toLowerCase().includes(k));
     return lm||tm||km||nm;
   });
-  // Also include contacts with relevant company keywords
   const companyKws=["vastgoed","hotel","invest","capital","fund","fonds","property","real estate","resort","hospitality","ontwikkel","finance"];
   const layer1b = S.contacts.filter(c=>!layer1.includes(c)&&c.company&&companyKws.some(k=>c.company.toLowerCase().includes(k)));
   const candidates = [...layer1,...layer1b].slice(0,50);
@@ -164,7 +215,6 @@ async function init(){
 async function loadC(){const d=await api({action:"get",range:`${SC}!A2:P10000`});S.contacts=(d.values||[]).map(r2c).filter(Boolean).filter(c=>c.name);}
 async function loadO(){
   try{
-    // Check if headers exist in row 1, write them if not
     const h=await api({action:"get",range:`${SO}!A1:M1`});
     const hrow=(h.values&&h.values[0])||[];
     if(!hrow[0]||hrow[0]!=="id"){
@@ -176,8 +226,9 @@ async function loadO(){
 }
 async function reload(){set({sync:"loading"});render();try{await Promise.all([loadC(),loadO()]);set({sync:"synced"});}catch(e){set({sync:"error",syncErr:e.message});}render();}
 
-async function saveC(form){
-  set({sync:"saving"});render();
+async function saveC(form, silent){
+  if(!silent) set({sync:"saving",render:true});
+  set({sync:"saving"}); if(!silent) render();
   try{
     const d=await api({action:"get",range:`${SC}!A2:A10000`});
     const rows=d.values||[];
@@ -185,9 +236,10 @@ async function saveC(form){
     if(idx>=0)await api({action:"update",range:`${SC}!A${idx+2}:P${idx+2}`,values:[c2r(form)]});
     else await api({action:"append",range:SC,values:[c2r(form)]});
     await loadC();
-    set({selC:form,showCF:false,editC:null,sync:"synced"});
+    if(!silent) set({selC:form,showCF:false,editC:null,sync:"synced"});
+    else set({sync:"synced"});
   }catch(e){set({sync:"error",syncErr:e.message});}
-  render();
+  if(!silent) render();
 }
 
 async function delC(id){
@@ -207,10 +259,8 @@ async function saveO(form){
   set({sync:"saving"});render();
   try{
     var row=o2r(form);
-    // Use just the sheet name without column spec for append
     var result=await api({action:"append",range:SO,values:[row]});
     if(result.error){throw new Error(JSON.stringify(result.error));}
-    // Also check for API-level errors in the response
     if(result.code&&result.code!==200){throw new Error("Sheets code "+result.code+": "+JSON.stringify(result));}
     await loadO();
     set({selO:form,showOF:false,editO:null,showPdf:false,sync:"synced"});
@@ -253,7 +303,6 @@ async function handlePDF(input){
   set({showPdf:true});render();
   try{
     if(file.size>30*1024*1024)throw new Error(`PDF te groot (${(file.size/1024/1024).toFixed(1)}MB). Max 30MB.`);
-    // Read as base64
     const b64=await new Promise((res,rej)=>{
       const r=new FileReader();
       r.onload=()=>{try{res(r.result.split(",")[1]);}catch(e){rej(new Error("Leesfout"));}};
@@ -261,7 +310,6 @@ async function handlePDF(input){
       r.readAsDataURL(file);
     });
     if(!b64||b64.length<100)throw new Error("PDF lijkt leeg of onleesbaar.");
-    // Send to Netlify function (server-side) instead of directly to Anthropic
     const resp=await fetch("/.netlify/functions/sheets",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
@@ -275,6 +323,7 @@ async function handlePDF(input){
     OF={id:String(Date.now()),name:ex.name||"",type:ex.type||"Hotel",stars:ex.stars||"",location:ex.location||"",price:ex.price||"",rooms:ex.rooms||"",size:ex.size||"",status:"Beschikbaar",description:ex.description||"",matchCriteria:ex.matchCriteria||"",addedDate:new Date().toISOString().split("T")[0],source:file.name};
   }catch(e){pdfState={loading:false,extracted:null,error:e.message,fname:file.name};}
   render();input.value="";}
+
 async function handleLI(input){
   const file=input.files[0];if(!file)return;
   const text=await file.text();
@@ -303,15 +352,17 @@ async function runSearch(){
     const res=await fetch("/.netlify/functions/sheets",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"search",criteria:cr})});
     const d=await res.json();
     if(d.error)throw new Error(d.error);
-    SS.results=d.results||[];
+    // Bewaar _name voor tracking toegevoegde contacten
+    SS.results=(d.results||[]).map(r=>({...r, _name:r.name, _added:false}));
     if(SS.results.length===0)SS.error="Geen resultaten gevonden. Probeer bredere criteria.";
   }catch(e){SS.error="Fout: "+e.message;}
-  SS.loading=false;render();}
+  SS.loading=false;render();
+}
 
 function av(name,sz=38){const i=name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();return `<div class="avatar" style="width:${sz}px;height:${sz}px;font-size:${Math.round(sz*0.34)}px;background:${AC[name.charCodeAt(0)%AC.length]};">${i}</div>`;}
 function bdg(t,c){return `<span class="badge" style="background:${c}18;color:${c};border:0.5px solid ${c}40;">${t}</span>`;}
 function tg(t,rm=false,f=""){return `<span class="tag">${t}${rm?`<span class="remove" onclick="rmTag('${f}','${t.replace(/'/g,"\\'")}')">✕</span>`:""}</span>`;}
-function syncH(){const m={loading:["#888","Laden..."],saving:["#C9A84C","Opslaan..."],synced:["#1A6B3C","✓ Gesynchroniseerd"],error:["#A32D2D","Fout"]};const v=m[S.sync];return v?`<span class="sync" style="color:${v[0]}">${v[1]}</span>`+"":" ";}
+function syncH(){const m={loading:["#888","Laden..."],saving:["#C9A84C","Opslaan..."],synced:["#1A6B3C","✓ Gesynchroniseerd"],error:["#A32D2D","Fout"]};const v=m[S.sync];return v?`<span class="sync" style="color:${v[0]}">${v[1]}</span>`:"";}
 
 function rmTag(f,v){if(CF[f])CF[f]=CF[f].filter(x=>x!==v);render();}
 function addTag(f,v){const val=v||(document.getElementById(f+'In')?document.getElementById(f+'In').value.trim():"");if(val&&CF[f]&&!CF[f].includes(val)){CF[f].push(val);if(!v&&document.getElementById(f+'In'))document.getElementById(f+'In').value="";}render();}
@@ -324,7 +375,7 @@ function render(){
   if(S.sync==="loading"&&S.contacts.length===0&&S.objects.length===0){app.innerHTML=`<div class="spinner" style="padding:80px 0"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div style="text-align:center;font-size:13px;color:var(--muted);margin-top:12px">Verbinden met Google Sheets...</div>`;return;}
 
   const hdr=`<div class="header"><div><div class="header-title"><span>Costa Capital</span> — Deal Platform</div><div class="header-sub">Hotel & vastgoed · Spanje & West-Europa ${syncH()} ${S.sync==="synced"?`<a href="#" onclick="reload();return false;" style="font-size:11px;color:var(--muted)">vernieuwen</a>`:""}</div></div>
-  <div class="header-actions">${S.tab==="kopers"?`<label class="btn-ghost" style="cursor:pointer;display:inline-flex;align-items:center;">LinkedIn import<input type="file" accept=".csv" style="display:none" onchange="handleLI(this)"></label><button class="btn-outline" onclick="set({showSearch:true});render()">Zoek kopers</button><button class="btn-primary" onclick="openCF(null)">+ Contact</button>`:`<label class="btn-outline" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;">📄 PDF importeren<input type="file" accept=".pdf" style="display:none" onchange="handlePDF(this)"></label><span style="font-size:11px;color:var(--muted);margin-left:4px;">max 20MB</span><button class="btn-primary" onclick="openOF(null)">+ Object</button>`}</div></div>
+  <div class="header-actions">${S.tab==="kopers"?`<label class="btn-ghost" style="cursor:pointer;display:inline-flex;align-items:center;">LinkedIn import<input type="file" accept=".csv" style="display:none" onchange="handleLI(this)"></label><button class="btn-outline" onclick="set({showSearch:true});SS.forObject=null;render()">Zoek kopers</button><button class="btn-primary" onclick="openCF(null)">+ Contact</button>`:`<label class="btn-outline" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;">📄 PDF importeren<input type="file" accept=".pdf" style="display:none" onchange="handlePDF(this)"></label><span style="font-size:11px;color:var(--muted);margin-left:4px;">max 20MB</span><button class="btn-primary" onclick="openOF(null)">+ Object</button>`}</div></div>
   <div class="tabs"><button class="tab ${S.tab==="kopers"?"active":""}" onclick="set({tab:'kopers',selO:null});render()">Kopers (${S.contacts.length})</button><button class="tab ${S.tab==="objecten"?"active":""}" onclick="set({tab:'objecten',selC:null});render()">Objecten (${S.objects.length})</button></div>`;
 
   const errBox=S.sync==="error"?`<div class="err-box"><strong>Verbindingsfout</strong> — ${S.syncErr}<br><small>Controleer of Google Sheet gedeeld is als "Iedereen met link kan bewerken".</small><button class="btn-primary" style="margin-top:8px;font-size:12px" onclick="init()">Opnieuw</button></div>`:"";
@@ -407,10 +458,11 @@ function dO(o){
     <div class="drow"><span class="dlabel">Toegevoegd</span><span>${o.addedDate||"—"}</span></div>
     <div class="drow"><span class="dlabel">Bron</span><span>${o.source||"—"}</span></div>
     ${o.description?`<div class="sec-title">Beschrijving</div><div style="font-size:13px;color:#444;line-height:1.7;white-space:pre-wrap;">${o.description}</div>`:""}
+
     <div class="sec-title">Overeenkomende kopers (${mx.length})</div>
     ${mx.length===0?`<div style="font-size:13px;color:var(--muted);">Geen directe matches op locatie of type.</div>`:""}
     ${mx.map(c=>`<div class="match-card">${av(c.name,32)}<div style="flex:1;min-width:0;"><div style="font-weight:500;font-size:13px;">${c.name}</div><div style="font-size:11px;color:var(--muted);">${c.company||""} ${c.locations.slice(0,2).join(", ")}</div></div><div style="display:flex;gap:4px;">${bdg(c.status,SC2[c.status]||"#888")}${c.linkedinFirstDegree?bdg("LI","#0A66C2"):""}</div></div>`).join("")}
-    ${mx.length>0?`<button class="btn-outline" style="width:100%;margin-top:8px;font-size:12px;" onclick="SS.loc='${o.location}';SS.type='${o.type}';set({showSearch:true});render();">Zoek nieuwe kopers online</button>`:""}
+    <button class="btn-outline" style="width:100%;margin-top:8px;font-size:12px;" onclick="SS.loc='${(o.location||"").replace(/'/g,"\\'")}';SS.type='${(o.type||"").replace(/'/g,"\\'")}';SS.forObject=${JSON.stringify(o).replace(/"/g,"&quot;")};set({showSearch:true});render();">Zoek nieuwe kopers online</button>
 
     <div class="sec-title" style="margin-top:20px;">AI analyse van jouw netwerk</div>
     <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">AI doorzoekt je ${S.contacts.length} CRM-contacten en zoekt online naar recente activiteit</div>
@@ -422,17 +474,31 @@ function dO(o){
         var contact=S.contacts.find(function(c){return c.name.toLowerCase()===m.name.toLowerCase();});
         var scoreColor=m.score>=8?'#1A6B3C':m.score>=6?'#E67E22':'#888';
         var liTag=m.linkedin?'<span style="margin-left:6px;background:#0A66C218;color:#0A66C2;border-radius:3px;padding:1px 5px;font-size:10px;">LI</span>':'';
-        var avatarHtml=contact?av(m.name,32):'<div style="width:32px;height:32px;border-radius:50%;background:#ddd;flex-shrink:0;"></div>';
+        var avatarHtml=contact?av(m.name,32):'<div style="width:32px;height:32px;border-radius:50%;background:#ddd;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888;">?</div>';
         var reasonHtml=m.reason?'<div style="font-size:12px;color:#444;line-height:1.5;padding-left:42px;">'+m.reason+'</div>':'';
         var activityHtml=m.activity?'<div style="font-size:11px;color:var(--muted);padding-left:42px;font-style:italic;">'+m.activity+'</div>':'';
+        // Knop: als contact al in CRM staat toon niets, anders toon "Toevoegen aan CRM"
+        var addBtn='';
+        if(!contact){
+          var safeObj=JSON.stringify(o).replace(/"/g,"&quot;");
+          addBtn='<button class="btn-success" style="flex-shrink:0;align-self:flex-start;" onclick="addSearchResultToCRM(\''+m.name.replace(/'/g,"\\'")+'\',' +
+            '\''+( m.company||'').replace(/'/g,"\\'")+'\',' +
+            '\''+( m.activity||'').replace(/'/g,"\\'")+'\',' +
+            '\''+( o.location||'').replace(/'/g,"\\'")+'\',' +
+            '\''+( o.type||'').replace(/'/g,"\\'")+'\',' +
+            '\'\',\'\',\''+o.id+'\')">+ Toevoegen aan CRM</button>';
+        }
         return '<div class="match-card" style="flex-direction:column;align-items:flex-start;gap:6px;">'+
           '<div style="display:flex;align-items:center;gap:10px;width:100%;">'+
           avatarHtml+
           '<div style="flex:1;min-width:0;">'+
           '<div style="font-weight:500;font-size:13px;">'+m.name+'</div>'+
-          '<div style="font-size:11px;color:var(--muted);">'+(contact?contact.company:'')+liTag+'</div>'+
+          '<div style="font-size:11px;color:var(--muted);">'+(contact?contact.company:(m.company||''))+liTag+'</div>'+
           '</div>'+
+          '<div style="display:flex;align-items:center;gap:6px;">'+
           '<div style="font-size:11px;font-weight:500;color:'+scoreColor+';">Score '+m.score+'/10</div>'+
+          addBtn+
+          '</div>'+
           '</div>'+reasonHtml+activityHtml+'</div>';
       }).join("")
     :""}
@@ -490,8 +556,10 @@ function mCF(){
 
 function mSearch(){
   const ss=SS;
+  const objLabel = ss.forObject ? `<div style="background:#FFFBF0;border:0.5px solid rgba(201,168,76,0.4);border-radius:7px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#7A5C00;">📌 Zoeken voor object: <strong>${ss.forObject.name}</strong> — gevonden kopers worden gekoppeld aan dit object</div>` : "";
   return `<div class="overlay" onclick="if(event.target===this){set({showSearch:false});render();}"><div class="modal modal-wide" onclick="event.stopPropagation()">
     <div class="modal-hdr"><div><div class="modal-title">Live Koper Zoeker</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">AI zoekt live op internet naar beslissers</div></div><button class="modal-close" onclick="set({showSearch:false});render();">✕</button></div>
+    ${objLabel}
     <div class="fgrid"><div><div class="flabel">Locatie *</div><input value="${ss.loc}" placeholder="bijv. Valencia" oninput="SS.loc=this.value"></div><div><div class="flabel">Type *</div><input value="${ss.type}" placeholder="bijv. Boutique hotel" oninput="SS.type=this.value"></div><div><div class="flabel">Kamers</div><input value="${ss.rooms}" placeholder="bijv. 30-60" oninput="SS.rooms=this.value"></div><div><div class="flabel">Budget</div><input value="${ss.budget}" placeholder="bijv. €3M - €8M" oninput="SS.budget=this.value"></div></div>
     <div class="frow"><div class="flabel">Extra</div><input value="${ss.extra}" placeholder="bijv. historisch pand, bestaande vergunning" oninput="SS.extra=this.value"></div>
     <button class="btn-primary" style="width:100%;padding:11px;margin:12px 0;font-size:14px;border-radius:9px;" onclick="runSearch()" ${ss.loading?"disabled":""}>
@@ -499,9 +567,27 @@ function mSearch(){
     </button>
     ${ss.loading?`<div class="spinner" style="margin-bottom:16px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`:""}
     ${ss.error?`<div class="err-box">${ss.error}</div>`:""}
-    ${ss.results&&ss.results.length>0?`<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${ss.results.length} kopers gevonden</div>
-    ${ss.results.map((r,i)=>{const inC=S.contacts.some(c=>c.name.toLowerCase().includes((r.name||"").toLowerCase().split(" ")[0]));return `<div style="background:#fff;border:0.5px solid var(--border);border-radius:10px;padding:13px 15px;margin-bottom:8px;"><div style="display:flex;justify-content:space-between;gap:10px;"><div style="flex:1;"><div style="font-weight:500;font-size:14px;margin-bottom:4px;">${r.name||""}</div>${r.company?`<div style="font-size:12px;color:var(--muted);margin-bottom:6px;">${r.company}</div>`:""}<div class="badges">${r.linkedin_likely?bdg("Mogelijk LinkedIn","#0A66C2"):""}${inC?bdg("Al in CRM","#1A6B3C"):""}${r.deal_type?bdg(r.deal_type,"#C9A84C"):""}</div>${r.activity?`<div style="font-size:12px;color:#444;line-height:1.6;margin-top:6px;">${r.activity}</div>`:""}</div>${!inC?`<button class="btn-primary" style="flex-shrink:0;align-self:flex-start;font-size:12px;padding:7px 12px;" onclick="saveC({id:String(Date.now()),name:'${(r.name||"").replace(/'/g,"\\'")}',alias:'',email:'',phone:'',company:'${(r.company||"").replace(/'/g,"\\'")}',linkedinFirstDegree:false,locations:['${ss.loc}'],type:['${ss.type}'],roomRange:'${ss.rooms}',budget:'${ss.budget}',notes:'${(r.activity||"").replace(/'/g,"\\'")}',operator:false,status:'Lead',lastContact:'${new Date().toISOString().split("T")[0]}',source:'AI Zoeker'})">+ Toevoegen</button>`:""}
-    </div></div>`;}).join("")}`:""}
+    ${ss.results&&ss.results.length>0?`<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${ss.results.length} kopers gevonden${ss.forObject?' voor '+ss.forObject.name:''}</div>
+    ${ss.results.map(function(r){
+      const inC = S.contacts.some(c=>c.name.toLowerCase().includes((r.name||"").toLowerCase().split(" ")[0]));
+      const alreadyAdded = r._added || inC;
+      const objectId = ss.forObject ? ss.forObject.id : null;
+      const addBtn = alreadyAdded
+        ? `<span style="font-size:11px;color:#1A6B3C;font-weight:500;">✓ In CRM</span>`
+        : `<button class="btn-success" style="flex-shrink:0;align-self:flex-start;font-size:12px;padding:7px 12px;" onclick="addSearchResultToCRM('${(r.name||"").replace(/'/g,"\\'")}','${(r.company||"").replace(/'/g,"\\'")}','${(r.activity||"").replace(/'/g,"\\'")}','${ss.loc}','${ss.type}','${ss.rooms}','${ss.budget}','${objectId||""}')">+ Toevoegen aan CRM</button>`;
+      return `<div style="background:#fff;border:0.5px solid var(--border);border-radius:10px;padding:13px 15px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">
+          <div style="flex:1;">
+            <div style="font-weight:500;font-size:14px;margin-bottom:4px;">${r.name||""}</div>
+            ${r.company?`<div style="font-size:12px;color:var(--muted);margin-bottom:6px;">${r.company}</div>`:""}
+            <div class="badges">${r.linkedin_likely?bdg("Mogelijk LinkedIn","#0A66C2"):""}${alreadyAdded?bdg("In CRM","#1A6B3C"):""}${r.deal_type?bdg(r.deal_type,"#C9A84C"):""}</div>
+            ${r.activity?`<div style="font-size:12px;color:#444;line-height:1.6;margin-top:6px;">${r.activity}</div>`:""}
+            ${r.why_match?`<div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic;">${r.why_match}</div>`:""}
+          </div>
+          ${addBtn}
+        </div>
+      </div>`;
+    }).join("")}`:""}
   </div></div>`;}
 
 render();
