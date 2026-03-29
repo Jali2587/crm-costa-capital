@@ -122,7 +122,18 @@ async function init(){
 }
 
 async function loadC(){const d=await api({action:"get",range:`${SC}!A2:P10000`});S.contacts=(d.values||[]).map(r2c).filter(Boolean).filter(c=>c.name);}
-async function loadO(){try{const d=await api({action:"get",range:`${SO}!A2:L1000`});S.objects=(d.values||[]).map(r2o).filter(Boolean).filter(o=>o.name);}catch(e){S.objects=[];}}
+async function loadO(){
+  try{
+    // Check if headers exist in row 1, write them if not
+    const h=await api({action:"get",range:`${SO}!A1:L1`});
+    const hrow=(h.values&&h.values[0])||[];
+    if(!hrow[0]||hrow[0]!=="id"){
+      await api({action:"update",range:`${SO}!A1:L1`,values:[OH]});
+    }
+    const d=await api({action:"get",range:`${SO}!A2:L1000`});
+    S.objects=(d.values||[]).map(r2o).filter(Boolean).filter(o=>o.name);
+  }catch(e){S.objects=[];}
+}
 async function reload(){set({sync:"loading"});render();try{await Promise.all([loadC(),loadO()]);set({sync:"synced"});}catch(e){set({sync:"error",syncErr:e.message});}render();}
 
 async function saveC(form){
