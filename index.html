@@ -274,6 +274,10 @@ function render() {
         <div class="header-sub">Hotel & horecavastgoed · Spanje & West-Europa ${syncStatusHtml()} ${s.syncState==="synced"?`<a href="#" onclick="loadContacts();return false;" style="font-size:11px;color:var(--muted)">vernieuwen</a>`:""}</div>
       </div>
       <div class="header-actions">
+        <label class="btn-ghost" style="cursor:pointer;display:inline-flex;align-items:center;" title="Importeer LinkedIn connecties als CSV">
+          LinkedIn import
+          <input type="file" id="liImport" accept=".csv" style="display:none" onchange="handleLinkedInCSV(this)">
+        </label>
         <button class="btn-outline" onclick="openSearch()">Zoek kopers via internet</button>
         <button class="btn-primary" onclick="openForm(null)">+ Nieuw contact</button>
       </div>
@@ -504,6 +508,84 @@ function addSearchResult(idx) {
   const contact = {id:String(Date.now()),name:r.name||"",alias:"",email:"",phone:"",company:r.company||"",linkedinFirstDegree:false,locations:ss.loc?[ss.loc]:[],type:ss.type?[ss.type]:[],roomRange:ss.rooms||"",budget:ss.budget||"",notes:(r.activity||"")+(r.source?`\n\nBron: ${r.source}`:""),operator:false,status:"Lead",lastContact:new Date().toISOString().split("T")[0],source:"AI Zoeker"};
   saveContact(contact);
   setState({showSearch:false});
+}
+
+
+async function handleLinkedInCSV(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const text = await file.text();
+  const lines = text.split('\n').filter(l => l.trim());
+  if (lines.length < 2) { alert('Geen data gevonden in CSV.'); return; }
+
+  // Detect header row — LinkedIn CSV has some intro lines before actual headers
+  let headerIdx = lines.findIndex(l => l.toLowerCase().includes('first name') || l.toLowerCase().includes('voornaam'));
+  if (headerIdx === -1) { alert('Geen geldige LinkedIn CSV herkend. Exporteer via LinkedIn → Instellingen → Gegevensarchivering → Connecties.'); return; }
+
+  const headers = lines[headerIdx].split(',').map(h => h.replace(/"/g,'').trim().toLowerCase());
+  const firstIdx = headers.findIndex(h => h.includes('first'));
+  const lastIdx = headers.findIndex(h => h.includes('last'));
+  const companyIdx = headers.findIndex(h => h.includes('company'));
+  const positionIdx = headers.findIndex(h => h.includes('position'));
+  const emailIdx = headers.findIndex(h => h.includes('email'));
+
+  const dataLines = lines.slice(headerIdx + 1).filter(l => l.trim());
+  let imported = 0, skipped = 0;
+  const existingNames = state.contacts.map(c => c.name.toLowerCase());
+
+  const newContacts = [];
+  for (const line of dataLines) {
+    const cols = line.match(/(".*?"|[^,]+|(?<=,)(?=,)|^(?=,)|(?<=,)$)/g) || line.split(',');
+    const clean = cols.map(c => (c||'').replace(/^"|"$/g,'').trim());
+    const first = clean[firstIdx] || '';
+    const last = clean[lastIdx] || '';
+    const name = (first + ' ' + last).trim();
+    if (!name || name.length < 2) { skipped++; continue; }
+    if (existingNames.includes(name.toLowerCase())) { skipped++; continue; }
+
+    newContacts.push({
+      id: String(Date.now() + imported),
+      name,
+      alias: '',
+      email: emailIdx >= 0 ? (clean[emailIdx]||'') : '',
+      phone: '',
+      company: companyIdx >= 0 ? (clean[companyIdx]||'') : '',
+      linkedinFirstDegree: true,
+      locations: [],
+      type: [],
+      roomRange: '',
+      budget: '',
+      notes: positionIdx >= 0 && clean[positionIdx] ? `Functie: ${clean[positionIdx]}` : '',
+      operator: false,
+      status: 'Lead',
+      lastContact: new Date().toISOString().split('T')[0],
+      source: 'LinkedIn'
+    });
+    imported++;
+  }
+
+  if (newContacts.length === 0) {
+    alert(`Geen nieuwe contacten gevonden. ${skipped} al aanwezig of leeg.`);
+    input.value = '';
+    return;
+  }
+
+  if (!confirm(`${newContacts.length} nieuwe LinkedIn connecties importeren? (${skipped} overgeslagen omdat ze al bestaan of leeg zijn)`)) {
+    input.value = '';
+    return;
+  }
+
+  setState({syncState:'saving'}); render();
+  try {
+    const rows = newContacts.map(c => [String(c.id),c.name,c.alias,c.email,c.phone,c.company,String(c.linkedinFirstDegree),(c.locations||[]).join('|'),(c.type||[]).join('|'),c.roomRange,c.budget,c.notes,String(c.operator),c.status,c.lastContact,c.source]);
+    await api({action:'append', range:SHEET_NAME, values:rows});
+    await loadContacts();
+    alert(`Klaar! ${imported} LinkedIn connecties geïmporteerd.`);
+  } catch(e) {
+    setState({syncState:'error', syncError: e.message});
+    render();
+  }
+  input.value = '';
 }
 
 initSheet();
