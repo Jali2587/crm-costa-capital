@@ -206,14 +206,28 @@ async function delC(id){
 async function saveO(form){
   set({sync:"saving"});render();
   try{
+    // Ensure headers exist first
+    const h=await api({action:"get",range:`${SO}!A1:M1`});
+    const hrow=(h.values&&h.values[0])||[];
+    if(!hrow[0]||hrow[0]!=="id"){
+      await api({action:"update",range:`${SO}!A1:M1`,values:[OH]});
+    }
+    // Now save the object
     const d=await api({action:"get",range:`${SO}!A2:A1000`});
     const rows=d.values||[];
     const idx=rows.findIndex(r=>r[0]===String(form.id));
-    if(idx>=0)await api({action:"update",range:`${SO}!A${idx+2}:L${idx+2}`,values:[o2r(form)]});
-    else await api({action:"append",range:SO,values:[o2r(form)]});
+    const row=o2r(form);
+    if(idx>=0){
+      await api({action:"update",range:`${SO}!A${idx+2}:M${idx+2}`,values:[row]});
+    } else {
+      await api({action:"append",range:SO,values:[row]});
+    }
     await loadO();
     set({selO:form,showOF:false,editO:null,showPdf:false,sync:"synced"});
-  }catch(e){set({sync:"error",syncErr:e.message});}
+  }catch(e){
+    set({sync:"error",syncErr:"Object opslaan mislukt: "+e.message});
+    alert("Fout bij opslaan: "+e.message);
+  }
   render();
 }
 
