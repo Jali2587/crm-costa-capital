@@ -100,6 +100,77 @@ exports.handler = async (event) => {
       return { statusCode: 500, headers, body: JSON.stringify({ error: "GOOGLE_SHEETS_API_KEY niet ingesteld in Netlify." }) };
     }
 
+    // ── LIVE BUYER SEARCH via Anthropic API ─────────────────────────────
+    if (action === "search") {
+      if (!ANTHROPIC_KEY) {
+        return { statusCode: 500, headers, body: JSON.stringify({ error: "ANTHROPIC_API_KEY niet ingesteld in Netlify environment variables." }) };
+      }
+      const { criteria } = body;
+      const payload = JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        tools: [{ type: "web_search_20250305", name: "web_search" }],
+        system: 'Dealflow-assistent Costa Capital. Zoek ECHTE RECENTE kopers en investeerders voor vastgoed. Geef UITSLUITEND een JSON array:
+[{"name":"Naam","company":"Organisatie","deal_type":"Type deal","activity":"Wat ze recent deden","why_match":"Waarom goede match","linkedin_likely":true,"source":"Bron"}]
+4-8 resultaten. Feitelijk, geen verzonnen namen.',
+        messages: [{ role: "user", content: `Zoek kopers en investeerders voor vastgoed met criteria: ${criteria}` }]
+      });
+      const result = await httpsRequest(
+        "https://api.anthropic.com/v1/messages",
+        "POST",
+        payload,
+        { "x-api-key": ANTHROPIC_KEY, "anthropic-version": "2023-06-01", "Content-Type": "application/json" }
+      );
+      if (result.status !== 200) {
+        return { statusCode: result.status, headers, body: JSON.stringify({ error: `API fout: ${JSON.stringify(result.body).slice(0,300)}` }) };
+      }
+      const text = (result.body.content || []).filter(b => b.type === "text").map(b => b.text).join("");
+      const match = text.match(/\[[\s\S]*?\]/);
+      let results = [];
+      if (match) { try { results = JSON.parse(match[0]); } catch(e) {} }
+      return { statusCode: 200, headers, body: JSON.stringify({ results }) };
+    }
+
+    // ── AI CRM MATCH (Laag 2: slim matchen op CRM contacten) ─────────────
+    if (action === "aimatch") {
+      if (!ANTHROPIC_KEY) {
+        return { statusCode: 500, headers, body: JSON.stringify({ error: "ANTHROPIC_API_KEY niet ingesteld." }) };
+      }
+      const { object, candidates } = body;
+      if (!candidates || candidates.length === 0) {
+        return { statusCode: 200, headers, body: JSON.stringify({ matches: [] }) };
+      }
+      const contactList = candidates.map((c, i) =>
+        i+1 + ". " + c.name + (c.company ? " (" + c.company + ")" : "") + (c.notes ? " | " + c.notes.slice(0,120) : "") + (c.linkedinFirstDegree ? " [LI-1e-lijn]" : "")
+      ).join("\n");
+
+      const payload = JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        tools: [{ type: "web_search_20250305", name: "web_search" }],
+        system: "Je bent dealflow-analist voor Costa Capital. Analyseer welke contacten de beste match zijn voor een vastgoedobject op basis van hun bedrijf en achtergrond. Zoek online naar recente vastgoedactiviteit van de meest veelbelovende namen. Geef UITSLUITEND JSON array: [{name:Exacte naam uit lijst,reason:Waarom match,activity:Recente online activiteit of leeg,score:1-10,linkedin:true/false}] Maximaal 8 beste matches gesorteerd op score.",
+        messages: [{
+          role: "user",
+          content: "Object: " + object.name + " | Type: " + object.type + " | Locatie: " + object.location + " | Prijs: " + object.price + " | Sterren: " + (object.stars || "onbekend") + "\n\nAnalyseer deze contacten en zoek online naar hun recente vastgoedactiviteit:\n\n" + contactList + "\n\nWelke zijn de beste potentiele kopers voor dit object?"
+        }]
+      });
+
+      const result = await httpsRequest(
+        "https://api.anthropic.com/v1/messages", "POST", payload,
+        { "x-api-key": ANTHROPIC_KEY, "anthropic-version": "2023-06-01", "Content-Type": "application/json" }
+      );
+      if (result.status !== 200) {
+        return { statusCode: result.status, headers, body: JSON.stringify({ error: "API fout: " + JSON.stringify(result.body).slice(0,200) }) };
+      }
+      const aiText = (result.body.content || []).filter(b => b.type === "text").map(b => b.text).join("");
+      const aiM = aiText.match(/\[([\s\S]*?)\]/);
+      let matches = [];
+      if (aiM) { try { matches = JSON.parse("[" + aiM[1] + "]"); } catch(e) {
+        try { matches = JSON.parse(aiText.match(/\[[\s\S]*\]/)[0]); } catch(e2) {}
+      }}
+      return { statusCode: 200, headers, body: JSON.stringify({ matches }) };
+    }
+
     if (action === "sheetinfo") {
       const r = await httpsRequest(`${BASE}?key=${SHEETS_KEY}&fields=sheets.properties.title`);
       return { statusCode: 200, headers, body: JSON.stringify(r.body) };
