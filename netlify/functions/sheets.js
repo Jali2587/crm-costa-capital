@@ -11,22 +11,39 @@ const CORS = {
 
 // ── Service Account JWT ──────────────────────────────────────────────────────
 
+function fixPrivateKey(key) {
+  // Stap 1: vervang letterlijke \n door echte newlines
+  key = key.replace(/\\n/g, "\n");
+  // Stap 2: als de key geen echte newlines heeft, formatteer hem opnieuw
+  if (!key.includes("\n")) {
+    // Haal BEGIN en END eruit, formatteer de body met 64-char regels
+    var begin = "-----BEGIN PRIVATE KEY-----";
+    var end = "-----END PRIVATE KEY-----";
+    key = key.replace(begin, "").replace(end, "").replace(/\s/g, "");
+    var lines = [begin];
+    for (var i = 0; i < key.length; i += 64) {
+      lines.push(key.slice(i, i + 64));
+    }
+    lines.push(end);
+    key = lines.join("\n") + "\n";
+  }
+  return key;
+}
+
 function getServiceAccount() {
-  // Optie 1: aparte env vars (robuuster — geen JSON parsing nodig)
   var email = process.env.GOOGLE_CLIENT_EMAIL;
   var key = process.env.GOOGLE_PRIVATE_KEY;
   if (email && key) {
     return {
       client_email: email,
-      private_key: key.replace(/\\n/g, "\n")
+      private_key: fixPrivateKey(key)
     };
   }
-  // Optie 2: volledige JSON fallback
   var raw = process.env.GOOGLE_SERVICE_ACCOUNT;
   if (!raw) throw new Error("Stel GOOGLE_CLIENT_EMAIL + GOOGLE_PRIVATE_KEY in als Netlify env vars");
   try {
     var sa = JSON.parse(raw);
-    sa.private_key = sa.private_key.replace(/\\n/g, "\n");
+    sa.private_key = fixPrivateKey(sa.private_key);
     return sa;
   }
   catch(e) { throw new Error("GOOGLE_SERVICE_ACCOUNT JSON ongeldig: " + e.message); }
