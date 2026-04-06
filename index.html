@@ -562,8 +562,46 @@ function mSearch(){
     }).join("")}`:""}
   </div></div>`; }
 
-render();
-init().then(()=>render());
+// ── Login ────────────────────────────────────────────────────────────────────
+const PASSWORD = "JaapHans2026!";
+const SESSION_KEY = "cc_auth";
+
+function isLoggedIn(){
+  return sessionStorage.getItem(SESSION_KEY) === "1";
+}
+
+function showLogin(){
+  document.getElementById("app").innerHTML = `
+    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;">
+      <div style="background:#fff;border:0.5px solid var(--border);border-radius:16px;padding:40px;width:min(380px,95vw);text-align:center;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+        <div style="font-size:22px;font-weight:500;margin-bottom:6px;"><span style="color:var(--gold)">Costa Capital</span></div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:28px;">Deal Platform</div>
+        <input id="pw-input" type="password" placeholder="Wachtwoord" style="margin-bottom:12px;text-align:center;font-size:15px;padding:12px;" onkeydown="if(event.key==='Enter')doLogin()">
+        <div id="pw-err" style="color:#A32D2D;font-size:12px;margin-bottom:10px;min-height:16px;"></div>
+        <button class="btn-primary" style="width:100%;padding:12px;font-size:15px;" onclick="doLogin()">Inloggen</button>
+      </div>
+    </div>`;
+  setTimeout(()=>{ const el=document.getElementById("pw-input"); if(el) el.focus(); }, 50);
+}
+
+function doLogin(){
+  const val = document.getElementById("pw-input").value;
+  if (val === PASSWORD) {
+    sessionStorage.setItem(SESSION_KEY, "1");
+    render();
+    init().then(()=>render());
+  } else {
+    document.getElementById("pw-err").textContent = "Onjuist wachtwoord.";
+    document.getElementById("pw-input").value = "";
+  }
+}
+
+if (isLoggedIn()){
+  render();
+  init().then(()=>render());
+} else {
+  showLogin();
+}
 </script>
 </body>
 </html>
