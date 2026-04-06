@@ -12,8 +12,7 @@
   .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
   .header-title { font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
   .header-title span { color: var(--gold); }
-  .header-sub { font-size: 12px; color: var(--muted); margin-top: 3px; display: flex; align-items: center; gap: 8px; }
-  .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .header-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
   .tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
   .tab { padding: 10px 20px; font-size: 14px; cursor: pointer; border: none; background: none; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; font-family: inherit; }
   .tab.active { color: var(--gold); border-bottom-color: var(--gold); font-weight: 500; }
@@ -29,7 +28,7 @@
   .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
   .stat-value { font-size: 26px; font-weight: 500; }
   .main { display: grid; gap: 14px; }
-  .main.split { grid-template-columns: 320px 1fr; }
+  .main.split { grid-template-columns: 340px 1fr; }
   input, select, textarea { font-family: inherit; font-size: 13px; padding: 8px 12px; border: 0.5px solid rgba(0,0,0,0.13); border-radius: 7px; background: #FAFAFA; color: var(--dark); outline: none; width: 100%; }
   input:focus, select:focus, textarea:focus { border-color: var(--gold); }
   textarea { resize: vertical; }
@@ -37,33 +36,21 @@
   .card:hover { border-color: rgba(201,168,76,0.4); }
   .card.selected { background: #FFFBF0; border: 1.5px solid var(--gold); }
   .badge { border-radius: 4px; font-size: 11px; padding: 2px 7px; font-weight: 500; white-space: nowrap; }
-  .tag { border-radius: 4px; font-size: 11px; padding: 2px 7px; display: inline-flex; align-items: center; gap: 4px; background: rgba(201,168,76,0.12); color: var(--gold); border: 0.5px solid rgba(201,168,76,0.3); }
-  .tag .remove { cursor: pointer; opacity: 0.6; font-size: 10px; }
-  .tags { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
-  .badges { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
   .avatar { border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 500; flex-shrink: 0; }
   .detail { background: var(--card); border: 0.5px solid var(--border); border-radius: 12px; padding: 22px; overflow-y: auto; max-height: calc(100vh - 160px); }
   .sec-title { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; border-bottom: 0.5px solid rgba(201,168,76,0.3); padding-bottom: 4px; margin-top: 16px; }
   .drow { display: flex; gap: 10px; margin-bottom: 5px; font-size: 13px; }
-  .dlabel { color: var(--muted); min-width: 120px; flex-shrink: 0; }
+  .dlabel { color: var(--muted); min-width: 130px; flex-shrink: 0; }
   .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-  .modal { background: #fff; border-radius: 14px; padding: 28px; width: min(620px, 95vw); max-height: 90vh; overflow-y: auto; border: 1px solid rgba(201,168,76,0.4); }
-  .modal-wide { width: min(760px, 96vw); }
+  .modal { background: #fff; border-radius: 14px; padding: 28px; width: min(640px, 95vw); max-height: 90vh; overflow-y: auto; border: 1px solid rgba(201,168,76,0.4); }
   .modal-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   .modal-title { font-size: 17px; font-weight: 500; }
   .modal-close { background: none; border: none; font-size: 20px; color: var(--muted); line-height: 1; }
-  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
   .frow { margin-bottom: 12px; }
   .flabel { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
   .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-  .tag-input-row { display: flex; gap: 6px; margin-bottom: 5px; }
-  .tag-input-row input { flex: 1; }
-  .tag-input-row button { padding: 8px 12px; background: var(--gold); color: #fff; border: none; border-radius: 7px; flex-shrink: 0; }
-  .tag-sug { background: none; border: 0.5px solid var(--border); border-radius: 4px; font-size: 11px; padding: 2px 7px; color: var(--muted); cursor: pointer; }
-  .tag-sugs { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
-  .obj-price { font-size: 20px; font-weight: 500; color: var(--gold); }
   .match-card { background: #F8F6F1; border: 0.5px solid var(--border); border-radius: 8px; padding: 10px 13px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
-  .ai-box { background: rgba(201,168,76,0.06); border: 0.5px solid rgba(201,168,76,0.3); border-radius: 10px; padding: 20px; text-align: center; margin: 16px 0; }
   .ok-box { background: #F0FFF4; border: 0.5px solid #9FE1CB; border-radius: 9px; padding: 13px 16px; margin-bottom: 16px; font-size: 13px; color: #1A6B3C; }
   .err-box { background: #FFF5F5; border: 0.5px solid #F5CACA; border-radius: 9px; padding: 14px 18px; margin-bottom: 16px; font-size: 13px; color: #A32D2D; }
   .list-scroll { overflow-y: auto; max-height: calc(100vh - 310px); }
@@ -82,513 +69,498 @@
   <div class="spinner" style="padding:80px 0"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
 </div>
 <script>
-const SHEET_ID="1y_QNvwgMSRydeeY2etGJUBREn-kDNRd9MuxV9nlJ2wc";
-const SC="contacten Hans en Jaap voor hotels en overig";
-const SO="Objecten";
-const CH=["id","name","alias","email","phone","company","linkedinFirstDegree","locations","type","roomRange","starMin","budget","notes","operator","status","lastContact","source"];
-const OH=["id","name","type","stars","location","price","rooms","size","status","description","matchCriteria","addedDate","source"];
-const STATS=["Lead","Actief","In onderhandeling","Gesloten","Inactief"];
-const OSTATS=["Beschikbaar","In analyse","In onderhandeling","Gesloten","Inactief"];
-const STARS=["","1 ster","2 sterren","3 sterren","4 sterren","5 sterren","Niet van toepassing"];
-const OTYPES=["Hotel","Boutique hotel","Resort","Aparthotel","Portfolio","Development","Nursing home","Mixed use","Kantoor","Retail","Wonen","Overig"];
-const LOCS=["Madrid","Barcelona","Valencia","Alicante","Málaga","Sevilla","Marbella","Costa del Sol","Costa Blanca","Ibiza","Mallorca","Portugal","Duitsland","Nederland","België","Frankrijk"];
-const AC=["#C9A84C","#1A4A7A","#1A6B3C","#7A3A1A","#4A1A7A","#1A6B6B"];
-const SC2={"Lead":"#E67E22","Actief":"#1A6B3C","In onderhandeling":"#1A4A7A","Gesloten":"#7A3A1A","Inactief":"#888"};
-const OC={"Beschikbaar":"#1A6B3C","In analyse":"#1A4A7A","In onderhandeling":"#E67E22","Gesloten":"#7A3A1A","Inactief":"#888"};
+const SHEET_ID = "1y_QNvwgMSRydeeY2etGJUBREn-kDNRd9MuxV9nlJ2wc";
+const SK = "Kopers en Operators";
+const SO = "Objecten";
+const KH = ["id","naam","bedrijf","email","telefoon","type","locaties","budget","zoekcriteria","notities","status","bron","toegevoegd"];
+const OH = ["id","naam","type","sterren","locatie","prijs","kamers","oppervlakte","status","beschrijving","matchCriteria","toegevoegd","bron"];
+const KTYPES = ["Koper","Operator","Investeerder","Fonds","Family Office","Ontwikkelaar","Overig"];
+const OSTATS = ["Beschikbaar","In analyse","In onderhandeling","Gesloten","Inactief"];
+const OTYPES = ["Hotel","Boutique hotel","Resort","Aparthotel","Portfolio","Development","Nursing home","Mixed use","Overig"];
+const KSTATS = ["Lead","Actief","In onderhandeling","Gesloten","Inactief"];
+const AC = ["#C9A84C","#1A4A7A","#1A6B3C","#7A3A1A","#4A1A7A","#1A6B6B"];
+const SC2 = {"Lead":"#E67E22","Actief":"#1A6B3C","In onderhandeling":"#1A4A7A","Gesloten":"#7A3A1A","Inactief":"#888"};
+const OC = {"Beschikbaar":"#1A6B3C","In analyse":"#1A4A7A","In onderhandeling":"#E67E22","Gesloten":"#7A3A1A","Inactief":"#888"};
 
-let S={contacts:[],objects:[],tab:"kopers",selC:null,selO:null,fTxt:"",fStat:"Alle",fLI:false,ofTxt:"",ofStat:"Alle",sync:"loading",syncErr:"",showCF:false,editC:null,showOF:false,editO:null,showSearch:false,showPdf:false};
-let CF={},OF={},pdfState={loading:false,extracted:null,error:"",fname:""};
-let SS={loc:"",type:"",rooms:"",budget:"",extra:"",loading:false,results:null,error:"",forObject:null};
-let AIM={loading:false,matches:null,error:"",objId:""};
+let S = {kopers:[], objecten:[], tab:"kopers", selK:null, selO:null, fTxt:"", fStat:"Alle", ofTxt:"", ofStat:"Alle", sync:"loading", syncErr:"", showKF:false, editK:null, showOF:false, editO:null, showPdfO:false, showPdfK:false, showSearch:false};
+let KF = {}, OF = {};
+let pdfO = {loading:false, extracted:null, error:"", fname:""};
+let pdfK = {loading:false, extracted:null, error:"", fname:""};
+let SS = {loc:"", type:"", budget:"", extra:"", loading:false, results:null, error:"", forObject:null};
 
-// ── Koper toevoegen vanuit zoekresultaat of AI match, gekoppeld aan object ──
+function set(u){ Object.assign(S, u); }
 
-async function addBuyerFromResult(contactData, objectId) {
-  // Sla contact op in CRM
-  await saveC(contactData, true);
-  // Koppel als mogelijke koper aan het object via een notitie in het contact
-  // (contact wordt opgeslagen met objectId in de notities als referentie)
-  render();
+async function api(b){
+  const r = await fetch("/.netlify/functions/sheets", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(b)});
+  const d = await r.json();
+  if (d.error) throw new Error(d.error);
+  return d;
 }
 
-async function addSearchResultToCRM(name, company, activity, loc, type, rooms, budget, objectId) {
-  const contact = {
-    id: String(Date.now()),
-    name: name,
-    alias: "",
-    email: "",
-    phone: "",
-    company: company,
-    linkedinFirstDegree: false,
-    locations: [loc].filter(Boolean),
-    type: [type].filter(Boolean),
-    roomRange: rooms || "",
-    starMin: "",
-    budget: budget || "",
-    notes: (activity || "") + (objectId ? "\n\n📌 Gevonden via AI zoeker voor object: " + objectId : ""),
-    operator: false,
-    status: "Lead",
-    lastContact: new Date().toISOString().split("T")[0],
-    source: "AI Zoeker"
-  };
+function r2k(r){ if(!r||!r[0])return null; return {id:r[0]||"",naam:r[1]||"",bedrijf:r[2]||"",email:r[3]||"",telefoon:r[4]||"",type:r[5]||"",locaties:r[6]||"",budget:r[7]||"",zoekcriteria:r[8]||"",notities:r[9]||"",status:r[10]||"Lead",bron:r[11]||"",toegevoegd:r[12]||""}; }
+function k2r(k){ return [k.id,k.naam,k.bedrijf||"",k.email||"",k.telefoon||"",k.type||"",k.locaties||"",k.budget||"",k.zoekcriteria||"",k.notities||"",k.status||"Lead",k.bron||"",k.toegevoegd||""]; }
+function r2o(r){ if(!r||!r[1])return null; return {id:r[0]||"",naam:r[1]||"",type:r[2]||"",sterren:r[3]||"",locatie:r[4]||"",prijs:r[5]||"",kamers:r[6]||"",oppervlakte:r[7]||"",status:r[8]||"Beschikbaar",beschrijving:r[9]||"",matchCriteria:r[10]||"",toegevoegd:r[11]||"",bron:r[12]||""}; }
+function o2r(o){ return [o.id,o.naam||"",o.type||"",o.sterren||"",o.locatie||"",o.prijs||"",o.kamers||"",o.oppervlakte||"",o.status||"Beschikbaar",o.beschrijving||"",o.matchCriteria||"",o.toegevoegd||"",o.bron||""]; }
 
-  // Zoek het object op voor de naam
-  const obj = S.objects.find(o => o.id === objectId);
-  if (obj) {
-    contact.notes = (activity || "") + "\n\n📌 Gevonden als potentiële koper voor: " + obj.name + " (" + obj.location + ", " + obj.price + ")";
-  }
-
-  set({sync:"saving"}); render();
-  try {
-    await api({action:"append", range:SC, values:[c2r(contact)]});
-    await loadC();
-    set({sync:"synced"});
-    // Update zoekresultaten zodat knop verandert naar "In CRM"
-    if (SS.results) {
-      SS.results = SS.results.map(r => r._name === name ? {...r, _added: true} : r);
-    }
-  } catch(e) {
-    set({sync:"error", syncErr:e.message});
-  }
-  render();
-}
-
-async function runAiMatch(obj){
-  const loc=(obj.location||"").toLowerCase();
-  const typ=(obj.type||"").toLowerCase();
-  const kws=(obj.matchCriteria||"").toLowerCase().split(",").map(k=>k.trim()).filter(Boolean);
-  const layer1 = S.contacts.filter(c=>{
-    const lm=c.locations.some(l=>loc.includes(l.toLowerCase())||l.toLowerCase().split(",").some(p=>loc.includes(p.trim())));
-    const tm=c.type.some(t=>typ.includes(t.toLowerCase())||t.toLowerCase().includes(typ.split(" ")[0]));
-    const km=kws.some(k=>c.locations.some(l=>l.toLowerCase().includes(k))||c.type.some(t=>t.toLowerCase().includes(k))||c.company.toLowerCase().includes(k));
-    const nm=c.notes&&kws.some(k=>c.notes.toLowerCase().includes(k));
-    return lm||tm||km||nm;
-  });
-  const companyKws=["vastgoed","hotel","invest","capital","fund","fonds","property","real estate","resort","hospitality","ontwikkel","finance"];
-  const layer1b = S.contacts.filter(c=>!layer1.includes(c)&&c.company&&companyKws.some(k=>c.company.toLowerCase().includes(k)));
-  const candidates = [...layer1,...layer1b].slice(0,50);
-
-  AIM={loading:true,matches:null,error:"",objId:obj.id};
-  set({selO:obj}); render();
-
-  try{
-    const resp=await fetch("/.netlify/functions/sheets",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        action:"aimatch",
-        object:{name:obj.name,type:obj.type,location:obj.location,price:obj.price,stars:obj.stars},
-        candidates:candidates.map(c=>({name:c.name,company:c.company,notes:c.notes,linkedinFirstDegree:c.linkedinFirstDegree}))
-      })
-    });
-    const d=await resp.json();
-    if(d.error)throw new Error(d.error);
-    AIM={loading:false,matches:d.matches||[],error:"",objId:obj.id};
-  }catch(e){
-    AIM={loading:false,matches:null,error:e.message,objId:obj.id};
-  }
-  render();
-}
-
-async function api(b){const r=await fetch("/.netlify/functions/sheets",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)});if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}
-
-function r2c(r){if(!r||!r[1])return null;return{id:r[0]||"",name:r[1]||"",alias:r[2]||"",email:r[3]||"",phone:r[4]||"",company:r[5]||"",linkedinFirstDegree:r[6]==="true",locations:r[7]?r[7].split("|"):[],type:r[8]?r[8].split("|"):[],roomRange:r[9]||"",starMin:r[10]||"",budget:r[11]||"",notes:r[12]||"",operator:r[13]==="true",status:r[14]||"Lead",lastContact:r[15]||"",source:r[16]||""};}
-function c2r(c){return[String(c.id),c.name,c.alias||"",c.email||"",c.phone||"",c.company||"",String(c.linkedinFirstDegree),(c.locations||[]).join("|"),(c.type||[]).join("|"),c.roomRange||"",c.starMin||"",c.budget||"",c.notes||"",String(c.operator),c.status,c.lastContact||"",c.source||""];}
-function r2o(r){if(!r||!r[1])return null;return{id:r[0]||"",name:r[1]||"",type:r[2]||"",stars:r[3]||"",location:r[4]||"",price:r[5]||"",rooms:r[6]||"",size:r[7]||"",status:r[8]||"Beschikbaar",description:r[9]||"",matchCriteria:r[10]||"",addedDate:r[11]||"",source:r[12]||""};}
-function o2r(o){return[String(o.id),o.name||"",o.type||"",o.stars||"",o.location||"",o.price||"",o.rooms||"",o.size||"",o.status||"Beschikbaar",o.description||"",o.matchCriteria||"",o.addedDate||"",o.source||""];}
-
-function set(u){Object.assign(S,u);}
+function today(){ return new Date().toISOString().split("T")[0]; }
 
 async function init(){
   set({sync:"loading"});
-  try{
-    const info=await api({action:"sheetinfo"});
-    const sheets=(info.sheets||[]).map(s=>s.properties.title);
-    if(!sheets.includes(SC))throw new Error(`Tabblad "${SC}" niet gevonden.`);
-    if(!sheets.includes(SO)){await api({action:"append",range:SO,values:[OH]});}
-    await Promise.all([loadC(),loadO()]);
+  try {
+    const info = await api({action:"sheetinfo"});
+    const sheets = (info.sheets||[]).map(s=>s.properties.title);
+    if (!sheets.includes(SK)) await api({action:"append", range:SK, values:[KH]});
+    if (!sheets.includes(SO)) await api({action:"append", range:SO, values:[OH]});
+    await Promise.all([loadK(), loadO()]);
     set({sync:"synced"});
-  }catch(e){set({sync:"error",syncErr:e.message});}
+  } catch(e){ set({sync:"error", syncErr:e.message}); }
   render();
 }
 
-async function loadC(){const d=await api({action:"get",range:`${SC}!A2:P10000`});S.contacts=(d.values||[]).map(r2c).filter(Boolean).filter(c=>c.name);}
+async function loadK(){
+  try {
+    const h = await api({action:"get", range:`${SK}!A1:M1`});
+    const hrow = (h.values&&h.values[0])||[];
+    if (!hrow[0]||hrow[0]!=="id") await api({action:"update", range:`${SK}!A1:M1`, values:[KH]});
+    const d = await api({action:"get", range:`${SK}!A2:M2000`});
+    S.kopers = (d.values||[]).map(r2k).filter(Boolean).filter(k=>k.naam);
+  } catch(e){ S.kopers=[]; }
+}
+
 async function loadO(){
-  try{
-    const h=await api({action:"get",range:`${SO}!A1:M1`});
-    const hrow=(h.values&&h.values[0])||[];
-    if(!hrow[0]||hrow[0]!=="id"){
-      await api({action:"update",range:`${SO}!A1:M1`,values:[OH]});
-    }
-    const d=await api({action:"get",range:`${SO}!A2:M1000`});
-    S.objects=(d.values||[]).map(r2o).filter(Boolean).filter(o=>o.name);
-  }catch(e){S.objects=[];}
-}
-async function reload(){set({sync:"loading"});render();try{await Promise.all([loadC(),loadO()]);set({sync:"synced"});}catch(e){set({sync:"error",syncErr:e.message});}render();}
-
-async function saveC(form, silent){
-  if(!silent) set({sync:"saving",render:true});
-  set({sync:"saving"}); if(!silent) render();
-  try{
-    const d=await api({action:"get",range:`${SC}!A2:A10000`});
-    const rows=d.values||[];
-    const idx=rows.findIndex(r=>r[0]===String(form.id));
-    if(idx>=0)await api({action:"update",range:`${SC}!A${idx+2}:P${idx+2}`,values:[c2r(form)]});
-    else await api({action:"append",range:SC,values:[c2r(form)]});
-    await loadC();
-    if(!silent) set({selC:form,showCF:false,editC:null,sync:"synced"});
-    else set({sync:"synced"});
-  }catch(e){set({sync:"error",syncErr:e.message});}
-  if(!silent) render();
+  try {
+    const h = await api({action:"get", range:`${SO}!A1:M1`});
+    const hrow = (h.values&&h.values[0])||[];
+    if (!hrow[0]||hrow[0]!=="id") await api({action:"update", range:`${SO}!A1:M1`, values:[OH]});
+    const d = await api({action:"get", range:`${SO}!A2:M1000`});
+    S.objecten = (d.values||[]).map(r2o).filter(Boolean).filter(o=>o.naam);
+  } catch(e){ S.objecten=[]; }
 }
 
-async function delC(id){
-  if(!confirm("Contact verwijderen?"))return;
-  set({sync:"saving"});render();
-  try{
-    const d=await api({action:"get",range:`${SC}!A2:P10000`});
-    const rows=(d.values||[]).filter(r=>r[0]!==String(id));
-    await api({action:"clear",range:`${SC}!A2:P10000`});
-    if(rows.length>0)await api({action:"update",range:`${SC}!A2:P${rows.length+1}`,values:rows});
-    await loadC();set({selC:null,sync:"synced"});
-  }catch(e){set({sync:"error",syncErr:e.message});}
+async function reload(){ set({sync:"loading"}); render(); try{ await Promise.all([loadK(),loadO()]); set({sync:"synced"}); }catch(e){ set({sync:"error",syncErr:e.message}); } render(); }
+
+async function saveK(form){
+  set({sync:"saving"}); render();
+  try {
+    const d = await api({action:"get", range:`${SK}!A2:A2000`});
+    const rows = d.values||[];
+    const idx = rows.findIndex(r=>r[0]===String(form.id));
+    if (idx>=0) await api({action:"update", range:`${SK}!A${idx+2}:M${idx+2}`, values:[k2r(form)]});
+    else await api({action:"append", range:SK, values:[k2r(form)]});
+    await loadK();
+    set({selK:form, showKF:false, editK:null, showPdfK:false, sync:"synced"});
+  } catch(e){ set({sync:"error", syncErr:e.message}); }
+  render();
+}
+
+async function delK(id){
+  if (!confirm("Koper verwijderen?")) return;
+  set({sync:"saving"}); render();
+  try {
+    const d = await api({action:"get", range:`${SK}!A2:M2000`});
+    const rows = (d.values||[]).filter(r=>r[0]!==String(id));
+    await api({action:"clear", range:`${SK}!A2:M2000`});
+    if (rows.length>0) await api({action:"update", range:`${SK}!A2:M${rows.length+1}`, values:rows});
+    await loadK(); set({selK:null, sync:"synced"});
+  } catch(e){ set({sync:"error", syncErr:e.message}); }
   render();
 }
 
 async function saveO(form){
-  set({sync:"saving"});render();
-  try{
-    var row=o2r(form);
-    var result=await api({action:"append",range:SO,values:[row]});
-    if(result.error){throw new Error(JSON.stringify(result.error));}
-    if(result.code&&result.code!==200){throw new Error("Sheets code "+result.code+": "+JSON.stringify(result));}
+  set({sync:"saving"}); render();
+  try {
+    const d = await api({action:"get", range:`${SO}!A2:A1000`});
+    const rows = d.values||[];
+    const idx = rows.findIndex(r=>r[0]===String(form.id));
+    if (idx>=0) await api({action:"update", range:`${SO}!A${idx+2}:M${idx+2}`, values:[o2r(form)]});
+    else await api({action:"append", range:SO, values:[o2r(form)]});
     await loadO();
-    set({selO:form,showOF:false,editO:null,showPdf:false,sync:"synced"});
-  }catch(e){
-    set({sync:"error",syncErr:e.message});
-    alert("Fout bij opslaan object:\n"+e.message);
-  }
+    set({selO:form, showOF:false, editO:null, showPdfO:false, sync:"synced"});
+  } catch(e){ set({sync:"error", syncErr:e.message}); alert("Fout: "+e.message); }
   render();
 }
+
 async function delO(id){
-  if(!confirm("Object verwijderen?"))return;
-  set({sync:"saving"});render();
-  try{
-    const d=await api({action:"get",range:`${SO}!A2:M1000`});
-    const rows=(d.values||[]).filter(r=>r[0]!==String(id));
-    await api({action:"clear",range:`${SO}!A2:L1000`});
-    if(rows.length>0)await api({action:"update",range:`${SO}!A2:L${rows.length+1}`,values:rows});
-    await loadO();set({selO:null,sync:"synced"});
-  }catch(e){set({sync:"error",syncErr:e.message});}
+  if (!confirm("Object verwijderen?")) return;
+  set({sync:"saving"}); render();
+  try {
+    const d = await api({action:"get", range:`${SO}!A2:M1000`});
+    const rows = (d.values||[]).filter(r=>r[0]!==String(id));
+    await api({action:"clear", range:`${SO}!A2:M1000`});
+    if (rows.length>0) await api({action:"update", range:`${SO}!A2:M${rows.length+1}`, values:rows});
+    await loadO(); set({selO:null, sync:"synced"});
+  } catch(e){ set({sync:"error", syncErr:e.message}); }
   render();
 }
 
 function matches(o){
-  if(!o)return[];
-  const loc=(o.location||"").toLowerCase();
-  const typ=(o.type||"").toLowerCase();
-  const kws=(o.matchCriteria||"").toLowerCase().split(",").map(k=>k.trim()).filter(Boolean);
-  return S.contacts.filter(c=>{
-    const lm=c.locations.some(l=>loc.includes(l.toLowerCase())||l.toLowerCase().split(",").some(lp=>loc.includes(lp.trim())));
-    const tm=c.type.some(t=>typ.includes(t.toLowerCase())||t.toLowerCase().includes(typ.split(" ")[0]));
-    const km=kws.some(k=>c.locations.some(l=>l.toLowerCase().includes(k))||c.type.some(t=>t.toLowerCase().includes(k)));
-    const sm=!c.starMin||!o.stars||o.stars>=c.starMin;
-    return (lm||tm||km)&&sm;
-  }).slice(0,25);
+  if (!o) return [];
+  const loc = (o.locatie||"").toLowerCase();
+  const typ = (o.type||"").toLowerCase();
+  return S.kopers.filter(k=>{
+    const lm = (k.locaties||"").toLowerCase().split(",").some(l=>l.trim()&&loc.includes(l.trim()));
+    const tm = (k.type||"").toLowerCase().split(",").some(t=>t.trim()&&(typ.includes(t.trim())||t.trim().includes(typ.split(" ")[0])));
+    const zm = (k.zoekcriteria||"").toLowerCase().includes(typ.split(" ")[0]);
+    return lm || tm || zm;
+  }).slice(0,20);
 }
 
-async function handlePDF(input){
-  const file=input.files[0];if(!file)return;
-  pdfState={loading:true,extracted:null,error:"",fname:file.name};
-  set({showPdf:true});render();
-  try{
-    if(file.size>30*1024*1024)throw new Error(`PDF te groot (${(file.size/1024/1024).toFixed(1)}MB). Max 30MB.`);
-    const b64=await new Promise((res,rej)=>{
-      const r=new FileReader();
-      r.onload=()=>{try{res(r.result.split(",")[1]);}catch(e){rej(new Error("Leesfout"));}};
-      r.onerror=()=>rej(new Error("Bestand kon niet worden gelezen"));
-      r.readAsDataURL(file);
-    });
-    if(!b64||b64.length<100)throw new Error("PDF lijkt leeg of onleesbaar.");
-    const resp=await fetch("/.netlify/functions/sheets",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({action:"extractpdf",pdfBase64:b64,filename:file.name})
-    });
-    const data=await resp.json();
-    if(!resp.ok||data.error)throw new Error(data.error||`Fout ${resp.status}`);
-    const ex=data.extracted;
-    if(!ex||!ex.name)throw new Error("AI kon geen vastgoeddata vinden in dit document.");
-    pdfState={loading:false,extracted:ex,error:"",fname:file.name};
-    OF={id:String(Date.now()),name:ex.name||"",type:ex.type||"Hotel",stars:ex.stars||"",location:ex.location||"",price:ex.price||"",rooms:ex.rooms||"",size:ex.size||"",status:"Beschikbaar",description:ex.description||"",matchCriteria:ex.matchCriteria||"",addedDate:new Date().toISOString().split("T")[0],source:file.name};
-  }catch(e){pdfState={loading:false,extracted:null,error:e.message,fname:file.name};}
-  render();input.value="";}
+async function readPDF(file){
+  if (file.size>30*1024*1024) throw new Error("PDF te groot. Max 30MB.");
+  return new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = ()=>{ try{ res(r.result.split(",")[1]); }catch(e){ rej(e); } };
+    r.onerror = ()=>rej(new Error("Leesfout"));
+    r.readAsDataURL(file);
+  });
+}
 
-async function handleLI(input){
-  const file=input.files[0];if(!file)return;
-  const text=await file.text();
-  const lines=text.split('\n').map(l=>{l=l.replace(/;;+\s*$/,'').trim();if(l.startsWith('"')&&l.endsWith('"'))l=l.slice(1,-1).replace(/""/g,'"');return l;}).filter(l=>l.length>0);
-  const hi=lines.findIndex(l=>l.toLowerCase().includes('first name'));
-  if(hi===-1){alert('Geen geldige LinkedIn CSV.');input.value='';return;}
-  const hdr=lines[hi].split(',').map(h=>h.replace(/"/g,'').trim().toLowerCase());
-  const fi=hdr.findIndex(h=>h.includes('first')),li=hdr.findIndex(h=>h.includes('last')),ci=hdr.findIndex(h=>h.includes('company')),pi=hdr.findIndex(h=>h.includes('position')),ei=hdr.findIndex(h=>h.includes('email'));
-  function pcsv(l){const r=[];let c='',q=false;for(let i=0;i<l.length;i++){const ch=l[i];if(ch==='"'){if(q&&l[i+1]==='"'){c+='"';i++;}else q=!q;}else if(ch===','&&!q){r.push(c.trim());c='';}else c+=ch;}r.push(c.trim());return r;}
-  const en=S.contacts.map(c=>c.name.toLowerCase());
-  const nc=[];let sk=0;
-  for(const l of lines.slice(hi+1)){if(!l.trim())continue;const cols=pcsv(l);const f=(cols[fi]||'').replace(/^"|"$/g,'').trim(),la=(cols[li]||'').replace(/^"|"$/g,'').trim(),n=(f+' '+la).trim();if(!n||n.length<2){sk++;continue;}if(en.includes(n.toLowerCase())){sk++;continue;}const co=ci>=0?(cols[ci]||'').replace(/^"|"$/g,'').trim():'',po=pi>=0?(cols[pi]||'').replace(/^"|"$/g,'').trim():'',em=ei>=0?(cols[ei]||'').replace(/^"|"$/g,'').trim():'';nc.push({id:String(Date.now()+nc.length),name:n,alias:'',email:em,phone:'',company:co,linkedinFirstDegree:true,locations:[],type:[],roomRange:'',budget:'',notes:po?`Functie: ${po}`:'',operator:false,status:'Lead',lastContact:new Date().toISOString().split('T')[0],source:'LinkedIn'});en.push(n.toLowerCase());}
-  if(nc.length===0){alert(`Geen nieuwe contacten.\n${sk} overgeslagen.`);input.value='';return;}
-  if(!confirm(`${nc.length} nieuwe LinkedIn connecties importeren?\n(${sk} overgeslagen)`)){input.value='';return;}
-  set({sync:'saving'});render();
-  try{const B=100;for(let i=0;i<nc.length;i+=B){await api({action:'append',range:SC,values:nc.slice(i,i+B).map(c2r)});}await loadC();set({sync:'synced'});alert(`Klaar! ${nc.length} geïmporteerd.`);}
-  catch(e){set({sync:'error',syncErr:e.message});}
-  render();input.value='';
+async function handlePdfO(input){
+  const file = input.files[0]; if (!file) return;
+  pdfO = {loading:true, extracted:null, error:"", fname:file.name};
+  set({showPdfO:true}); render();
+  try {
+    const b64 = await readPDF(file);
+    const resp = await fetch("/.netlify/functions/sheets", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({action:"extractpdf", pdfBase64:b64, filename:file.name})});
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    const ex = data.extracted;
+    if (!ex||!ex.name) throw new Error("AI kon geen vastgoeddata vinden.");
+    pdfO = {loading:false, extracted:ex, error:"", fname:file.name};
+    OF = {id:String(Date.now()), naam:ex.name||"", type:ex.type||"Hotel", sterren:ex.stars||"", locatie:ex.location||"", prijs:ex.price||"", kamers:ex.rooms||"", oppervlakte:ex.size||"", status:"Beschikbaar", beschrijving:ex.description||"", matchCriteria:ex.matchCriteria||"", toegevoegd:today(), bron:file.name};
+  } catch(e){ pdfO = {loading:false, extracted:null, error:e.message, fname:file.name}; }
+  render(); input.value="";
+}
+
+async function handlePdfK(input){
+  const file = input.files[0]; if (!file) return;
+  pdfK = {loading:true, extracted:null, error:"", fname:file.name};
+  set({showPdfK:true}); render();
+  try {
+    const b64 = await readPDF(file);
+    const resp = await fetch("/.netlify/functions/sheets", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({action:"extractkoper", pdfBase64:b64, filename:file.name})});
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+    const ex = data.extracted;
+    if (!ex||!ex.naam) throw new Error("AI kon geen koper/operator profiel vinden.");
+    pdfK = {loading:false, extracted:ex, error:"", fname:file.name};
+    KF = {id:String(Date.now()), naam:ex.naam||"", bedrijf:ex.bedrijf||"", email:ex.email||"", telefoon:ex.telefoon||"", type:ex.type||"Koper", locaties:ex.locaties||"", budget:ex.budget||"", zoekcriteria:ex.zoekcriteria||"", notities:ex.notities||"", status:"Lead", bron:file.name, toegevoegd:today()};
+  } catch(e){ pdfK = {loading:false, extracted:null, error:e.message, fname:file.name}; }
+  render(); input.value="";
 }
 
 async function runSearch(){
-  if(!SS.loc&&!SS.type)return;
-  SS.loading=true;SS.results=null;SS.error="";render();
-  const cr=[SS.loc&&`Locatie: ${SS.loc}`,SS.type&&`Type: ${SS.type}`,SS.rooms&&`Kamers: ${SS.rooms}`,SS.budget&&`Budget: ${SS.budget}`,SS.extra&&`Extra: ${SS.extra}`].filter(Boolean).join(", ");
-  try{
-    const res=await fetch("/.netlify/functions/sheets",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"search",criteria:cr})});
-    const d=await res.json();
-    if(d.error)throw new Error(d.error);
-    // Bewaar _name voor tracking toegevoegde contacten
-    SS.results=(d.results||[]).map(r=>({...r, _name:r.name, _added:false}));
-    if(SS.results.length===0)SS.error="Geen resultaten gevonden. Probeer bredere criteria.";
-  }catch(e){SS.error="Fout: "+e.message;}
-  SS.loading=false;render();
+  if (!SS.loc&&!SS.type) return;
+  SS.loading=true; SS.results=null; SS.error=""; render();
+  const cr = [SS.loc&&`Locatie: ${SS.loc}`, SS.type&&`Type: ${SS.type}`, SS.budget&&`Budget: ${SS.budget}`, SS.extra&&`Extra: ${SS.extra}`].filter(Boolean).join(", ");
+  try {
+    const res = await fetch("/.netlify/functions/sheets", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({action:"search", criteria:cr})});
+    const d = await res.json();
+    if (d.error) throw new Error(d.error);
+    SS.results = (d.results||[]).map(r=>({...r, _added:false}));
+    if (!SS.results.length) SS.error = "Geen resultaten. Probeer bredere criteria.";
+  } catch(e){ SS.error = "Fout: "+e.message; }
+  SS.loading=false; render();
 }
 
-function av(name,sz=38){const i=name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();return `<div class="avatar" style="width:${sz}px;height:${sz}px;font-size:${Math.round(sz*0.34)}px;background:${AC[name.charCodeAt(0)%AC.length]};">${i}</div>`;}
-function bdg(t,c){return `<span class="badge" style="background:${c}18;color:${c};border:0.5px solid ${c}40;">${t}</span>`;}
-function tg(t,rm=false,f=""){return `<span class="tag">${t}${rm?`<span class="remove" onclick="rmTag('${f}','${t.replace(/'/g,"\\'")}')">✕</span>`:""}</span>`;}
-function syncH(){const m={loading:["#888","Laden..."],saving:["#C9A84C","Opslaan..."],synced:["#1A6B3C","✓ Gesynchroniseerd"],error:["#A32D2D","Fout"]};const v=m[S.sync];return v?`<span class="sync" style="color:${v[0]}">${v[1]}</span>`:"";}
+async function addFromSearch(naam, bedrijf, activiteit, loc, type, objectId){
+  const obj = S.objecten.find(o=>o.id===objectId);
+  const notitie = activiteit + (obj?`\n\n📌 Gevonden voor: ${obj.naam} (${obj.locatie}, ${obj.prijs})`:"");
+  const koper = {id:String(Date.now()), naam, bedrijf:bedrijf||"", email:"", telefoon:"", type:type||"Koper", locaties:loc||"", budget:"", zoekcriteria:"", notities:notitie, status:"Lead", bron:"AI Zoeker", toegevoegd:today()};
+  set({sync:"saving"}); render();
+  try {
+    await api({action:"append", range:SK, values:[k2r(koper)]});
+    await loadK();
+    set({sync:"synced"});
+    if (SS.results) SS.results = SS.results.map(r=>r.name===naam?{...r,_added:true}:r);
+  } catch(e){ set({sync:"error", syncErr:e.message}); }
+  render();
+}
 
-function rmTag(f,v){if(CF[f])CF[f]=CF[f].filter(x=>x!==v);render();}
-function addTag(f,v){const val=v||(document.getElementById(f+'In')?document.getElementById(f+'In').value.trim():"");if(val&&CF[f]&&!CF[f].includes(val)){CF[f].push(val);if(!v&&document.getElementById(f+'In'))document.getElementById(f+'In').value="";}render();}
+function av(naam, sz=38){ const i=(naam||"?").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase(); return `<div class="avatar" style="width:${sz}px;height:${sz}px;font-size:${Math.round(sz*0.34)}px;background:${AC[(naam||"").charCodeAt(0)%AC.length]};">${i}</div>`; }
+function bdg(t,c){ return `<span class="badge" style="background:${c}18;color:${c};border:0.5px solid ${c}40;">${t}</span>`; }
+function syncH(){ const m={loading:["#888","Laden..."],saving:["#C9A84C","Opslaan..."],synced:["#1A6B3C","✓ Gesynchroniseerd"],error:["#A32D2D","Fout"]}; const v=m[S.sync]; return v?`<span class="sync" style="color:${v[0]}">${v[1]}</span>`:""; }
 
-function openCF(c){CF=c?JSON.parse(JSON.stringify(c)):{id:String(Date.now()),name:"",alias:"",email:"",phone:"",company:"",linkedinFirstDegree:false,locations:[],type:[],roomRange:"",starMin:"",budget:"",notes:"",operator:false,status:"Lead",lastContact:new Date().toISOString().split("T")[0],source:"Direct"};set({editC:c,showCF:true});render();}
-function openOF(o){OF=o?JSON.parse(JSON.stringify(o)):{id:String(Date.now()),name:"",type:"Hotel",stars:"",location:"",price:"",rooms:"",size:"",status:"Beschikbaar",description:"",matchCriteria:"",addedDate:new Date().toISOString().split("T")[0],source:""};set({editO:o,showOF:true,showPdf:false});render();}
+function openKF(k){ KF=k?JSON.parse(JSON.stringify(k)):{id:String(Date.now()),naam:"",bedrijf:"",email:"",telefoon:"",type:"Koper",locaties:"",budget:"",zoekcriteria:"",notities:"",status:"Lead",bron:"Direct",toegevoegd:today()}; set({editK:k,showKF:true}); render(); }
+function openOF(o){ OF=o?JSON.parse(JSON.stringify(o)):{id:String(Date.now()),naam:"",type:"Hotel",sterren:"",locatie:"",prijs:"",kamers:"",oppervlakte:"",status:"Beschikbaar",beschrijving:"",matchCriteria:"",toegevoegd:today(),bron:""}; set({editO:o,showOF:true,showPdfO:false}); render(); }
 
 function render(){
-  const app=document.getElementById("app");
-  if(S.sync==="loading"&&S.contacts.length===0&&S.objects.length===0){app.innerHTML=`<div class="spinner" style="padding:80px 0"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div style="text-align:center;font-size:13px;color:var(--muted);margin-top:12px">Verbinden met Google Sheets...</div>`;return;}
-
-  const hdr=`<div class="header"><div><div class="header-title"><span>Costa Capital</span> — Deal Platform</div><div class="header-sub">Hotel & vastgoed · Spanje & West-Europa ${syncH()} ${S.sync==="synced"?`<a href="#" onclick="reload();return false;" style="font-size:11px;color:var(--muted)">vernieuwen</a>`:""}</div></div>
-  <div class="header-actions">${S.tab==="kopers"?`<label class="btn-ghost" style="cursor:pointer;display:inline-flex;align-items:center;">LinkedIn import<input type="file" accept=".csv" style="display:none" onchange="handleLI(this)"></label><button class="btn-outline" onclick="set({showSearch:true});SS.forObject=null;render()">Zoek kopers</button><button class="btn-primary" onclick="openCF(null)">+ Contact</button>`:`<label class="btn-outline" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;">📄 PDF importeren<input type="file" accept=".pdf" style="display:none" onchange="handlePDF(this)"></label><span style="font-size:11px;color:var(--muted);margin-left:4px;">max 20MB</span><button class="btn-primary" onclick="openOF(null)">+ Object</button>`}</div></div>
-  <div class="tabs"><button class="tab ${S.tab==="kopers"?"active":""}" onclick="set({tab:'kopers',selO:null});render()">Kopers (${S.contacts.length})</button><button class="tab ${S.tab==="objecten"?"active":""}" onclick="set({tab:'objecten',selC:null});render()">Objecten (${S.objects.length})</button></div>`;
-
-  const errBox=S.sync==="error"?`<div class="err-box"><strong>Verbindingsfout</strong> — ${S.syncErr}<br><small>Controleer of Google Sheet gedeeld is als "Iedereen met link kan bewerken".</small><button class="btn-primary" style="margin-top:8px;font-size:12px" onclick="init()">Opnieuw</button></div>`:"";
-
-  const modals=(S.showSearch?mSearch():"")+(S.showPdf?mPdf():"")+(S.showCF||S.editC?mCF():"")+(S.showOF||S.editO?mOF():"");
-
-  app.innerHTML=hdr+errBox+(S.tab==="kopers"?tabK():tabO())+modals;
+  const app = document.getElementById("app");
+  if (S.sync==="loading"&&!S.kopers.length&&!S.objecten.length){
+    app.innerHTML=`<div class="spinner" style="padding:80px 0"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div style="text-align:center;color:var(--muted);font-size:13px;margin-top:12px">Verbinden met Google Sheets...</div>`;
+    return;
+  }
+  const errBox = S.sync==="error" ? `<div class="err-box"><strong>Verbindingsfout</strong> — ${S.syncErr}<button class="btn-primary" style="margin-left:12px;font-size:12px" onclick="init()">Opnieuw</button></div>` : "";
+  const hdr = `<div class="header">
+    <div>
+      <div class="header-title"><span>Costa Capital</span> — Deal Platform</div>
+      <div class="header-sub">Hotel & vastgoed · Spanje & West-Europa ${syncH()} ${S.sync==="synced"?`<a href="#" onclick="reload();return false;" style="color:var(--muted);font-size:11px;margin-left:6px">vernieuwen</a>`:""}</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      ${S.tab==="kopers"
+        ? `<label class="btn-ghost" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;">📄 PDF koper<input type="file" accept=".pdf" style="display:none" onchange="handlePdfK(this)"></label>
+           <button class="btn-outline" onclick="SS.forObject=null;set({showSearch:true});render()">🔍 AI Zoeker</button>
+           <button class="btn-primary" onclick="openKF(null)">+ Koper/Operator</button>`
+        : `<label class="btn-outline" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;">📄 PDF object<input type="file" accept=".pdf" style="display:none" onchange="handlePdfO(this)"></label>
+           <button class="btn-primary" onclick="openOF(null)">+ Object</button>`
+      }
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab ${S.tab==="kopers"?"active":""}" onclick="set({tab:'kopers',selO:null});render()">Kopers & Operators (${S.kopers.length})</button>
+    <button class="tab ${S.tab==="objecten"?"active":""}" onclick="set({tab:'objecten',selK:null});render()">Objecten (${S.objecten.length})</button>
+  </div>`;
+  const modals = (S.showKF?mKF():"") + (S.showOF?mOF():"") + (S.showPdfO?mPdfO():"") + (S.showPdfK?mPdfK():"") + (S.showSearch?mSearch():"");
+  app.innerHTML = hdr + errBox + (S.tab==="kopers" ? tabK() : tabO()) + modals;
 }
 
 function tabK(){
-  const stats=[{l:"Contacten",v:S.contacts.length,c:"#C9A84C"},{l:"Actieve kopers",v:S.contacts.filter(c=>c.status==="Actief").length,c:"#1A6B3C"},{l:"1e lijn LinkedIn",v:S.contacts.filter(c=>c.linkedinFirstDegree).length,c:"#0A66C2"},{l:"Open leads",v:S.contacts.filter(c=>c.status==="Lead").length,c:"#E67E22"}];
-  const fc=S.contacts.filter(c=>{const t=S.fTxt.toLowerCase();return(!t||[c.name,c.company,...c.locations,...c.type,c.notes].join(" ").toLowerCase().includes(t))&&(S.fStat==="Alle"||c.status===S.fStat)&&(!S.fLI||c.linkedinFirstDegree);});
+  const fk = S.kopers.filter(k=>{
+    const t = S.fTxt.toLowerCase();
+    return (!t||[k.naam,k.bedrijf,k.locaties,k.type,k.zoekcriteria,k.notities].join(" ").toLowerCase().includes(t)) && (S.fStat==="Alle"||k.status===S.fStat);
+  });
+  const stats = [{l:"Totaal",v:S.kopers.length,c:"#C9A84C"},{l:"Actief",v:S.kopers.filter(k=>k.status==="Actief").length,c:"#1A6B3C"},{l:"Leads",v:S.kopers.filter(k=>k.status==="Lead").length,c:"#E67E22"},{l:"In onderhandeling",v:S.kopers.filter(k=>k.status==="In onderhandeling").length,c:"#1A4A7A"}];
   return `<div class="stats">${stats.map(s=>`<div class="stat"><div class="stat-label">${s.l}</div><div class="stat-value" style="color:${s.c}">${s.v}</div></div>`).join("")}</div>
-  <div class="main ${S.selC?"split":""}"><div>
-    <div class="filters"><input placeholder="Zoek naam, locatie, type..." value="${S.fTxt}" oninput="set({fTxt:this.value});render();" style="flex:1;min-width:140px;"><select onchange="set({fStat:this.value});render();" style="width:auto;"><option ${S.fStat==="Alle"?"selected":""}>Alle</option>${STATS.map(s=>`<option ${S.fStat===s?"selected":""}>${s}</option>`).join("")}</select></div>
-    <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);margin-bottom:8px;cursor:pointer;"><input type="checkbox" ${S.fLI?"checked":""} onchange="set({fLI:this.checked});render();"> Alleen 1e lijns LinkedIn</label>
-    <div class="count">${fc.length} van ${S.contacts.length}</div>
+  <div class="main ${S.selK?"split":""}"><div>
+    <div class="filters">
+      <input placeholder="Zoek naam, bedrijf, locatie..." value="${S.fTxt}" oninput="set({fTxt:this.value});render();" style="flex:1;min-width:140px;">
+      <select onchange="set({fStat:this.value});render();" style="width:auto;"><option ${S.fStat==="Alle"?"selected":""}>Alle</option>${KSTATS.map(s=>`<option ${S.fStat===s?"selected":""}>${s}</option>`).join("")}</select>
+    </div>
+    <div class="count">${fk.length} van ${S.kopers.length}</div>
     <div class="list-scroll">
-      ${fc.length===0?`<div style="text-align:center;padding:40px 0;color:var(--muted)">Geen resultaten.<br><a href="#" onclick="set({fTxt:'',fStat:'Alle',fLI:false});render();return false;" style="color:var(--gold);font-size:13px;display:inline-block;margin-top:8px">Filters wissen</a></div>`:""}
-      ${fc.map(c=>`<div class="card ${S.selC?.id===c.id?"selected":""}" onclick="set({selC:${JSON.stringify(c).replace(/"/g,"&quot;")}});render();">
-        <div style="display:flex;align-items:center;gap:11px;">${av(c.name)}<div style="flex:1;min-width:0;"><div style="font-weight:500;font-size:13.5px;">${c.name}</div>${c.company?`<div style="font-size:11px;color:var(--muted)">${c.company}</div>`:""}<div class="badges">${bdg(c.status,SC2[c.status]||"#888")}${c.linkedinFirstDegree?bdg("LI 1e lijn","#0A66C2"):""}${c.source==="AI Zoeker"?bdg("AI","#7A3A1A"):""}</div></div></div>
-        ${c.locations.length>0?`<div class="tags">${c.locations.slice(0,3).map(l=>tg(l)).join("")}${c.locations.length>3?tg(`+${c.locations.length-3}`):""}</div>`:""}
-        ${c.roomRange?`<div style="font-size:11px;color:var(--muted);margin-top:5px;">${c.roomRange} kamers · ${c.type.slice(0,2).join(", ")}</div>`:""}
+      ${!fk.length?`<div style="text-align:center;padding:40px 0;color:var(--muted)">Geen resultaten.</div>`:""}
+      ${fk.map(k=>`<div class="card ${S.selK?.id===k.id?"selected":""}" onclick="set({selK:${JSON.stringify(k).replace(/"/g,"&quot;")}});render();">
+        <div style="display:flex;align-items:center;gap:11px;">${av(k.naam)}
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:500;font-size:13.5px;">${k.naam}</div>
+            ${k.bedrijf?`<div style="font-size:11px;color:var(--muted)">${k.bedrijf}</div>`:""}
+            <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;">${bdg(k.status,SC2[k.status]||"#888")} ${k.type?bdg(k.type,"#555"):""} ${k.bron&&k.bron.includes(".pdf")?bdg("PDF","#1A4A7A"):k.bron==="AI Zoeker"?bdg("AI","#7A3A1A"):""}</div>
+          </div>
+        </div>
+        ${k.locaties?`<div style="font-size:11px;color:var(--muted);margin-top:5px;">📍 ${k.locaties}</div>`:""}
+        ${k.zoekcriteria?`<div style="font-size:11px;color:#555;margin-top:3px;">🔍 ${k.zoekcriteria.slice(0,80)}${k.zoekcriteria.length>80?"...":""}</div>`:""}
       </div>`).join("")}
     </div>
-  </div>${S.selC?dC(S.selC):""}</div>`;
+  </div>${S.selK?dK(S.selK):""}</div>`;
 }
 
-function dC(c){return `<div class="detail">
-  <div style="display:flex;justify-content:space-between;margin-bottom:16px;"><div style="display:flex;align-items:center;gap:12px;">${av(c.name,48)}<div><div style="font-weight:500;font-size:17px;">${c.name}</div>${c.alias?`<div style="font-size:12px;color:var(--muted)">"${c.alias}"</div>`:""} ${c.company?`<div style="font-size:12px;color:var(--muted)">${c.company}</div>`:""}</div></div>
-  <div style="display:flex;gap:6px;"><button class="btn-primary" style="font-size:12px;padding:6px 12px" onclick="openCF(${JSON.stringify(c).replace(/"/g,"&quot;")})">Bewerken</button><button class="btn-ghost" onclick="set({selC:null});render();">✕</button></div></div>
-  <div class="badges" style="margin-bottom:16px;">${bdg(c.status,SC2[c.status]||"#888")} ${c.linkedinFirstDegree?bdg("1e lijn LinkedIn","#0A66C2"):""} ${c.operator?bdg("Operator","#7A3A1A"):""} ${bdg(c.source||"Direct","#555")}</div>
-  <div class="sec-title">Vastgoedprofiel</div>
-  <div class="drow"><span class="dlabel">Locaties</span><span>${c.locations.join(", ")||"—"}</span></div>
-  <div class="drow"><span class="dlabel">Type</span><span>${c.type.join(", ")||"—"}</span></div>
-  <div class="drow"><span class="dlabel">Kamers</span><span>${c.roomRange||"—"}</span></div>
-  <div class="drow"><span class="dlabel">Min. sterren</span><span>${c.starMin||"—"}</span></div>
-  <div class="drow"><span class="dlabel">Budget</span><span>${c.budget||"—"}</span></div>
+function dK(k){ return `<div class="detail">
+  <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+    <div style="display:flex;align-items:center;gap:12px;">${av(k.naam,48)}
+      <div><div style="font-weight:500;font-size:17px;">${k.naam}</div>${k.bedrijf?`<div style="font-size:12px;color:var(--muted)">${k.bedrijf}</div>`:""}</div>
+    </div>
+    <div style="display:flex;gap:6px;">
+      <button class="btn-primary" style="font-size:12px;padding:6px 12px" onclick="openKF(${JSON.stringify(k).replace(/"/g,"&quot;")})">Bewerken</button>
+      <button class="btn-ghost" onclick="set({selK:null});render();">✕</button>
+    </div>
+  </div>
+  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px;">${bdg(k.status,SC2[k.status]||"#888")} ${k.type?bdg(k.type,"#555"):""} ${bdg(k.bron||"Direct","#888")}</div>
+  <div class="sec-title">Profiel</div>
+  <div class="drow"><span class="dlabel">Type</span><span>${k.type||"—"}</span></div>
+  <div class="drow"><span class="dlabel">Locaties</span><span>${k.locaties||"—"}</span></div>
+  <div class="drow"><span class="dlabel">Budget</span><span>${k.budget||"—"}</span></div>
+  ${k.zoekcriteria?`<div class="sec-title">Zoekcriteria</div><div style="font-size:13px;color:#444;line-height:1.7;">${k.zoekcriteria}</div>`:""}
   <div class="sec-title">Contact</div>
-  <div class="drow"><span class="dlabel">E-mail</span><span>${c.email||"—"}</span></div>
-  <div class="drow"><span class="dlabel">Telefoon</span><span>${c.phone||"—"}</span></div>
-  <div class="drow"><span class="dlabel">Laatste contact</span><span>${c.lastContact||"—"}</span></div>
-  ${c.notes?`<div class="sec-title">Notities</div><div style="font-size:13px;color:#444;line-height:1.7;white-space:pre-wrap;">${c.notes}</div>`:""}
-  <div style="margin-top:20px;"><button class="btn-danger" onclick="delC('${c.id}')">Verwijderen</button></div>
-</div>`;}
+  <div class="drow"><span class="dlabel">E-mail</span><span>${k.email||"—"}</span></div>
+  <div class="drow"><span class="dlabel">Telefoon</span><span>${k.telefoon||"—"}</span></div>
+  <div class="drow"><span class="dlabel">Toegevoegd</span><span>${k.toegevoegd||"—"}</span></div>
+  ${k.notities?`<div class="sec-title">Notities</div><div style="font-size:13px;color:#444;line-height:1.7;white-space:pre-wrap;">${k.notities}</div>`:""}
+  <div style="margin-top:20px;"><button class="btn-danger" onclick="delK('${k.id}')">Verwijderen</button></div>
+</div>`; }
 
 function tabO(){
-  const stats=[{l:"Objecten",v:S.objects.length,c:"#C9A84C"},{l:"Beschikbaar",v:S.objects.filter(o=>o.status==="Beschikbaar").length,c:"#1A6B3C"},{l:"In analyse",v:S.objects.filter(o=>o.status==="In analyse").length,c:"#1A4A7A"},{l:"In onderhandeling",v:S.objects.filter(o=>o.status==="In onderhandeling").length,c:"#E67E22"}];
-  const fo=S.objects.filter(o=>{const t=S.ofTxt.toLowerCase();return(!t||[o.name,o.type,o.location,o.description].join(" ").toLowerCase().includes(t))&&(S.ofStat==="Alle"||o.status===S.ofStat);});
+  const fo = S.objecten.filter(o=>{
+    const t = S.ofTxt.toLowerCase();
+    return (!t||[o.naam,o.type,o.locatie,o.beschrijving].join(" ").toLowerCase().includes(t)) && (S.ofStat==="Alle"||o.status===S.ofStat);
+  });
+  const stats = [{l:"Totaal",v:S.objecten.length,c:"#C9A84C"},{l:"Beschikbaar",v:S.objecten.filter(o=>o.status==="Beschikbaar").length,c:"#1A6B3C"},{l:"In analyse",v:S.objecten.filter(o=>o.status==="In analyse").length,c:"#1A4A7A"},{l:"In onderhandeling",v:S.objecten.filter(o=>o.status==="In onderhandeling").length,c:"#E67E22"}];
   return `<div class="stats">${stats.map(s=>`<div class="stat"><div class="stat-label">${s.l}</div><div class="stat-value" style="color:${s.c}">${s.v}</div></div>`).join("")}</div>
   <div class="main ${S.selO?"split":""}"><div>
-    <div class="filters"><input placeholder="Zoek naam, locatie, type..." value="${S.ofTxt}" oninput="set({ofTxt:this.value});render();" style="flex:1;min-width:140px;"><select onchange="set({ofStat:this.value});render();" style="width:auto;"><option ${S.ofStat==="Alle"?"selected":""}>Alle</option>${OSTATS.map(s=>`<option ${S.ofStat===s?"selected":""}>${s}</option>`).join("")}</select></div>
-    <div class="count">${fo.length} van ${S.objects.length} objecten</div>
+    <div class="filters">
+      <input placeholder="Zoek naam, locatie, type..." value="${S.ofTxt}" oninput="set({ofTxt:this.value});render();" style="flex:1;min-width:140px;">
+      <select onchange="set({ofStat:this.value});render();" style="width:auto;"><option ${S.ofStat==="Alle"?"selected":""}>Alle</option>${OSTATS.map(s=>`<option ${S.ofStat===s?"selected":""}>${s}</option>`).join("")}</select>
+    </div>
+    <div class="count">${fo.length} van ${S.objecten.length} objecten</div>
     <div class="list-scroll">
-      ${fo.length===0?`<div style="text-align:center;padding:40px 0;color:var(--muted);">${S.objects.length===0?"Nog geen objecten. Gebruik '+ Object' of importeer een PDF.":"Geen resultaten."}</div>`:""}
+      ${!fo.length?`<div style="text-align:center;padding:40px 0;color:var(--muted);">${!S.objecten.length?"Nog geen objecten. Importeer een PDF of voeg handmatig toe.":"Geen resultaten."}</div>`:""}
       ${fo.map(o=>`<div class="card ${S.selO?.id===o.id?"selected":""}" onclick="set({selO:${JSON.stringify(o).replace(/"/g,"&quot;")}});render();">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;"><div style="flex:1;min-width:0;"><div style="font-weight:500;font-size:13.5px;margin-bottom:4px;">${o.name}</div><div class="badges">${bdg(o.status,OC[o.status]||"#888")} ${bdg(o.type,"#555")} ${o.stars?bdg(o.stars,"#C9A84C"):""}</div></div>${o.price?`<div class="obj-price" style="font-size:14px;white-space:nowrap;">${o.price}</div>`:""}</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:4px;">${[o.location,o.rooms,o.size].filter(Boolean).join(" · ")}</div>
-        ${o.description?`<div style="font-size:12px;color:#555;margin-top:6px;line-height:1.5;">${o.description.slice(0,120)}${o.description.length>120?"...":""}</div>`:""}
-        <div style="font-size:11px;color:var(--muted);margin-top:6px;">${matches(o).length} mogelijke kopers in CRM</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+          <div style="flex:1;min-width:0;"><div style="font-weight:500;font-size:13.5px;margin-bottom:4px;">${o.naam}</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;">${bdg(o.status,OC[o.status]||"#888")} ${bdg(o.type,"#555")} ${o.sterren?bdg(o.sterren+"★","#C9A84C"):""}</div></div>
+          ${o.prijs?`<div style="font-size:14px;font-weight:500;color:var(--gold);white-space:nowrap;">${o.prijs}</div>`:""}
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:5px;">${[o.locatie,o.kamers?""+o.kamers+" kamers":null,o.oppervlakte].filter(Boolean).join(" · ")}</div>
+        ${o.beschrijving?`<div style="font-size:12px;color:#555;margin-top:5px;line-height:1.5;">${o.beschrijving.slice(0,100)}${o.beschrijving.length>100?"...":""}</div>`:""}
+        <div style="font-size:11px;color:var(--muted);margin-top:5px;">${matches(o).length} mogelijke kopers in CRM</div>
       </div>`).join("")}
     </div>
   </div>${S.selO?dO(S.selO):""}</div>`;
 }
 
 function dO(o){
-  const mx=matches(o);
+  const mx = matches(o);
   return `<div class="detail">
-    <div style="display:flex;justify-content:space-between;margin-bottom:16px;"><div><div style="font-weight:500;font-size:17px;">${o.name}</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">${o.location}</div></div>
-    <div style="display:flex;gap:6px;"><button class="btn-primary" style="font-size:12px;padding:6px 12px" onclick="openOF(${JSON.stringify(o).replace(/"/g,"&quot;")})">Bewerken</button><button class="btn-ghost" onclick="set({selO:null});render();">✕</button></div></div>
-    <div class="badges" style="margin-bottom:16px;">${bdg(o.status,OC[o.status]||"#888")} ${bdg(o.type,"#555")} ${o.source?bdg("PDF","#1A4A7A"):""}</div>
-    ${o.price?`<div class="obj-price" style="font-size:22px;margin-bottom:12px;">${o.price}</div>`:""}
+    <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+      <div><div style="font-weight:500;font-size:17px;">${o.naam}</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">${o.locatie}</div></div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn-primary" style="font-size:12px;padding:6px 12px" onclick="openOF(${JSON.stringify(o).replace(/"/g,"&quot;")})">Bewerken</button>
+        <button class="btn-ghost" onclick="set({selO:null});render();">✕</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px;">${bdg(o.status,OC[o.status]||"#888")} ${bdg(o.type,"#555")} ${o.bron?bdg("PDF","#1A4A7A"):""}</div>
+    ${o.prijs?`<div style="font-size:22px;font-weight:500;color:var(--gold);margin-bottom:12px;">${o.prijs}</div>`:""}
     <div class="sec-title">Details</div>
     <div class="drow"><span class="dlabel">Type</span><span>${o.type||"—"}</span></div>
-    <div class="drow"><span class="dlabel">Sterren</span><span>${o.stars||"—"}</span></div>
-    <div class="drow"><span class="dlabel">Locatie</span><span>${o.location||"—"}</span></div>
-    <div class="drow"><span class="dlabel">Kamers/eenheden</span><span>${o.rooms||"—"}</span></div>
-    <div class="drow"><span class="dlabel">Oppervlakte</span><span>${o.size||"—"}</span></div>
+    <div class="drow"><span class="dlabel">Sterren</span><span>${o.sterren?o.sterren+"★":"—"}</span></div>
+    <div class="drow"><span class="dlabel">Locatie</span><span>${o.locatie||"—"}</span></div>
+    <div class="drow"><span class="dlabel">Kamers</span><span>${o.kamers||"—"}</span></div>
+    <div class="drow"><span class="dlabel">Oppervlakte</span><span>${o.oppervlakte||"—"}</span></div>
     <div class="drow"><span class="dlabel">Status</span><span>${o.status||"—"}</span></div>
-    <div class="drow"><span class="dlabel">Toegevoegd</span><span>${o.addedDate||"—"}</span></div>
-    <div class="drow"><span class="dlabel">Bron</span><span>${o.source||"—"}</span></div>
-    ${o.description?`<div class="sec-title">Beschrijving</div><div style="font-size:13px;color:#444;line-height:1.7;white-space:pre-wrap;">${o.description}</div>`:""}
-
+    <div class="drow"><span class="dlabel">Toegevoegd</span><span>${o.toegevoegd||"—"}</span></div>
+    ${o.beschrijving?`<div class="sec-title">Beschrijving</div><div style="font-size:13px;color:#444;line-height:1.7;white-space:pre-wrap;">${o.beschrijving}</div>`:""}
     <div class="sec-title">Overeenkomende kopers (${mx.length})</div>
-    ${mx.length===0?`<div style="font-size:13px;color:var(--muted);">Geen directe matches op locatie of type.</div>`:""}
-    ${mx.map(c=>`<div class="match-card">${av(c.name,32)}<div style="flex:1;min-width:0;"><div style="font-weight:500;font-size:13px;">${c.name}</div><div style="font-size:11px;color:var(--muted);">${c.company||""} ${c.locations.slice(0,2).join(", ")}</div></div><div style="display:flex;gap:4px;">${bdg(c.status,SC2[c.status]||"#888")}${c.linkedinFirstDegree?bdg("LI","#0A66C2"):""}</div></div>`).join("")}
-    <button class="btn-outline" style="width:100%;margin-top:8px;font-size:12px;" onclick="SS.loc='${(o.location||"").replace(/'/g,"\\'")}';SS.type='${(o.type||"").replace(/'/g,"\\'")}';SS.forObject=${JSON.stringify(o).replace(/"/g,"&quot;")};set({showSearch:true});render();">Zoek nieuwe kopers online</button>
-
-    <div class="sec-title" style="margin-top:20px;">AI analyse van jouw netwerk</div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">AI doorzoekt je ${S.contacts.length} CRM-contacten en zoekt online naar recente activiteit</div>
-    ${AIM.loading&&AIM.objId===o.id?`<div class="spinner" style="margin-bottom:12px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div style="font-size:12px;color:var(--muted);text-align:center;">AI analyseert je netwerk en zoekt online...</div>`:""}
-    ${AIM.error&&AIM.objId===o.id?`<div class="err-box">${AIM.error}</div>`:""}
-    ${AIM.matches&&AIM.objId===o.id&&AIM.matches.length>0?
-      '<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">'+AIM.matches.length+' beste matches uit je netwerk</div>'+
-      AIM.matches.map(function(m){
-        var contact=S.contacts.find(function(c){return c.name.toLowerCase()===m.name.toLowerCase();});
-        var scoreColor=m.score>=8?'#1A6B3C':m.score>=6?'#E67E22':'#888';
-        var liTag=m.linkedin?'<span style="margin-left:6px;background:#0A66C218;color:#0A66C2;border-radius:3px;padding:1px 5px;font-size:10px;">LI</span>':'';
-        var avatarHtml=contact?av(m.name,32):'<div style="width:32px;height:32px;border-radius:50%;background:#ddd;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888;">?</div>';
-        var reasonHtml=m.reason?'<div style="font-size:12px;color:#444;line-height:1.5;padding-left:42px;">'+m.reason+'</div>':'';
-        var activityHtml=m.activity?'<div style="font-size:11px;color:var(--muted);padding-left:42px;font-style:italic;">'+m.activity+'</div>':'';
-        // Knop: als contact al in CRM staat toon niets, anders toon "Toevoegen aan CRM"
-        var addBtn='';
-        if(!contact){
-          var safeObj=JSON.stringify(o).replace(/"/g,"&quot;");
-          addBtn='<button class="btn-success" style="flex-shrink:0;align-self:flex-start;" onclick="addSearchResultToCRM(\''+m.name.replace(/'/g,"\\'")+'\',' +
-            '\''+( m.company||'').replace(/'/g,"\\'")+'\',' +
-            '\''+( m.activity||'').replace(/'/g,"\\'")+'\',' +
-            '\''+( o.location||'').replace(/'/g,"\\'")+'\',' +
-            '\''+( o.type||'').replace(/'/g,"\\'")+'\',' +
-            '\'\',\'\',\''+o.id+'\')">+ Toevoegen aan CRM</button>';
-        }
-        return '<div class="match-card" style="flex-direction:column;align-items:flex-start;gap:6px;">'+
-          '<div style="display:flex;align-items:center;gap:10px;width:100%;">'+
-          avatarHtml+
-          '<div style="flex:1;min-width:0;">'+
-          '<div style="font-weight:500;font-size:13px;">'+m.name+'</div>'+
-          '<div style="font-size:11px;color:var(--muted);">'+(contact?contact.company:(m.company||''))+liTag+'</div>'+
-          '</div>'+
-          '<div style="display:flex;align-items:center;gap:6px;">'+
-          '<div style="font-size:11px;font-weight:500;color:'+scoreColor+';">Score '+m.score+'/10</div>'+
-          addBtn+
-          '</div>'+
-          '</div>'+reasonHtml+activityHtml+'</div>';
-      }).join("")
-    :""}
-    ${!AIM.loading&&(!AIM.matches||AIM.objId!==o.id)?`<button class="btn-primary" style="width:100%;padding:10px;font-size:13px;" onclick="runAiMatch(${JSON.stringify(o).replace(/"/g,'&quot;')})">AI: analyseer mijn netwerk voor dit object</button>`:""}
-    ${AIM.matches&&AIM.objId===o.id?`<button class="btn-ghost" style="width:100%;margin-top:8px;font-size:12px;" onclick="runAiMatch(${JSON.stringify(o).replace(/"/g,'&quot;')})">Opnieuw analyseren</button>`:""}
-
+    ${!mx.length?`<div style="font-size:13px;color:var(--muted);">Geen directe matches op locatie of type.</div>`:""}
+    ${mx.map(k=>`<div class="match-card">${av(k.naam,32)}<div style="flex:1;min-width:0;"><div style="font-weight:500;font-size:13px;">${k.naam}</div><div style="font-size:11px;color:var(--muted);">${k.bedrijf||""} · ${k.locaties}</div></div>${bdg(k.status,SC2[k.status]||"#888")}</div>`).join("")}
+    <button class="btn-outline" style="width:100%;margin-top:10px;font-size:12px;" onclick="SS.loc='${(o.locatie||"").replace(/'/g,"\\'")}';SS.type='${(o.type||"").replace(/'/g,"\\'")}';SS.forObject=${JSON.stringify(o).replace(/"/g,"&quot;")};set({showSearch:true});render();">🔍 Zoek nieuwe kopers online</button>
     <div style="margin-top:16px;"><button class="btn-danger" onclick="delO('${o.id}')">Object verwijderen</button></div>
-  </div>`;}
+  </div>`; }
 
-function mPdf(){
-  const ps=pdfState;
-  const fields=ps.extracted?`<div class="fgrid"><div><div class="flabel">Naam *</div><input value="${(OF.name||"").replace(/"/g,"&quot;")}" oninput="OF.name=this.value"></div><div><div class="flabel">Type</div><select onchange="OF.type=this.value">${OTYPES.map(t=>`<option ${OF.type===t?"selected":""}>${t}</option>`).join("")}</select></div></div>
-  <div class="fgrid"><div><div class="flabel">Locatie</div><input value="${(OF.location||"").replace(/"/g,"&quot;")}" oninput="OF.location=this.value"></div><div><div class="flabel">Vraagprijs</div><input value="${(OF.price||"").replace(/"/g,"&quot;")}" oninput="OF.price=this.value"></div></div>
-  <div class="fgrid"><div><div class="flabel">Kamers</div><input value="${(OF.rooms||"").replace(/"/g,"&quot;")}" oninput="OF.rooms=this.value"></div><div><div class="flabel">Oppervlakte</div><input value="${(OF.size||"").replace(/"/g,"&quot;")}" oninput="OF.size=this.value"></div></div>
-  <div class="fgrid"><div><div class="flabel">Status</div><select onchange="OF.status=this.value">${OSTATS.map(s=>`<option ${OF.status===s?"selected":""}>${s}</option>`).join("")}</select></div><div><div class="flabel">Bron</div><input value="${(OF.source||"").replace(/"/g,"&quot;")}" oninput="OF.source=this.value"></div></div>
-  <div class="frow"><div class="flabel">Beschrijving</div><textarea rows="3" oninput="OF.description=this.value">${OF.description||""}</textarea></div>
-  <div class="frow"><div class="flabel">Match trefwoorden</div><input value="${(OF.matchCriteria||"").replace(/"/g,"&quot;")}" oninput="OF.matchCriteria=this.value" placeholder="bijv. Marbella, 4-5 sterren, resort"></div>
-  <div class="modal-footer"><button class="btn-ghost" onclick="set({showPdf:false});render();">Annuleren</button><button class="btn-primary" onclick="saveO(OF)">Opslaan in Sheets</button></div>`:""
-  return `<div class="overlay" onclick="if(event.target===this){set({showPdf:false});render();}"><div class="modal modal-wide" onclick="event.stopPropagation()">
-    <div class="modal-hdr"><div><div class="modal-title">PDF Importeren</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">AI extraheert automatisch de vastgoeddata · maximaal 20MB per bestand</div></div><button class="modal-close" onclick="set({showPdf:false});render();">✕</button></div>
-    ${ps.loading?`<div class="ai-box"><div class="spinner" style="margin-bottom:12px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div style="font-size:13px;color:var(--muted);">AI leest het document en extraheert vastgoeddata...</div></div>`:""}
-    ${ps.error?`<div class="err-box">${ps.error}</div>`:""}
-    ${ps.extracted&&!ps.loading?`<div class="ok-box">✓ Data geëxtraheerd uit <strong>${ps.fname}</strong>. Controleer en pas aan.</div>${fields}`:""}
-  </div></div>`;}
+function mKF(){
+  const f = KF;
+  return `<div class="overlay" onclick="if(event.target===this){set({showKF:false,editK:null});render();}"><div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hdr"><div class="modal-title">${S.editK?"Koper bewerken":"Nieuwe koper / operator"}</div><button class="modal-close" onclick="set({showKF:false,editK:null});render();">✕</button></div>
+    <div class="fgrid">
+      <div><div class="flabel">Naam *</div><input value="${(f.naam||"").replace(/"/g,"&quot;")}" oninput="KF.naam=this.value"></div>
+      <div><div class="flabel">Bedrijf</div><input value="${(f.bedrijf||"").replace(/"/g,"&quot;")}" oninput="KF.bedrijf=this.value"></div>
+    </div>
+    <div class="fgrid">
+      <div><div class="flabel">Type</div><select onchange="KF.type=this.value">${KTYPES.map(t=>`<option ${f.type===t?"selected":""}>${t}</option>`).join("")}</select></div>
+      <div><div class="flabel">Status</div><select onchange="KF.status=this.value">${KSTATS.map(s=>`<option ${f.status===s?"selected":""}>${s}</option>`).join("")}</select></div>
+    </div>
+    <div class="fgrid">
+      <div><div class="flabel">E-mail</div><input value="${(f.email||"").replace(/"/g,"&quot;")}" oninput="KF.email=this.value"></div>
+      <div><div class="flabel">Telefoon</div><input value="${(f.telefoon||"").replace(/"/g,"&quot;")}" oninput="KF.telefoon=this.value"></div>
+    </div>
+    <div class="frow"><div class="flabel">Locaties</div><input value="${(f.locaties||"").replace(/"/g,"&quot;")}" oninput="KF.locaties=this.value" placeholder="bijv. Spanje, Portugal, Marbella"></div>
+    <div class="frow"><div class="flabel">Budget</div><input value="${(f.budget||"").replace(/"/g,"&quot;")}" oninput="KF.budget=this.value" placeholder="bijv. €5M - €20M"></div>
+    <div class="frow"><div class="flabel">Zoekcriteria (wat zoeken ze exact)</div><textarea rows="2" oninput="KF.zoekcriteria=this.value" placeholder="bijv. Boutique hotel 4-5 sterren, 30-80 kamers, historisch pand">${f.zoekcriteria||""}</textarea></div>
+    <div class="frow"><div class="flabel">Notities</div><textarea rows="2" oninput="KF.notities=this.value">${f.notities||""}</textarea></div>
+    <div class="modal-footer"><button class="btn-ghost" onclick="set({showKF:false,editK:null});render();">Annuleren</button><button class="btn-primary" onclick="saveK(KF)">Opslaan</button></div>
+  </div></div>`; }
 
 function mOF(){
-  const f=OF;
-  return `<div class="overlay" onclick="if(event.target===this){set({showOF:false,editO:null});render();}"><div class="modal modal-wide" onclick="event.stopPropagation()">
+  const f = OF;
+  return `<div class="overlay" onclick="if(event.target===this){set({showOF:false,editO:null});render();}"><div class="modal" onclick="event.stopPropagation()">
     <div class="modal-hdr"><div class="modal-title">${S.editO?"Object bewerken":"Nieuw object"}</div><button class="modal-close" onclick="set({showOF:false,editO:null});render();">✕</button></div>
-    <div class="fgrid"><div><div class="flabel">Naam *</div><input value="${(f.name||"").replace(/"/g,"&quot;")}" oninput="OF.name=this.value"></div><div><div class="flabel">Type</div><select onchange="OF.type=this.value">${OTYPES.map(t=>`<option ${f.type===t?"selected":""}>${t}</option>`).join("")}</select></div></div>
-    <div class="fgrid"><div><div class="flabel">Aantal sterren</div><select onchange="OF.stars=this.value">${STARS.map(s=>`<option ${f.stars===s?"selected":""}>${s}</option>`).join("")}</select></div><div></div></div>
-    <div class="fgrid"><div><div class="flabel">Locatie</div><input value="${(f.location||"").replace(/"/g,"&quot;")}" oninput="OF.location=this.value" placeholder="bijv. Marbella, Costa del Sol"></div><div><div class="flabel">Vraagprijs</div><input value="${(f.price||"").replace(/"/g,"&quot;")}" oninput="OF.price=this.value" placeholder="bijv. €28.500.000"></div></div>
-    <div class="fgrid"><div><div class="flabel">Kamers / eenheden</div><input value="${(f.rooms||"").replace(/"/g,"&quot;")}" oninput="OF.rooms=this.value"></div><div><div class="flabel">Oppervlakte</div><input value="${(f.size||"").replace(/"/g,"&quot;")}" oninput="OF.size=this.value"></div></div>
-    <div class="fgrid"><div><div class="flabel">Status</div><select onchange="OF.status=this.value">${OSTATS.map(s=>`<option ${f.status===s?"selected":""}>${s}</option>`).join("")}</select></div><div><div class="flabel">Bron / bestandsnaam</div><input value="${(f.source||"").replace(/"/g,"&quot;")}" oninput="OF.source=this.value"></div></div>
-    <div class="frow"><div class="flabel">Beschrijving</div><textarea rows="3" oninput="OF.description=this.value">${f.description||""}</textarea></div>
-    <div class="frow"><div class="flabel">Match trefwoorden (voor koperskoppeling)</div><input value="${(f.matchCriteria||"").replace(/"/g,"&quot;")}" oninput="OF.matchCriteria=this.value" placeholder="bijv. Marbella, 4-5 sterren, resort, boutique"></div>
-    <div class="modal-footer"><button class="btn-ghost" onclick="set({showOF:false,editO:null});render();">Annuleren</button><button class="btn-primary" onclick="saveO(OF)">Opslaan in Sheets</button></div>
-  </div></div>`;}
-
-function mCF(){
-  const f=CF;
-  return `<div class="overlay" onclick="if(event.target===this){set({showCF:false,editC:null});render();}"><div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-hdr"><div class="modal-title">${S.editC?"Bewerken":"Nieuw contact"}</div><button class="modal-close" onclick="set({showCF:false,editC:null});render();">✕</button></div>
-    ${[["Naam *","name"],["Bijnaam","alias"],["Bedrijf","company"],["E-mail","email"],["Telefoon","phone"],["Kamers (voorkeur)","roomRange"],["Min. sterren (voorkeur)","starMin"],["Budget","budget"]].map(([l,k])=>`<div class="frow"><div class="flabel">${l}</div><input value="${(f[k]||"").replace(/"/g,"&quot;")}" oninput="CF['${k}']=this.value"></div>`).join("")}
-    <div class="fgrid"><div><div class="flabel">Status</div><select onchange="CF.status=this.value">${STATS.map(s=>`<option ${f.status===s?"selected":""}>${s}</option>`).join("")}</select></div><div><div class="flabel">Bron</div><select onchange="CF.source=this.value">${["Direct","Netwerk","LinkedIn","Online","AI Zoeker","Referral","Event"].map(s=>`<option ${f.source===s?"selected":""}>${s}</option>`).join("")}</select></div></div>
-    <div style="display:flex;gap:20px;margin-bottom:13px;"><label style="display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer;"><input type="checkbox" ${f.linkedinFirstDegree?"checked":""} onchange="CF.linkedinFirstDegree=this.checked"> 1e lijns LinkedIn</label><label style="display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer;"><input type="checkbox" ${f.operator?"checked":""} onchange="CF.operator=this.checked"> Operator zoekend</label></div>
-    <div class="frow"><div class="flabel">Locaties</div>
-      <div class="tags" style="margin-bottom:6px;">${(f.locations||[]).map(l=>tg(l,true,"locations")).join("")}</div>
-      <div class="tag-input-row"><input id="locationsIn" placeholder="Locatie + Enter" onkeydown="if(event.key==='Enter'){addTag('locations');event.preventDefault();}"><button onclick="addTag('locations')">+</button></div>
-      <div class="tag-sugs">${LOCS.filter(l=>!(f.locations||[]).includes(l)).map(l=>`<button class="tag-sug" onclick="addTag('locations','${l}')">${l}</button>`).join("")}</div>
+    <div class="fgrid">
+      <div><div class="flabel">Naam *</div><input value="${(f.naam||"").replace(/"/g,"&quot;")}" oninput="OF.naam=this.value"></div>
+      <div><div class="flabel">Type</div><select onchange="OF.type=this.value">${OTYPES.map(t=>`<option ${f.type===t?"selected":""}>${t}</option>`).join("")}</select></div>
     </div>
-    <div class="frow" style="margin-top:10px;"><div class="flabel">Notities</div><textarea rows="3" oninput="CF.notes=this.value">${f.notes||""}</textarea></div>
-    <div class="modal-footer"><button class="btn-ghost" onclick="set({showCF:false,editC:null});render();">Annuleren</button><button class="btn-primary" onclick="saveC(CF)">Opslaan</button></div>
-  </div></div>`;}
+    <div class="fgrid">
+      <div><div class="flabel">Locatie</div><input value="${(f.locatie||"").replace(/"/g,"&quot;")}" oninput="OF.locatie=this.value"></div>
+      <div><div class="flabel">Vraagprijs</div><input value="${(f.prijs||"").replace(/"/g,"&quot;")}" oninput="OF.prijs=this.value"></div>
+    </div>
+    <div class="fgrid">
+      <div><div class="flabel">Sterren</div><input value="${(f.sterren||"").replace(/"/g,"&quot;")}" oninput="OF.sterren=this.value" placeholder="bijv. 4"></div>
+      <div><div class="flabel">Kamers</div><input value="${(f.kamers||"").replace(/"/g,"&quot;")}" oninput="OF.kamers=this.value"></div>
+    </div>
+    <div class="fgrid">
+      <div><div class="flabel">Oppervlakte</div><input value="${(f.oppervlakte||"").replace(/"/g,"&quot;")}" oninput="OF.oppervlakte=this.value"></div>
+      <div><div class="flabel">Status</div><select onchange="OF.status=this.value">${OSTATS.map(s=>`<option ${f.status===s?"selected":""}>${s}</option>`).join("")}</select></div>
+    </div>
+    <div class="frow"><div class="flabel">Beschrijving</div><textarea rows="3" oninput="OF.beschrijving=this.value">${f.beschrijving||""}</textarea></div>
+    <div class="frow"><div class="flabel">Match trefwoorden</div><input value="${(f.matchCriteria||"").replace(/"/g,"&quot;")}" oninput="OF.matchCriteria=this.value" placeholder="bijv. resort, 4-5 sterren, Marbella"></div>
+    <div class="modal-footer"><button class="btn-ghost" onclick="set({showOF:false,editO:null});render();">Annuleren</button><button class="btn-primary" onclick="saveO(OF)">Opslaan</button></div>
+  </div></div>`; }
+
+function mPdfO(){
+  const ps = pdfO;
+  return `<div class="overlay" onclick="if(event.target===this){set({showPdfO:false});render();}"><div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hdr"><div><div class="modal-title">PDF Object Importeren</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">AI extraheert automatisch de vastgoeddata</div></div><button class="modal-close" onclick="set({showPdfO:false});render();">✕</button></div>
+    ${ps.loading?`<div class="spinner" style="margin:24px 0;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div style="text-align:center;font-size:13px;color:var(--muted);margin-top:8px;">AI leest het document...</div>`:""}
+    ${ps.error?`<div class="err-box">${ps.error}</div>`:""}
+    ${ps.extracted&&!ps.loading?`<div style="background:#F0FFF4;border:0.5px solid #9FE1CB;border-radius:9px;padding:13px 16px;margin-bottom:16px;font-size:13px;color:#1A6B3C;">✓ Data geëxtraheerd uit <strong>${ps.fname}</strong>. Controleer en pas aan.</div>
+    <div class="fgrid">
+      <div><div class="flabel">Naam *</div><input value="${(OF.naam||"").replace(/"/g,"&quot;")}" oninput="OF.naam=this.value"></div>
+      <div><div class="flabel">Type</div><select onchange="OF.type=this.value">${OTYPES.map(t=>`<option ${OF.type===t?"selected":""}>${t}</option>`).join("")}</select></div>
+    </div>
+    <div class="fgrid">
+      <div><div class="flabel">Locatie</div><input value="${(OF.locatie||"").replace(/"/g,"&quot;")}" oninput="OF.locatie=this.value"></div>
+      <div><div class="flabel">Vraagprijs</div><input value="${(OF.prijs||"").replace(/"/g,"&quot;")}" oninput="OF.prijs=this.value"></div>
+    </div>
+    <div class="fgrid">
+      <div><div class="flabel">Kamers</div><input value="${(OF.kamers||"").replace(/"/g,"&quot;")}" oninput="OF.kamers=this.value"></div>
+      <div><div class="flabel">Sterren</div><input value="${(OF.sterren||"").replace(/"/g,"&quot;")}" oninput="OF.sterren=this.value"></div>
+    </div>
+    <div class="frow"><div class="flabel">Beschrijving</div><textarea rows="3" oninput="OF.beschrijving=this.value">${OF.beschrijving||""}</textarea></div>
+    <div class="frow"><div class="flabel">Match trefwoorden</div><input value="${(OF.matchCriteria||"").replace(/"/g,"&quot;")}" oninput="OF.matchCriteria=this.value"></div>
+    <div class="modal-footer"><button class="btn-ghost" onclick="set({showPdfO:false});render();">Annuleren</button><button class="btn-primary" onclick="saveO(OF)">Opslaan</button></div>`:""}
+  </div></div>`; }
+
+function mPdfK(){
+  const ps = pdfK;
+  return `<div class="overlay" onclick="if(event.target===this){set({showPdfK:false});render();}"><div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hdr"><div><div class="modal-title">PDF Koper/Operator Importeren</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">AI extraheert naam, bedrijf, locaties, budget en zoekcriteria</div></div><button class="modal-close" onclick="set({showPdfK:false});render();">✕</button></div>
+    ${ps.loading?`<div class="spinner" style="margin:24px 0;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div style="text-align:center;font-size:13px;color:var(--muted);margin-top:8px;">AI leest het document...</div>`:""}
+    ${ps.error?`<div class="err-box">${ps.error}</div>`:""}
+    ${ps.extracted&&!ps.loading?`<div style="background:#F0FFF4;border:0.5px solid #9FE1CB;border-radius:9px;padding:13px 16px;margin-bottom:16px;font-size:13px;color:#1A6B3C;">✓ Profiel geëxtraheerd uit <strong>${ps.fname}</strong>. Controleer en pas aan.</div>
+    <div class="fgrid">
+      <div><div class="flabel">Naam *</div><input value="${(KF.naam||"").replace(/"/g,"&quot;")}" oninput="KF.naam=this.value"></div>
+      <div><div class="flabel">Bedrijf</div><input value="${(KF.bedrijf||"").replace(/"/g,"&quot;")}" oninput="KF.bedrijf=this.value"></div>
+    </div>
+    <div class="fgrid">
+      <div><div class="flabel">Type</div><select onchange="KF.type=this.value">${KTYPES.map(t=>`<option ${KF.type===t?"selected":""}>${t}</option>`).join("")}</select></div>
+      <div><div class="flabel">Status</div><select onchange="KF.status=this.value">${KSTATS.map(s=>`<option ${KF.status===s?"selected":""}>${s}</option>`).join("")}</select></div>
+    </div>
+    <div class="fgrid">
+      <div><div class="flabel">E-mail</div><input value="${(KF.email||"").replace(/"/g,"&quot;")}" oninput="KF.email=this.value"></div>
+      <div><div class="flabel">Telefoon</div><input value="${(KF.telefoon||"").replace(/"/g,"&quot;")}" oninput="KF.telefoon=this.value"></div>
+    </div>
+    <div class="frow"><div class="flabel">Locaties</div><input value="${(KF.locaties||"").replace(/"/g,"&quot;")}" oninput="KF.locaties=this.value"></div>
+    <div class="frow"><div class="flabel">Budget</div><input value="${(KF.budget||"").replace(/"/g,"&quot;")}" oninput="KF.budget=this.value"></div>
+    <div class="frow"><div class="flabel">Zoekcriteria</div><textarea rows="2" oninput="KF.zoekcriteria=this.value">${KF.zoekcriteria||""}</textarea></div>
+    <div class="frow"><div class="flabel">Notities</div><textarea rows="2" oninput="KF.notities=this.value">${KF.notities||""}</textarea></div>
+    <div class="modal-footer"><button class="btn-ghost" onclick="set({showPdfK:false});render();">Annuleren</button><button class="btn-primary" onclick="saveK(KF)">Opslaan</button></div>`:""}
+  </div></div>`; }
 
 function mSearch(){
-  const ss=SS;
-  const objLabel = ss.forObject ? `<div style="background:#FFFBF0;border:0.5px solid rgba(201,168,76,0.4);border-radius:7px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#7A5C00;">📌 Zoeken voor object: <strong>${ss.forObject.name}</strong> — gevonden kopers worden gekoppeld aan dit object</div>` : "";
-  return `<div class="overlay" onclick="if(event.target===this){set({showSearch:false});render();}"><div class="modal modal-wide" onclick="event.stopPropagation()">
-    <div class="modal-hdr"><div><div class="modal-title">Live Koper Zoeker</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">AI zoekt live op internet naar beslissers</div></div><button class="modal-close" onclick="set({showSearch:false});render();">✕</button></div>
+  const ss = SS;
+  const objLabel = ss.forObject ? `<div style="background:#FFFBF0;border:0.5px solid rgba(201,168,76,0.4);border-radius:7px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#7A5C00;">📌 Zoeken voor: <strong>${ss.forObject.naam}</strong></div>` : "";
+  return `<div class="overlay" onclick="if(event.target===this){set({showSearch:false});render();}"><div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hdr"><div><div class="modal-title">AI Zoeker</div><div style="font-size:12px;color:var(--muted);margin-top:3px;">Zoekt live op internet naar kopers, operators en investeerders</div></div><button class="modal-close" onclick="set({showSearch:false});render();">✕</button></div>
     ${objLabel}
-    <div class="fgrid"><div><div class="flabel">Locatie *</div><input value="${ss.loc}" placeholder="bijv. Valencia" oninput="SS.loc=this.value"></div><div><div class="flabel">Type *</div><input value="${ss.type}" placeholder="bijv. Boutique hotel" oninput="SS.type=this.value"></div><div><div class="flabel">Kamers</div><input value="${ss.rooms}" placeholder="bijv. 30-60" oninput="SS.rooms=this.value"></div><div><div class="flabel">Budget</div><input value="${ss.budget}" placeholder="bijv. €3M - €8M" oninput="SS.budget=this.value"></div></div>
-    <div class="frow"><div class="flabel">Extra</div><input value="${ss.extra}" placeholder="bijv. historisch pand, bestaande vergunning" oninput="SS.extra=this.value"></div>
-    <button class="btn-primary" style="width:100%;padding:11px;margin:12px 0;font-size:14px;border-radius:9px;" onclick="runSearch()" ${ss.loading?"disabled":""}>
-      ${ss.loading?"Zoeken op internet...":"Zoek live op internet →"}
+    <div class="fgrid">
+      <div><div class="flabel">Locatie</div><input value="${ss.loc}" placeholder="bijv. Spanje, Marbella" oninput="SS.loc=this.value"></div>
+      <div><div class="flabel">Type vastgoed</div><input value="${ss.type}" placeholder="bijv. Boutique hotel" oninput="SS.type=this.value"></div>
+    </div>
+    <div class="frow"><div class="flabel">Budget range</div><input value="${ss.budget}" placeholder="bijv. €5M - €20M" oninput="SS.budget=this.value"></div>
+    <div class="frow"><div class="flabel">Extra zoektermen</div><input value="${ss.extra}" placeholder="bijv. recent actief, family office" oninput="SS.extra=this.value"></div>
+    <button class="btn-primary" style="width:100%;padding:11px;margin:12px 0;font-size:14px;" onclick="runSearch()" ${ss.loading?"disabled":""}>
+      ${ss.loading?"Zoeken...":"Zoek live op internet →"}
     </button>
-    ${ss.loading?`<div class="spinner" style="margin-bottom:16px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`:""}
+    ${ss.loading?`<div class="spinner"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`:""}
     ${ss.error?`<div class="err-box">${ss.error}</div>`:""}
-    ${ss.results&&ss.results.length>0?`<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${ss.results.length} kopers gevonden${ss.forObject?' voor '+ss.forObject.name:''}</div>
-    ${ss.results.map(function(r){
-      const inC = S.contacts.some(c=>c.name.toLowerCase().includes((r.name||"").toLowerCase().split(" ")[0]));
-      const alreadyAdded = r._added || inC;
-      const objectId = ss.forObject ? ss.forObject.id : null;
-      const addBtn = alreadyAdded
+    ${ss.results&&ss.results.length?`<div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${ss.results.length} resultaten gevonden</div>
+    ${ss.results.map(r=>{
+      const inCRM = S.kopers.some(k=>k.naam.toLowerCase().includes((r.name||"").toLowerCase().split(" ")[0]));
+      const added = r._added||inCRM;
+      const objectId = ss.forObject?ss.forObject.id:null;
+      const addBtn = added
         ? `<span style="font-size:11px;color:#1A6B3C;font-weight:500;">✓ In CRM</span>`
-        : `<button class="btn-success" style="flex-shrink:0;align-self:flex-start;font-size:12px;padding:7px 12px;" onclick="addSearchResultToCRM('${(r.name||"").replace(/'/g,"\\'")}','${(r.company||"").replace(/'/g,"\\'")}','${(r.activity||"").replace(/'/g,"\\'")}','${ss.loc}','${ss.type}','${ss.rooms}','${ss.budget}','${objectId||""}')">+ Toevoegen aan CRM</button>`;
+        : `<button class="btn-success" style="font-size:12px;" onclick="addFromSearch('${(r.name||"").replace(/'/g,"\\'")}','${(r.company||"").replace(/'/g,"\\'")}','${(r.activity||"").replace(/'/g,"\\'")}','${ss.loc}','${ss.type||"Koper"}','${objectId||""}')">+ Toevoegen</button>`;
       return `<div style="background:#fff;border:0.5px solid var(--border);border-radius:10px;padding:13px 15px;margin-bottom:8px;">
         <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;">
           <div style="flex:1;">
-            <div style="font-weight:500;font-size:14px;margin-bottom:4px;">${r.name||""}</div>
-            ${r.company?`<div style="font-size:12px;color:var(--muted);margin-bottom:6px;">${r.company}</div>`:""}
-            <div class="badges">${r.linkedin_likely?bdg("Mogelijk LinkedIn","#0A66C2"):""}${alreadyAdded?bdg("In CRM","#1A6B3C"):""}${r.deal_type?bdg(r.deal_type,"#C9A84C"):""}</div>
-            ${r.activity?`<div style="font-size:12px;color:#444;line-height:1.6;margin-top:6px;">${r.activity}</div>`:""}
+            <div style="font-weight:500;font-size:14px;margin-bottom:3px;">${r.name||""}</div>
+            ${r.company?`<div style="font-size:12px;color:var(--muted);margin-bottom:5px;">${r.company}</div>`:""}
+            ${r.activity?`<div style="font-size:12px;color:#444;line-height:1.5;">${r.activity}</div>`:""}
             ${r.why_match?`<div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic;">${r.why_match}</div>`:""}
           </div>
           ${addBtn}
         </div>
       </div>`;
     }).join("")}`:""}
-  </div></div>`;}
+  </div></div>`; }
 
 render();
 init().then(()=>render());
