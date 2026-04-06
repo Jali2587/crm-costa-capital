@@ -1,7 +1,7 @@
 const https = require("https");
+const crypto = require("crypto");
 
 const SHEET_ID = "1y_QNvwgMSRydeeY2etGJUBREn-kDNRd9MuxV9nlJ2wc";
-const SHEETS_KEY = process.env.GOOGLE_SHEETS_API_KEY;
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 
 const CORS = {
@@ -11,10 +11,61 @@ const CORS = {
   "Content-Type": "application/json"
 };
 
-function req(url, method, body, hdrs) {
+// ── Service Account via base64 ───────────────────────────────────────────────
+
+function getServiceAccount() {
+  var b64 = process.env.GOOGLE_SA_BASE64;
+  if (!b64) throw new Error("GOOGLE_SA_BASE64 niet ingesteld");
+  var json = Buffer.from(b64, "base64").toString("utf8");
+  return JSON.parse(json);
+}
+
+function base64url(str) {
+  return Buffer.from(str).toString("base64")
+    .replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+}
+
+function makeJWT(sa) {
+  var now = Math.floor(Date.now() / 1000);
+  var header = base64url(JSON.stringify({alg: "RS256", typ: "JWT"}));
+  var claim = base64url(JSON.stringify({
+    iss: sa.client_email,
+    scope: "https://www.googleapis.com/auth/spreadsheets",
+    aud: "https://oauth2.googleapis.com/token",
+    exp: now + 3600,
+    iat: now
+  }));
+  var signing = header + "." + claim;
+  var sign = crypto.createSign("RSA-SHA256");
+  sign.update(signing);
+  var sig = sign.sign(sa.private_key, "base64")
+    .replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+  return signing + "." + sig;
+}
+
+async function getAccessToken() {
+  var sa = getServiceAccount();
+  var jwt = makeJWT(sa);
+  var postData = "grant_type=" + encodeURIComponent("urn:ietf:params:oauth:grant-type:jwt-bearer") + "&assertion=" + jwt;
+  var result = await req(
+    "https://oauth2.googleapis.com/token",
+    "POST", null,
+    {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Content-Length": Buffer.byteLength(postData)
+    },
+    postData
+  );
+  if (result.s !== 200) throw new Error("Token fout: " + JSON.stringify(result.b));
+  return result.b.access_token;
+}
+
+// ── HTTP helper ──────────────────────────────────────────────────────────────
+
+function req(url, method, body, hdrs, rawBody) {
   return new Promise(function(resolve, reject) {
     var u = new URL(url);
-    var bodyData = body ? JSON.stringify(body) : null;
+    var bodyData = rawBody || (body ? JSON.stringify(body) : null);
     var opt = {
       hostname: u.hostname,
       path: u.pathname + u.search,
@@ -36,9 +87,12 @@ function req(url, method, body, hdrs) {
   });
 }
 
-function sheetsUrl(path) {
-  var base = "https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + path;
-  return base + (path.includes("?") ? "&" : "?") + "key=" + SHEETS_KEY;
+async function sheets(path, method, body) {
+  var token = await getAccessToken();
+  var url = "https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + path;
+  return req(url, method || "GET", body || null, {
+    "Authorization": "Bearer " + token
+  });
 }
 
 function ok(body) {
@@ -47,6 +101,8 @@ function ok(body) {
 function err(msg, code) {
   return {statusCode: code || 500, headers: CORS, body: JSON.stringify({error: msg})};
 }
+
+// ── Handler ──────────────────────────────────────────────────────────────────
 
 exports.handler = async function(event) {
   if (event.httpMethod === "OPTIONS") return {statusCode: 200, headers: CORS, body: ""};
@@ -59,18 +115,18 @@ exports.handler = async function(event) {
 
   try {
     if (action === "sheetinfo") {
-      var r = await req(sheetsUrl("?fields=sheets.properties.title"));
+      var r = await sheets("?fields=sheets.properties.title");
       return ok(r.b);
     }
 
     if (action === "get") {
-      var r = await req(sheetsUrl("/values/" + encodeURIComponent(body.range)));
+      var r = await sheets("/values/" + encodeURIComponent(body.range));
       return ok(r.b);
     }
 
     if (action === "append") {
-      var r = await req(
-        sheetsUrl("/values/" + encodeURIComponent(body.range) + ":append?valueInputOption=RAW&insertDataOption=INSERT_ROWS"),
+      var r = await sheets(
+        "/values/" + encodeURIComponent(body.range) + ":append?valueInputOption=RAW&insertDataOption=INSERT_ROWS",
         "POST", {values: body.values}
       );
       if (r.s !== 200) return err("Sheets fout " + r.s + ": " + JSON.stringify(r.b), r.s);
@@ -78,8 +134,8 @@ exports.handler = async function(event) {
     }
 
     if (action === "update") {
-      var r = await req(
-        sheetsUrl("/values/" + encodeURIComponent(body.range) + "?valueInputOption=RAW"),
+      var r = await sheets(
+        "/values/" + encodeURIComponent(body.range) + "?valueInputOption=RAW",
         "PUT", {values: body.values}
       );
       if (r.s !== 200) return err("Sheets fout " + r.s + ": " + JSON.stringify(r.b), r.s);
@@ -87,7 +143,7 @@ exports.handler = async function(event) {
     }
 
     if (action === "clear") {
-      var r = await req(sheetsUrl("/values/" + encodeURIComponent(body.range) + ":clear"), "POST", {});
+      var r = await sheets("/values/" + encodeURIComponent(body.range) + ":clear", "POST", {});
       return ok(r.b);
     }
 
