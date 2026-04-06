@@ -97,9 +97,9 @@ async function api(b){
   return d;
 }
 
-function r2k(r){ if(!r||!r[0])return null; return {id:r[0]||"",naam:r[1]||"",bedrijf:r[2]||"",email:r[3]||"",telefoon:r[4]||"",type:r[5]||"",locaties:r[6]||"",budget:r[7]||"",zoekcriteria:r[8]||"",notities:r[9]||"",status:r[10]||"Lead",bron:r[11]||"",toegevoegd:r[12]||""}; }
+function r2k(r){ if(!r||!r[0]||r[0]==="id"||r[1]==="naam")return null; return {id:r[0]||"",naam:r[1]||"",bedrijf:r[2]||"",email:r[3]||"",telefoon:r[4]||"",type:r[5]||"",locaties:r[6]||"",budget:r[7]||"",zoekcriteria:r[8]||"",notities:r[9]||"",status:r[10]||"Lead",bron:r[11]||"",toegevoegd:r[12]||""}; }
 function k2r(k){ return [k.id,k.naam,k.bedrijf||"",k.email||"",k.telefoon||"",k.type||"",k.locaties||"",k.budget||"",k.zoekcriteria||"",k.notities||"",k.status||"Lead",k.bron||"",k.toegevoegd||""]; }
-function r2o(r){ if(!r||!r[1])return null; return {id:r[0]||"",naam:r[1]||"",type:r[2]||"",sterren:r[3]||"",locatie:r[4]||"",prijs:r[5]||"",kamers:r[6]||"",oppervlakte:r[7]||"",status:r[8]||"Beschikbaar",beschrijving:r[9]||"",matchCriteria:r[10]||"",toegevoegd:r[11]||"",bron:r[12]||""}; }
+function r2o(r){ if(!r||!r[1]||r[0]==="id"||r[1]==="naam")return null; return {id:r[0]||"",naam:r[1]||"",type:r[2]||"",sterren:r[3]||"",locatie:r[4]||"",prijs:r[5]||"",kamers:r[6]||"",oppervlakte:r[7]||"",status:r[8]||"Beschikbaar",beschrijving:r[9]||"",matchCriteria:r[10]||"",toegevoegd:r[11]||"",bron:r[12]||""}; }
 function o2r(o){ return [o.id,o.naam||"",o.type||"",o.sterren||"",o.locatie||"",o.prijs||"",o.kamers||"",o.oppervlakte||"",o.status||"Beschikbaar",o.beschrijving||"",o.matchCriteria||"",o.toegevoegd||"",o.bron||""]; }
 
 function today(){ return new Date().toISOString().split("T")[0]; }
@@ -123,7 +123,7 @@ async function loadK(){
     const hrow = (h.values&&h.values[0])||[];
     if (!hrow[0]||hrow[0]!=="id") await api({action:"update", range:`${SK}!A1:M1`, values:[KH]});
     const d = await api({action:"get", range:`${SK}!A2:M2000`});
-    S.kopers = (d.values||[]).map(r2k).filter(Boolean).filter(k=>k.naam);
+    S.kopers = (d.values||[]).map(r2k).filter(Boolean).filter(k=>k.naam&&k.naam.trim().length>0&&k.id&&k.id.trim().length>0);
   } catch(e){ S.kopers=[]; }
 }
 
@@ -133,7 +133,7 @@ async function loadO(){
     const hrow = (h.values&&h.values[0])||[];
     if (!hrow[0]||hrow[0]!=="id") await api({action:"update", range:`${SO}!A1:M1`, values:[OH]});
     const d = await api({action:"get", range:`${SO}!A2:M1000`});
-    S.objecten = (d.values||[]).map(r2o).filter(Boolean).filter(o=>o.naam);
+    S.objecten = (d.values||[]).map(r2o).filter(Boolean).filter(o=>o.naam&&o.naam.trim().length>0&&o.id&&o.id.trim().length>0);
   } catch(e){ S.objecten=[]; }
 }
 
