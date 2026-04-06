@@ -1,7 +1,9 @@
 const https = require("https");
-const crypto = require("crypto");
+
 const SHEET_ID = "1y_QNvwgMSRydeeY2etGJUBREn-kDNRd9MuxV9nlJ2wc";
+const SHEETS_KEY = process.env.GOOGLE_SHEETS_API_KEY;
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
+
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Content-Type",
@@ -9,91 +11,10 @@ const CORS = {
   "Content-Type": "application/json"
 };
 
-// ── Service Account JWT ──────────────────────────────────────────────────────
-
-function fixPrivateKey(key) {
-  // Stap 1: vervang letterlijke \n door echte newlines
-  key = key.replace(/\\n/g, "\n");
-  // Stap 2: als de key geen echte newlines heeft, formatteer hem opnieuw
-  if (!key.includes("\n")) {
-    // Haal BEGIN en END eruit, formatteer de body met 64-char regels
-    var begin = "-----BEGIN PRIVATE KEY-----";
-    var end = "-----END PRIVATE KEY-----";
-    key = key.replace(begin, "").replace(end, "").replace(/\s/g, "");
-    var lines = [begin];
-    for (var i = 0; i < key.length; i += 64) {
-      lines.push(key.slice(i, i + 64));
-    }
-    lines.push(end);
-    key = lines.join("\n") + "\n";
-  }
-  return key;
-}
-
-function getServiceAccount() {
-  var email = process.env.GOOGLE_CLIENT_EMAIL;
-  var key = process.env.GOOGLE_PRIVATE_KEY;
-  if (email && key) {
-    return {
-      client_email: email,
-      private_key: fixPrivateKey(key)
-    };
-  }
-  var raw = process.env.GOOGLE_SERVICE_ACCOUNT;
-  if (!raw) throw new Error("Stel GOOGLE_CLIENT_EMAIL + GOOGLE_PRIVATE_KEY in als Netlify env vars");
-  try {
-    var sa = JSON.parse(raw);
-    sa.private_key = fixPrivateKey(sa.private_key);
-    return sa;
-  }
-  catch(e) { throw new Error("GOOGLE_SERVICE_ACCOUNT JSON ongeldig: " + e.message); }
-}
-
-function base64url(str) {
-  return Buffer.from(str).toString("base64")
-    .replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-}
-
-function makeJWT(sa) {
-  var now = Math.floor(Date.now() / 1000);
-  var header = base64url(JSON.stringify({alg: "RS256", typ: "JWT"}));
-  var claim = base64url(JSON.stringify({
-    iss: sa.client_email,
-    scope: "https://www.googleapis.com/auth/spreadsheets",
-    aud: "https://oauth2.googleapis.com/token",
-    exp: now + 3600,
-    iat: now
-  }));
-  var signing = header + "." + claim;
-  var key = sa.private_key;
-  var sign = crypto.createSign("RSA-SHA256");
-  sign.update(signing);
-  var sig = sign.sign(key, "base64")
-    .replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-  return signing + "." + sig;
-}
-
-async function getAccessToken() {
-  var sa = getServiceAccount();
-  var jwt = makeJWT(sa);
-  var postData = "grant_type=" + encodeURIComponent("urn:ietf:params:oauth:grant-type:jwt-bearer") + "&assertion=" + jwt;
-  var result = await req(
-    "https://oauth2.googleapis.com/token",
-    "POST", null, {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Content-Length": Buffer.byteLength(postData)
-    }, postData
-  );
-  if (result.s !== 200) throw new Error("Token fout: " + JSON.stringify(result.b));
-  return result.b.access_token;
-}
-
-// ── HTTP helper ──────────────────────────────────────────────────────────────
-
-function req(url, method, body, hdrs, rawBody) {
+function req(url, method, body, hdrs) {
   return new Promise(function(resolve, reject) {
     var u = new URL(url);
-    var bodyData = rawBody || (body ? JSON.stringify(body) : null);
+    var bodyData = body ? JSON.stringify(body) : null;
     var opt = {
       hostname: u.hostname,
       path: u.pathname + u.search,
@@ -115,64 +36,66 @@ function req(url, method, body, hdrs, rawBody) {
   });
 }
 
-async function sheets(path, method, body) {
-  var token = await getAccessToken();
-  var url = "https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + path;
-  return req(url, method || "GET", body || null, {
-    "Authorization": "Bearer " + token
-  });
+function sheetsUrl(path) {
+  var base = "https://sheets.googleapis.com/v4/spreadsheets/" + SHEET_ID + path;
+  return base + (path.includes("?") ? "&" : "?") + "key=" + SHEETS_KEY;
 }
-
-// ── Response helpers ─────────────────────────────────────────────────────────
 
 function ok(body) {
   return {statusCode: 200, headers: CORS, body: JSON.stringify(body)};
 }
-
 function err(msg, code) {
   return {statusCode: code || 500, headers: CORS, body: JSON.stringify({error: msg})};
 }
 
-// ── Handler ──────────────────────────────────────────────────────────────────
-
 exports.handler = async function(event) {
   if (event.httpMethod === "OPTIONS") return {statusCode: 200, headers: CORS, body: ""};
+
   var body;
   try { body = JSON.parse(event.body || "{}"); }
   catch(e) { return err("Invalid JSON", 400); }
+
   var action = body.action;
+
   try {
     if (action === "sheetinfo") {
-      var r = await sheets("?fields=sheets.properties.title");
+      var r = await req(sheetsUrl("?fields=sheets.properties.title"));
       return ok(r.b);
     }
+
     if (action === "get") {
-      var r = await sheets("/values/" + encodeURIComponent(body.range));
+      var r = await req(sheetsUrl("/values/" + encodeURIComponent(body.range)));
       return ok(r.b);
     }
+
     if (action === "append") {
-      var r = await sheets(
-        "/values/" + encodeURIComponent(body.range) + ":append?valueInputOption=RAW&insertDataOption=INSERT_ROWS",
+      var r = await req(
+        sheetsUrl("/values/" + encodeURIComponent(body.range) + ":append?valueInputOption=RAW&insertDataOption=INSERT_ROWS"),
         "POST", {values: body.values}
       );
       if (r.s !== 200) return err("Sheets fout " + r.s + ": " + JSON.stringify(r.b), r.s);
       return ok(r.b);
     }
+
     if (action === "update") {
-      var r = await sheets(
-        "/values/" + encodeURIComponent(body.range) + "?valueInputOption=RAW",
+      var r = await req(
+        sheetsUrl("/values/" + encodeURIComponent(body.range) + "?valueInputOption=RAW"),
         "PUT", {values: body.values}
       );
       if (r.s !== 200) return err("Sheets fout " + r.s + ": " + JSON.stringify(r.b), r.s);
       return ok(r.b);
     }
+
     if (action === "clear") {
-      var r = await sheets("/values/" + encodeURIComponent(body.range) + ":clear", "POST", {});
+      var r = await req(sheetsUrl("/values/" + encodeURIComponent(body.range) + ":clear"), "POST", {});
       return ok(r.b);
     }
+
     if (action === "extractpdf" || action === "search" || action === "aimatch") {
       if (!ANTHROPIC_KEY) return err("ANTHROPIC_API_KEY niet ingesteld");
+
       var payload;
+
       if (action === "extractpdf") {
         payload = {
           model: "claude-sonnet-4-20250514",
@@ -184,6 +107,7 @@ exports.handler = async function(event) {
           ]}]
         };
       }
+
       if (action === "search") {
         payload = {
           model: "claude-sonnet-4-20250514",
@@ -193,6 +117,7 @@ exports.handler = async function(event) {
           messages: [{role: "user", content: "Zoek kopers voor: " + body.criteria}]
         };
       }
+
       if (action === "aimatch") {
         var list = (body.candidates || []).map(function(c, i) {
           return (i+1) + ". " + c.name + (c.company ? " (" + c.company + ")" : "") + (c.notes ? " | " + c.notes.slice(0,100) : "") + (c.linkedinFirstDegree ? " [LI]" : "");
@@ -206,26 +131,34 @@ exports.handler = async function(event) {
           messages: [{role: "user", content: "Object: " + obj.name + " | " + obj.type + " | " + obj.location + " | " + obj.price + "\n\nContacten:\n" + list}]
         };
       }
+
       var r = await req(
         "https://api.anthropic.com/v1/messages",
         "POST", payload,
         {"x-api-key": ANTHROPIC_KEY, "anthropic-version": "2023-06-01"}
       );
+
       if (r.s !== 200) return err("Anthropic fout " + r.s + ": " + JSON.stringify(r.b).slice(0,300), r.s);
+
       var text = (r.b.content || []).filter(function(x) { return x.type === "text"; }).map(function(x) { return x.text; }).join("");
+
       if (action === "extractpdf") {
-        var m = text.match(/\{[\s\S]*?\}/);
+        var m = text.match(/\{[\s\S]*\}/);
         if (!m) return err("Geen JSON in antwoord: " + text.slice(0,200));
         try { return ok({extracted: JSON.parse(m[0])}); }
         catch(e) { return err("Parse fout: " + m[0].slice(0,100)); }
       }
-      var m2 = text.match(/\[[\s\S]*?\]/);
+
+      var m2 = text.match(/\[[\s\S]*\]/);
       var arr = [];
       if (m2) { try { arr = JSON.parse(m2[0]); } catch(e) {} }
+
       if (action === "search") return ok({results: arr});
       if (action === "aimatch") return ok({matches: arr});
     }
+
     return err("Onbekende actie: " + action, 400);
+
   } catch(e) {
     return err(e.message);
   }
